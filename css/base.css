@@ -4,21 +4,23 @@
    ======================================== */
 
 :root {
-  --primary: #00FF87;
-  --primary-dark: #00CC6A;
-  --bg-deep: #0A0A0F;
-  --bg-card: #12121A;
-  --bg-elevated: #1A1A28;
-  --text-primary: #FFFFFF;
-  --text-secondary: #A0A0B8;
-  --text-muted: #5A5A72;
-  --accent-orange: #FF6B35;
-  --accent-blue: #00B4FF;
-  --danger: #FF3D5A;
-  --success: #00FF87;
-  --border: rgba(255, 255, 255, 0.06);
-  --border-hover: rgba(0, 255, 135, 0.25);
-  --shadow-green: 0 0 30px rgba(0, 255, 135, 0.12);
+  --primary: #16A34A;
+  --primary-dark: #15803D;
+  --primary-light: #DCFCE7;
+  --bg-deep: #F8FAFC;
+  --bg-card: #FFFFFF;
+  --bg-elevated: #F1F5F9;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --accent-orange: #EA580C;
+  --accent-blue: #0284C7;
+  --danger: #DC2626;
+  --success: #16A34A;
+  --border: rgba(15, 23, 42, 0.08);
+  --border-hover: rgba(22, 163, 74, 0.35);
+  --shadow-green: 0 4px 20px rgba(22, 163, 74, 0.15);
+  --shadow-card: 0 2px 12px rgba(15, 23, 42, 0.07);
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 20px;

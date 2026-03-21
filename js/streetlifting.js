@@ -24,13 +24,7 @@ function initStreetlifting() {
   renderCalculator();
   renderProgressChart();
 
-  /* Logout buttons */
-  document.querySelectorAll('[data-action="logout"]').forEach(function(btn) {
-    btn.addEventListener('click', function(e) {
-      e.preventDefault();
-      logout();
-    });
-  });
+  /* Logout handled globally by nav.js */
 }
 
 /* Render equipment toggles */

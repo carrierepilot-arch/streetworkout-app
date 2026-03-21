@@ -72,4 +72,45 @@ function setActiveNav() {
 document.addEventListener('DOMContentLoaded', function() {
   initNav();
   setActiveNav();
+  initLogoutModal();
 });
+
+/* ==================== GLOBAL LOGOUT MODAL ==================== */
+function showLogoutModal() {
+  var overlay = document.getElementById('logout-modal-global');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'logout-modal-global';
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML =
+      '<div class="modal">' +
+      '<div style="font-size:2rem;text-align:center;margin-bottom:12px;">🚪</div>' +
+      '<h3 style="text-align:center;margin-bottom:8px;">Déconnexion</h3>' +
+      '<p style="color:var(--text-secondary);text-align:center;margin-bottom:24px;">Voulez-vous vous déconnecter ?</p>' +
+      '<div style="display:flex;gap:12px;">' +
+      '<button class="btn btn-secondary" style="flex:1;" id="lg-cancel">Non</button>' +
+      '<button class="btn btn-danger" style="flex:1;" id="lg-confirm">Oui, déconnecter</button>' +
+      '</div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    document.getElementById('lg-cancel').addEventListener('click', function() {
+      overlay.classList.remove('active');
+    });
+    document.getElementById('lg-confirm').addEventListener('click', function() {
+      if (typeof logout === 'function') logout();
+    });
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) overlay.classList.remove('active');
+    });
+  }
+  overlay.classList.add('active');
+}
+
+function initLogoutModal() {
+  document.querySelectorAll('[data-action="logout"]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      showLogoutModal();
+    });
+  });
+}

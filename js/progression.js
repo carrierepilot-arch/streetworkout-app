@@ -84,6 +84,47 @@ var EXERCISES = [
       { id: 'frontlever-4', name: 'Front lever straddle', desc: 'Deux jambes tendues écartées horizontalement' },
       { id: 'frontlever-5', name: 'Front lever planche complète', desc: 'Objectif — position horizontale parfaite' }
     ]
+  },
+  {
+    id: 'handstand',
+    name: 'Handstand / HSPU',
+    icon: '🤸',
+    color: '#7C3AED',
+    steps: [
+      { id: 'handstand-1', name: 'Planche inclinée sur mur', desc: 'Pieds sur le mur, corps incliné à 45°' },
+      { id: 'handstand-2', name: 'Kick-up contre le mur', desc: 'Monter en équilibre contre le mur 20-30s' },
+      { id: 'handstand-3', name: 'Handstand contre mur (tendu)', desc: 'Corps parfaitement aligné, maintien 30s+' },
+      { id: 'handstand-4', name: 'HSPU partiel contre mur', desc: 'Descente partielle du crâne vers le sol' },
+      { id: 'handstand-5', name: 'HSPU complet contre mur', desc: 'Amplitude totale crâne-sol-bras tendus' },
+      { id: 'handstand-6', name: 'Handstand libre 5s+', desc: 'Équilibre libre sans support' },
+      { id: 'handstand-7', name: 'Handstand libre 30s+', desc: 'Objectif — équilibre libre maîtrisé' }
+    ]
+  },
+  {
+    id: 'backlever',
+    name: 'Back Lever',
+    icon: '🏊',
+    color: '#EA580C',
+    steps: [
+      { id: 'backlever-1', name: 'German hang passif', desc: 'Suspension épaules en arrière, corps tombant' },
+      { id: 'backlever-2', name: 'Back lever groupé', desc: 'Genoux ramenés, dos horizontal' },
+      { id: 'backlever-3', name: 'Back lever une jambe', desc: 'Une jambe tendue, une repliée' },
+      { id: 'backlever-4', name: 'Back lever straddle', desc: 'Deux jambes tendues écartées horizontalement' },
+      { id: 'backlever-5', name: 'Back lever planche', desc: 'Objectif — position horizontale dos au sol' }
+    ]
+  },
+  {
+    id: 'humanflag',
+    name: 'Human Flag',
+    icon: '🚩',
+    color: '#0284C7',
+    steps: [
+      { id: 'humanflag-1', name: 'Side plank vertical', desc: 'Gainage latéral sur poteau / mur' },
+      { id: 'humanflag-2', name: 'Flag groupé', desc: 'Corps en boule, position latérale sur poteau' },
+      { id: 'humanflag-3', name: 'Flag avec assistance', desc: 'Un élastique ou un appui pour maintenir l\'horizontale' },
+      { id: 'humanflag-4', name: 'Flag straddle', desc: 'Jambes écartées pour réduire le bras de levier' },
+      { id: 'humanflag-5', name: 'Human flag complet', desc: 'Objectif — corps horizontal parfait 3s+' }
+    ]
   }
 ];
 
@@ -101,13 +142,7 @@ function initProgression() {
   renderAccordions();
   updateGlobalScore();
 
-  /* Logout buttons */
-  document.querySelectorAll('[data-action="logout"]').forEach(function(btn) {
-    btn.addEventListener('click', function(e) {
-      e.preventDefault();
-      logout();
-    });
-  });
+  /* Logout handled globally by nav.js */
 }
 
 /* Render overview circles at top */

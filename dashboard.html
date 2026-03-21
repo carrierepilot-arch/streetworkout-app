@@ -89,37 +89,134 @@
       <!-- Data Form -->
       <div class="card data-form-card">
         <h3>📝 Saisie des données</h3>
+
+        <!-- Section: Mensurations -->
+        <div class="form-section-title">📏 Mensurations</div>
         <div class="form-grid">
           <div class="form-field">
             <label for="input-weight">Poids corporel (kg)</label>
             <input type="number" id="input-weight" min="30" max="200" step="0.1" placeholder="Ex : 75">
           </div>
           <div class="form-field">
-            <label for="input-pullups">Tractions max (reps)</label>
+            <label for="input-height">Taille (cm)</label>
+            <input type="number" id="input-height" min="100" max="230" placeholder="Ex : 178">
+          </div>
+          <div class="form-field">
+            <label for="input-age">Âge (ans)</label>
+            <input type="number" id="input-age" min="10" max="80" placeholder="Ex : 22">
+          </div>
+        </div>
+
+        <!-- Section: Tractions -->
+        <div class="form-section-title">💪 Tractions (reps max)</div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="input-pullups">Poids de corps</label>
             <input type="number" id="input-pullups" min="0" max="50" placeholder="Ex : 10">
           </div>
           <div class="form-field">
-            <label for="input-dips">Dips max (reps)</label>
+            <label for="input-pullups5">+5 kg</label>
+            <input type="number" id="input-pullups5" min="0" max="40" placeholder="Optionnel">
+          </div>
+          <div class="form-field">
+            <label for="input-pullups10">+10 kg</label>
+            <input type="number" id="input-pullups10" min="0" max="30" placeholder="Optionnel">
+          </div>
+          <div class="form-field">
+            <label for="input-pullups20">+20 kg</label>
+            <input type="number" id="input-pullups20" min="0" max="20" placeholder="Optionnel">
+          </div>
+        </div>
+
+        <!-- Section: Dips -->
+        <div class="form-section-title">🔥 Dips (reps max)</div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="input-dips">Poids de corps</label>
             <input type="number" id="input-dips" min="0" max="80" placeholder="Ex : 15">
           </div>
           <div class="form-field">
-            <label for="input-pushups">Pompes max (reps)</label>
+            <label for="input-dips5">+5 kg</label>
+            <input type="number" id="input-dips5" min="0" max="60" placeholder="Optionnel">
+          </div>
+          <div class="form-field">
+            <label for="input-dips10">+10 kg</label>
+            <input type="number" id="input-dips10" min="0" max="50" placeholder="Optionnel">
+          </div>
+          <div class="form-field">
+            <label for="input-dips20">+20 kg</label>
+            <input type="number" id="input-dips20" min="0" max="40" placeholder="Optionnel">
+          </div>
+        </div>
+
+        <!-- Section: Pompes -->
+        <div class="form-section-title">⚡ Pompes (reps max)</div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="input-pushups">Pompes strictes</label>
             <input type="number" id="input-pushups" min="0" max="150" placeholder="Ex : 30">
           </div>
           <div class="form-field">
-            <label for="input-squats">Squats max (reps)</label>
+            <label for="input-pushups-explo">Pompes explosives</label>
+            <input type="number" id="input-pushups-explo" min="0" max="80" placeholder="Optionnel">
+          </div>
+        </div>
+
+        <!-- Section: Squats -->
+        <div class="form-section-title">🦵 Squats (reps max)</div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="input-squats">Poids de corps</label>
             <input type="number" id="input-squats" min="0" max="200" placeholder="Ex : 40">
           </div>
           <div class="form-field">
-            <label>Muscle-up ? (+20 pts)</label>
+            <label for="input-squats-weighted">Lesté (kg ajouté)</label>
+            <input type="number" id="input-squats-weighted" min="0" max="200" placeholder="Optionnel">
+          </div>
+        </div>
+
+        <!-- Section: Skills -->
+        <div class="form-section-title">🧠 Skills & Figures</div>
+        <div class="form-grid-skills">
+          <div class="form-field">
+            <label>Muscle-up (+20 pts)</label>
             <div class="radio-group">
               <label class="radio-label"><input type="radio" name="muscleup" value="oui"> Oui</label>
               <label class="radio-label"><input type="radio" name="muscleup" value="non" checked> Non</label>
             </div>
           </div>
+          <div class="form-field">
+            <label for="input-frontlever">Front Lever</label>
+            <select id="input-frontlever" class="form-input">
+              <option value="0">Non acquis</option>
+              <option value="1">Tuck front lever</option>
+              <option value="2">One leg</option>
+              <option value="3">Straddle</option>
+              <option value="4">Full front lever</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="input-handstand">Handstand</label>
+            <select id="input-handstand" class="form-input">
+              <option value="0">Non acquis</option>
+              <option value="1">Contre le mur</option>
+              <option value="2">Balance libre (5s+)</option>
+              <option value="3">Balance libre (15s+)</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="input-hspu">Handstand Push-up</label>
+            <select id="input-hspu" class="form-input">
+              <option value="0">Non acquis</option>
+              <option value="1">Assisté mur</option>
+              <option value="2">Strict contre mur</option>
+              <option value="3">Free HSPU</option>
+            </select>
+          </div>
         </div>
-        <button class="btn btn-primary" id="save-data" style="animation:none;">
-          <span class="btn-text">Sauvegarder mes données</span>
+
+        <button class="btn btn-primary" id="save-data" style="margin-top:8px;">
+          <span class="btn-text">💾 Sauvegarder mes données</span>
         </button>
       </div>
 
@@ -216,6 +313,7 @@
   <script src="js/auth.js"></script>
   <script src="js/nav.js"></script>
   <script src="js/dashboard.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="js/export-pdf.js"></script>
 </body>

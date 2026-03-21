@@ -1,43 +1,73 @@
 /* ========================================
-   DASHBOARD.JS — Dashboard Logic (Stats, Level, Chart)
+   DASHBOARD.JS — Dashboard Logic (Stats, Level, Charts)
    ======================================== */
 
-/* Level calculation */
+/* ==================== 5-LEVEL SYSTEM ==================== */
 function calculateLevel(data) {
   var score = 0;
 
-  if (data.pullups >= 15) score += 25;
-  else if (data.pullups >= 8) score += 15;
-  else if (data.pullups >= 3) score += 8;
+  // Tractions
+  if (data.pullups >= 20)     score += 25;
+  else if (data.pullups >= 15) score += 20;
+  else if (data.pullups >= 10) score += 14;
+  else if (data.pullups >= 5)  score += 8;
+  else if (data.pullups >= 1)  score += 3;
 
-  if (data.dips >= 20) score += 20;
-  else if (data.dips >= 10) score += 12;
-  else if (data.dips >= 5) score += 6;
+  // Dips
+  if (data.dips >= 25)        score += 20;
+  else if (data.dips >= 18)   score += 15;
+  else if (data.dips >= 12)   score += 10;
+  else if (data.dips >= 6)    score += 5;
+  else if (data.dips >= 1)    score += 2;
 
-  if (data.pushups >= 40) score += 20;
-  else if (data.pushups >= 20) score += 12;
-  else if (data.pushups >= 10) score += 6;
+  // Pompes
+  if (data.pushups >= 50)     score += 15;
+  else if (data.pushups >= 35) score += 11;
+  else if (data.pushups >= 20) score += 7;
+  else if (data.pushups >= 10) score += 4;
+  else if (data.pushups >= 1)  score += 2;
 
-  if (data.squats >= 60) score += 15;
-  else if (data.squats >= 30) score += 9;
-  else if (data.squats >= 15) score += 5;
+  // Squats
+  if (data.squats >= 60)      score += 10;
+  else if (data.squats >= 40) score += 7;
+  else if (data.squats >= 20) score += 4;
+  else if (data.squats >= 5)  score += 2;
 
-  if (data.muscleup === 'oui') score += 20;
+  // Muscle-up
+  if (data.muscleup === 'oui') score += 15;
 
-  if (score >= 65) return { level: 'Avancé', color: '#00FF87', icon: '🔥', score: score };
-  if (score >= 30) return { level: 'Intermédiaire', color: '#00B4FF', icon: '⚡', score: score };
-  return { level: 'Débutant', color: '#FF6B35', icon: '🌱', score: score };
+  // Front lever (0-4 niveaux -> 0-8 pts)
+  score += (parseInt(data.frontlever) || 0) * 2;
+
+  // Handstand (0-3 -> 0-6 pts)
+  score += (parseInt(data.handstand) || 0) * 2;
+
+  // HSPU (0-3 -> 0-9 pts)
+  score += (parseInt(data.hspu) || 0) * 3;
+
+  // Tractions lestées bonus
+  if (data.pullups20 >= 1)     score += 5;
+  else if (data.pullups10 >= 1) score += 3;
+  else if (data.pullups5 >= 1)  score += 1;
+
+  score = Math.min(score, 100);
+
+  if (score >= 85) return { level: 'Élite',         color: '#7C3AED', icon: '👑', score: score };
+  if (score >= 65) return { level: 'Avancé',         color: '#16A34A', icon: '🔥', score: score };
+  if (score >= 45) return { level: 'Intermédiaire',  color: '#0284C7', icon: '⚡', score: score };
+  if (score >= 20) return { level: 'Novice',         color: '#EA580C', icon: '🌟', score: score };
+  return              { level: 'Débutant',        color: '#94A3B8', icon: '🌱', score: score };
 }
 
-/* Get recommended targets based on level */
+/* Targets per level */
 function getTargets(levelName) {
-  if (levelName === 'Avancé') {
-    return { pullups: 20, dips: 25, pushups: 50, squats: 80 };
-  }
-  if (levelName === 'Intermédiaire') {
-    return { pullups: 15, dips: 20, pushups: 40, squats: 60 };
-  }
-  return { pullups: 8, dips: 10, pushups: 20, squats: 30 };
+  var map = {
+    'Élite':         { pullups: 25, dips: 30, pushups: 60, squats: 80 },
+    'Avancé':        { pullups: 20, dips: 25, pushups: 50, squats: 60 },
+    'Intermédiaire': { pullups: 15, dips: 18, pushups: 35, squats: 40 },
+    'Novice':        { pullups: 10, dips: 12, pushups: 20, squats: 25 }
+  };
+  return map[levelName] || { pullups: 5, dips: 8, pushups: 10, squats: 15 };
 }
 
 /* Initialize dashboard */
@@ -47,13 +77,12 @@ function initDashboard() {
   loadProfile();
   loadFormData();
   updateStatsCards();
-  renderChart();
+  renderCharts();
 
-  /* Save button handler */
   var saveBtn = document.getElementById('save-data');
-  if (saveBtn) {
-    saveBtn.addEventListener('click', saveFormData);
-  }
+  if (saveBtn) saveBtn.addEventListener('click', saveFormData);
+
+  /* Profile name editing */
 
   /* Profile name editing */
   var editNameBtn = document.getElementById('edit-name-btn');
@@ -95,13 +124,7 @@ function initDashboard() {
     });
   }
 
-  /* Logout buttons */
-  document.querySelectorAll('[data-action="logout"]').forEach(function(btn) {
-    btn.addEventListener('click', function(e) {
-      e.preventDefault();
-      logout();
-    });
-  });
+  /* Logout is handled globally by nav.js showLogoutModal */
 }
 
 /* Load profile name */
@@ -122,57 +145,63 @@ function updateAvatar(name) {
 }
 
 /* Load saved form data into inputs */
+var FORM_FIELDS = ['weight','height','age','pullups','pullups5','pullups10','pullups20','dips','dips5','dips10','dips20','pushups','pushups-explo','squats','squats-weighted'];
+
 function loadFormData() {
   var data = SW.load('user_data');
   if (!data) return;
 
-  var fields = ['weight', 'pullups', 'dips', 'pushups', 'squats'];
-  fields.forEach(function(f) {
-    var input = document.getElementById('input-' + f);
-    if (input && data[f] !== undefined) {
-      input.value = data[f];
-    }
+  FORM_FIELDS.forEach(function(f) {
+    var el = document.getElementById('input-' + f);
+    if (el && data[f] !== undefined && data[f] !== 0) el.value = data[f];
   });
 
-  /* Muscle-up radio */
   if (data.muscleup) {
     var radio = document.querySelector('input[name="muscleup"][value="' + data.muscleup + '"]');
     if (radio) radio.checked = true;
   }
+
+  ['frontlever','handstand','hspu'].forEach(function(key) {
+    var el = document.getElementById('input-' + key);
+    if (el && data[key] !== undefined) el.value = data[key];
+  });
 }
 
 /* Save form data */
 function saveFormData() {
   var data = {
-    weight: parseFloat(document.getElementById('input-weight').value) || 0,
-    pullups: parseInt(document.getElementById('input-pullups').value) || 0,
-    dips: parseInt(document.getElementById('input-dips').value) || 0,
-    pushups: parseInt(document.getElementById('input-pushups').value) || 0,
-    squats: parseInt(document.getElementById('input-squats').value) || 0,
-    muscleup: (document.querySelector('input[name="muscleup"]:checked') || {}).value || 'non',
-    date: new Date().toISOString()
+    weight:         parseFloat(document.getElementById('input-weight').value)          || 0,
+    height:         parseInt(document.getElementById('input-height').value)            || 0,
+    age:            parseInt(document.getElementById('input-age').value)               || 0,
+    pullups:        parseInt(document.getElementById('input-pullups').value)           || 0,
+    pullups5:       parseInt(document.getElementById('input-pullups5').value)          || 0,
+    pullups10:      parseInt(document.getElementById('input-pullups10').value)         || 0,
+    pullups20:      parseInt(document.getElementById('input-pullups20').value)         || 0,
+    dips:           parseInt(document.getElementById('input-dips').value)              || 0,
+    dips5:          parseInt(document.getElementById('input-dips5').value)             || 0,
+    dips10:         parseInt(document.getElementById('input-dips10').value)            || 0,
+    dips20:         parseInt(document.getElementById('input-dips20').value)            || 0,
+    pushups:        parseInt(document.getElementById('input-pushups').value)           || 0,
+    pushupsExplo:   parseInt(document.getElementById('input-pushups-explo').value)     || 0,
+    squats:         parseInt(document.getElementById('input-squats').value)            || 0,
+    squatsWeighted: parseInt(document.getElementById('input-squats-weighted').value)   || 0,
+    muscleup:       (document.querySelector('input[name="muscleup"]:checked') || {}).value || 'non',
+    frontlever:     parseInt(document.getElementById('input-frontlever').value)        || 0,
+    handstand:      parseInt(document.getElementById('input-handstand').value)         || 0,
+    hspu:           parseInt(document.getElementById('input-hspu').value)              || 0,
+    date:           new Date().toISOString()
   };
 
-  /* Save current data */
   SW.save('user_data', data);
 
-  /* Append to history */
   var history = SW.load('user_history') || [];
-  history.push({
-    pullups: data.pullups,
-    dips: data.dips,
-    pushups: data.pushups,
-    squats: data.squats,
-    weight: data.weight,
-    date: data.date
-  });
-  /* Keep last 30 entries */
+  history.push({ pullups: data.pullups, dips: data.dips, pushups: data.pushups, squats: data.squats, weight: data.weight, date: data.date });
   if (history.length > 30) history = history.slice(-30);
   SW.save('user_history', history);
 
   updateStatsCards();
-  renderChart();
-  showToast('Données sauvegardées !');
+  renderCharts();
+  showToast('Données sauvegardées ! 💾');
 }
 
 /* Update stats cards and level */
@@ -224,80 +253,75 @@ function updateStatsCards() {
   });
 }
 
-/* Render SVG chart for pullups history */
-function renderChart() {
+/* Render charts using Chart.js */
+var _charts = {};
+
+function renderCharts() {
+  var history = SW.load('user_history') || [];
   var container = document.getElementById('chart-container');
   if (!container) return;
 
-  var history = SW.load('user_history');
-  if (!history || history.length < 2) {
-    container.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--text-muted);">' +
-      '<p style="font-size:1.1rem;margin-bottom:8px;">📊</p>' +
-      '<p>Sauvegarde tes premières données pour voir ta progression.</p>' +
-      '<p style="font-size:0.8rem;margin-top:4px;">Au moins 2 sauvegardes nécessaires.</p></div>';
+  if (history.length < 2) {
+    container.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--text-muted);">'
+      + '<p style="font-size:2rem;margin-bottom:8px;">📊</p>'
+      + '<p>Sauvegarde tes premières données pour voir ta progression.</p>'
+      + '<p style="font-size:0.8rem;margin-top:4px;">Il faut au moins 2 enregistrements.</p></div>';
     return;
   }
 
-  var width = container.clientWidth || 600;
-  var height = 220;
-  var padX = 40;
-  var padY = 20;
+  if (typeof Chart === 'undefined') return;
 
-  /* Build data arrays */
-  var pullData = history.map(function(h) { return h.pullups || 0; });
-  var dipsData = history.map(function(h) { return h.dips || 0; });
+  var labels = history.map(function(h) {
+    var d = new Date(h.date);
+    return (d.getDate()) + '/' + (d.getMonth() + 1);
+  });
 
-  var allValues = pullData.concat(dipsData);
-  var maxVal = Math.max.apply(null, allValues) || 1;
-  maxVal = Math.ceil(maxVal * 1.15);
+  container.innerHTML =
+    '<div class="charts-grid">'
+    + '<div class="chart-wrap"><canvas id="chart-pullups"></canvas><div class="chart-label">💪 Tractions</div></div>'
+    + '<div class="chart-wrap"><canvas id="chart-dips"></canvas><div class="chart-label">🔥 Dips</div></div>'
+    + '<div class="chart-wrap"><canvas id="chart-pushups"></canvas><div class="chart-label">⚡ Pompes</div></div>'
+    + '<div class="chart-wrap"><canvas id="chart-weight"></canvas><div class="chart-label">⚖️ Poids (kg)</div></div>'
+    + '</div>';
 
-  var stepX = (width - padX * 2) / (history.length - 1);
+  var defs = [
+    { id: 'chart-pullups', key: 'pullups', color: '#16A34A', bg: 'rgba(22,163,74,0.1)' },
+    { id: 'chart-dips',    key: 'dips',    color: '#0284C7', bg: 'rgba(2,132,199,0.1)'  },
+    { id: 'chart-pushups', key: 'pushups', color: '#EA580C', bg: 'rgba(234,88,12,0.1)'  },
+    { id: 'chart-weight',  key: 'weight',  color: '#7C3AED', bg: 'rgba(124,58,237,0.1)' }
+  ];
 
-  function toPoint(data, i) {
-    var x = padX + i * stepX;
-    var y = height - padY - ((data[i] / maxVal) * (height - padY * 2));
-    return { x: x, y: y };
-  }
-
-  function buildPath(data) {
-    var points = data.map(function(_, i) { return toPoint(data, i); });
-    return points.map(function(p, i) {
-      return (i === 0 ? 'M' : 'L') + p.x.toFixed(1) + ',' + p.y.toFixed(1);
-    }).join(' ');
-  }
-
-  /* Grid lines */
-  var gridLines = '';
-  for (var g = 0; g <= 4; g++) {
-    var gy = padY + (g / 4) * (height - padY * 2);
-    var gVal = Math.round(maxVal - (g / 4) * maxVal);
-    gridLines += '<line x1="' + padX + '" y1="' + gy + '" x2="' + (width - padX) + '" y2="' + gy + '" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>';
-    gridLines += '<text x="' + (padX - 8) + '" y="' + (gy + 4) + '" fill="' + 'var(--text-muted)' + '" font-size="10" text-anchor="end">' + gVal + '</text>';
-  }
-
-  /* Dots */
-  var pullDots = pullData.map(function(_, i) {
-    var p = toPoint(pullData, i);
-    return '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="4" fill="#00FF87"/>';
-  }).join('');
-
-  var dipsDots = dipsData.map(function(_, i) {
-    var p = toPoint(dipsData, i);
-    return '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="4" fill="#00B4FF"/>';
-  }).join('');
-
-  var svg = '<svg width="100%" height="' + height + '" viewBox="0 0 ' + width + ' ' + height + '" preserveAspectRatio="none">' +
-    gridLines +
-    '<path d="' + buildPath(pullData) + '" fill="none" stroke="#00FF87" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>' +
-    '<path d="' + buildPath(dipsData) + '" fill="none" stroke="#00B4FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>' +
-    pullDots + dipsDots +
-    '<circle cx="' + (width - padX - 60) + '" cy="12" r="5" fill="#00FF87"/>' +
-    '<text x="' + (width - padX - 50) + '" y="16" fill="var(--text-secondary)" font-size="11">Tractions</text>' +
-    '<circle cx="' + (width - padX - 60) + '" cy="28" r="5" fill="#00B4FF"/>' +
-    '<text x="' + (width - padX - 50) + '" y="32" fill="var(--text-secondary)" font-size="11">Dips</text>' +
-    '</svg>';
-
-  container.innerHTML = svg;
+  defs.forEach(function(def) {
+    var canvas = document.getElementById(def.id);
+    if (!canvas) return;
+    if (_charts[def.id]) { _charts[def.id].destroy(); }
+    var values = history.map(function(h) { return h[def.key] || 0; });
+    _charts[def.id] = new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: values,
+          borderColor: def.color,
+          backgroundColor: def.bg,
+          borderWidth: 2.5,
+          pointBackgroundColor: def.color,
+          pointRadius: 4,
+          tension: 0.35,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { color: 'rgba(15,23,42,0.05)' }, ticks: { color: '#94A3B8', font: { size: 10 } } },
+          y: { grid: { color: 'rgba(15,23,42,0.05)' }, ticks: { color: '#94A3B8', font: { size: 10 } }, beginAtZero: true }
+        }
+      }
+    });
+  });
 }
 
 /* Run on DOM ready */
