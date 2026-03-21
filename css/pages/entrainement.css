@@ -1,0 +1,341 @@
+/* ========================================
+   ENTRAINEMENT.CSS — Training Page Styles
+   ======================================== */
+
+/* Planning Grid */
+.planning-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.planning-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.planning-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 255, 135, 0.2);
+}
+
+.planning-today {
+  border-color: var(--primary);
+  background: rgba(0, 255, 135, 0.05);
+  box-shadow: 0 0 20px rgba(0, 255, 135, 0.1);
+}
+
+.planning-jour {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.planning-type {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+.planning-muscles {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+/* Session Section */
+.session-section {
+  margin-bottom: 2rem;
+}
+
+.session-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.session-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.session-table th,
+.session-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.session-table th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+.session-table td {
+  font-size: 0.95rem;
+}
+
+.serie-dot {
+  display: inline-block;
+  margin: 0 3px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.serie-dot:hover {
+  color: rgba(0, 255, 135, 0.5);
+}
+
+.serie-dot.done {
+  color: var(--primary);
+  text-shadow: 0 0 6px rgba(0, 255, 135, 0.5);
+}
+
+.exo-check {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.rest-day-msg {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+}
+
+.rest-day-msg p:first-child {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Timer Section */
+.timer-section {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.timer-circle {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 1rem;
+}
+
+.timer-circle svg {
+  transform: rotate(-90deg);
+  width: 140px;
+  height: 140px;
+}
+
+.timer-circle-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.06);
+  stroke-width: 6;
+}
+
+.timer-circle-fill {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+#timer-display {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer-presets {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.timer-presets .btn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  min-width: auto;
+}
+
+.timer-presets .btn.active {
+  background: var(--primary);
+  color: var(--bg-deep);
+}
+
+.timer-custom-input {
+  width: 80px;
+  padding: 0.4rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: var(--text-primary);
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.timer-custom-input::placeholder {
+  color: var(--text-muted);
+}
+
+.timer-controls {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.timer-controls .btn {
+  min-width: 100px;
+}
+
+/* History Section */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.history-item {
+  display: grid;
+  grid-template-columns: 100px 80px 1fr 120px 50px;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.history-date {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.history-type {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.history-stats {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.history-bar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.history-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.history-pct {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* Layout helpers */
+.training-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 2rem;
+}
+
+.training-main {
+  min-width: 0;
+}
+
+.training-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Save button */
+.save-session-wrap {
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .planning-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .training-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .history-item {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .history-stats {
+    grid-column: 1 / -1;
+  }
+
+  .history-bar {
+    grid-column: 1 / -1;
+  }
+
+  .history-pct {
+    text-align: left;
+  }
+
+  .session-table th:nth-child(3),
+  .session-table td:nth-child(3) {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .planning-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .timer-circle {
+    width: 120px;
+    height: 120px;
+  }
+
+  .timer-circle svg {
+    width: 120px;
+    height: 120px;
+  }
+
+  #timer-display {
+    font-size: 1.4rem;
+  }
+}

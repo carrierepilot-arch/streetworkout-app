@@ -22,7 +22,9 @@ function calculateLevel(data) {
   else if (data.squats >= 30) score += 9;
   else if (data.squats >= 15) score += 5;
 
-  if (score >= 60) return { level: 'Avancé', color: '#00FF87', icon: '🔥', score: score };
+  if (data.muscleup === 'oui') score += 20;
+
+  if (score >= 65) return { level: 'Avancé', color: '#00FF87', icon: '🔥', score: score };
   if (score >= 30) return { level: 'Intermédiaire', color: '#00B4FF', icon: '⚡', score: score };
   return { level: 'Débutant', color: '#FF6B35', icon: '🌱', score: score };
 }
@@ -131,6 +133,12 @@ function loadFormData() {
       input.value = data[f];
     }
   });
+
+  /* Muscle-up radio */
+  if (data.muscleup) {
+    var radio = document.querySelector('input[name="muscleup"][value="' + data.muscleup + '"]');
+    if (radio) radio.checked = true;
+  }
 }
 
 /* Save form data */
@@ -141,6 +149,7 @@ function saveFormData() {
     dips: parseInt(document.getElementById('input-dips').value) || 0,
     pushups: parseInt(document.getElementById('input-pushups').value) || 0,
     squats: parseInt(document.getElementById('input-squats').value) || 0,
+    muscleup: (document.querySelector('input[name="muscleup"]:checked') || {}).value || 'non',
     date: new Date().toISOString()
   };
 
@@ -191,7 +200,7 @@ function updateStatsCards() {
 
   /* Update score */
   var scoreEl = document.getElementById('score-value');
-  if (scoreEl) scoreEl.textContent = result.score + '/80';
+  if (scoreEl) scoreEl.textContent = result.score + '/100';
 
   /* Update each stat card */
   var exercises = [

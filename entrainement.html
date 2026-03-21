@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entraînement — Street Workout</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/pages/entrainement.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <a href="index.html" class="nav-logo">SW</a>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="progression.html">Progression</a>
+      <a href="entrainement.html" class="active">Entraînement</a>
+      <a href="streetlifting.html">Streetlifting</a>
+      <a href="#" data-action="logout">Déconnexion</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <div class="mobile-menu-header">
+      <span class="nav-logo">SW</span>
+      <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Fermer">✕</button>
+    </div>
+    <div class="mobile-menu-links">
+      <a href="dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+      <a href="progression.html"><span class="nav-icon">📈</span> Progression</a>
+      <a href="entrainement.html" class="active"><span class="nav-icon">💪</span> Entraînement</a>
+      <a href="streetlifting.html"><span class="nav-icon">🏋️</span> Streetlifting</a>
+      <a href="#" data-action="logout"><span class="nav-icon">🚪</span> Déconnexion</a>
+    </div>
+  </div>
+  <div class="menu-backdrop" id="menu-backdrop"></div>
+
+  <!-- App Layout -->
+  <div class="app-layout">
+    <!-- Sidebar (desktop) -->
+    <aside class="sidebar">
+      <div class="sidebar-links">
+        <a href="dashboard.html">
+          <span class="nav-icon">📊</span> Dashboard
+        </a>
+        <a href="progression.html">
+          <span class="nav-icon">📈</span> Progression
+        </a>
+        <a href="entrainement.html" class="active">
+          <span class="nav-icon">💪</span> Entraînement
+        </a>
+        <a href="streetlifting.html">
+          <span class="nav-icon">🏋️</span> Streetlifting
+        </a>
+        <a href="#" data-action="logout">
+          <span class="nav-icon">🚪</span> Déconnexion
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <h1 class="reveal">💪 Entraînement</h1>
+
+      <!-- Weekly Planning -->
+      <section class="card reveal">
+        <h2>📅 Programme de la semaine</h2>
+        <div class="planning-grid" id="planning-grid"></div>
+      </section>
+
+      <!-- Training Layout: Session + Timer side by side -->
+      <div class="training-layout">
+        <div class="training-main">
+          <!-- Today's Session -->
+          <section class="card session-section reveal">
+            <h2>🔥 Séance du jour</h2>
+            <h3 class="session-title" id="session-title"></h3>
+            <div id="session-content"></div>
+            <div class="save-session-wrap">
+              <button class="btn btn-primary" id="save-session">✅ Sauvegarder la séance</button>
+            </div>
+          </section>
+        </div>
+
+        <div class="training-aside">
+          <!-- Timer -->
+          <section class="card timer-section reveal">
+            <h2>⏱ Timer repos</h2>
+            <div class="timer-circle">
+              <svg viewBox="0 0 120 120">
+                <circle class="timer-circle-bg" cx="60" cy="60" r="54"/>
+                <circle class="timer-circle-fill" id="timer-circle-fill" cx="60" cy="60" r="54"/>
+              </svg>
+              <div id="timer-display">01:30</div>
+            </div>
+            <div class="timer-presets">
+              <button class="btn" data-timer-duration="30">30s</button>
+              <button class="btn" data-timer-duration="60">60s</button>
+              <button class="btn active" data-timer-duration="90">90s</button>
+              <button class="btn" data-timer-duration="120">2min</button>
+              <input type="number" class="timer-custom-input" id="timer-custom" placeholder="sec" min="5" max="600">
+            </div>
+            <div class="timer-controls">
+              <button class="btn btn-primary" id="timer-start">▶ Start</button>
+              <button class="btn btn-secondary" id="timer-pause">⏸ Pause</button>
+              <button class="btn" id="timer-reset">↺ Reset</button>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- History -->
+      <section class="card reveal">
+        <h2>📋 Historique des séances</h2>
+        <div class="history-list" id="history-list"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Bottom Navigation (mobile) -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html">
+      <span class="nav-icon">📊</span>
+      Dashboard
+    </a>
+    <a href="progression.html">
+      <span class="nav-icon">📈</span>
+      Progression
+    </a>
+    <a href="entrainement.html" class="active">
+      <span class="nav-icon">💪</span>
+      Entraînement
+    </a>
+    <a href="streetlifting.html">
+      <span class="nav-icon">🏋️</span>
+      Streetlifting
+    </a>
+    <a href="#" data-action="logout">
+      <span class="nav-icon">🚪</span>
+      Quitter
+    </a>
+  </nav>
+
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/entrainement.js"></script>
+</body>
+</html>
