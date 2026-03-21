@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Progression — Street Workout</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/pages/progression.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <a href="index.html" class="nav-logo">SW</a>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="progression.html" class="active">Progression</a>
+      <a href="streetlifting.html">Streetlifting</a>
+      <a href="#" data-action="logout">Déconnexion</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <div class="mobile-menu-header">
+      <span class="nav-logo">SW</span>
+      <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Fermer">✕</button>
+    </div>
+    <div class="mobile-menu-links">
+      <a href="dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+      <a href="progression.html" class="active"><span class="nav-icon">📈</span> Progression</a>
+      <a href="streetlifting.html"><span class="nav-icon">🏋️</span> Streetlifting</a>
+      <a href="#" data-action="logout"><span class="nav-icon">🚪</span> Déconnexion</a>
+    </div>
+  </div>
+  <div class="menu-backdrop" id="menu-backdrop"></div>
+
+  <!-- App Layout -->
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-links">
+        <a href="dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="progression.html" class="active"><span class="nav-icon">📈</span> Progression</a>
+        <a href="streetlifting.html"><span class="nav-icon">🏋️</span> Streetlifting</a>
+        <a href="#" data-action="logout"><span class="nav-icon">🚪</span> Déconnexion</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <h2 style="margin-bottom: 8px;">📈 Progression</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 24px;">Suis ton évolution étape par étape pour chaque exercice fondamental.</p>
+
+      <!-- Overview -->
+      <div class="progression-overview">
+        <div class="overview-header">
+          <div>
+            <h3>Vue d'ensemble</h3>
+            <div class="global-score" id="global-score">0% du parcours complet</div>
+            <div class="global-count" id="global-count">0/33 étapes</div>
+          </div>
+        </div>
+        <div class="overview-circles" id="overview-circles"></div>
+      </div>
+
+      <!-- Accordion List -->
+      <div id="progression-list"></div>
+    </main>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html">
+      <span class="nav-icon">📊</span> Dashboard
+    </a>
+    <a href="progression.html" class="active">
+      <span class="nav-icon">📈</span> Progression
+    </a>
+    <a href="streetlifting.html">
+      <span class="nav-icon">🏋️</span> Streetlifting
+    </a>
+    <a href="#" data-action="logout">
+      <span class="nav-icon">🚪</span> Quitter
+    </a>
+  </nav>
+
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/progression.js"></script>
+</body>
+</html>

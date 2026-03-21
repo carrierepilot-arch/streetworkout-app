@@ -1,0 +1,208 @@
+/* ========================================
+   PROGRESSION.CSS — Progression Page Styles
+   ======================================== */
+
+/* === Overview === */
+.progression-overview {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.overview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.overview-header h3 {
+  font-size: 1.1rem;
+}
+
+.global-score {
+  font-size: 0.9rem;
+  color: var(--primary);
+  font-weight: 600;
+}
+.global-count {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.overview-circles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.overview-circle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.overview-label {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-align: center;
+}
+
+/* === Accordion === */
+.accordion-item {
+  margin-bottom: 12px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  gap: 12px;
+  user-select: none;
+}
+
+.accordion-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+.accordion-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.accordion-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.accordion-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.accordion-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.mini-progress {
+  display: none;
+}
+
+.accordion-content {
+  padding: 0;
+}
+
+.accordion-item.open .accordion-content {
+  padding: 0 20px 20px;
+}
+
+/* === Steps List === */
+.steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.step-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+}
+.step-row:hover {
+  border-color: var(--border-hover);
+}
+
+.step-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.step-counter {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.step-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.step-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* === Status Radio override for mobile === */
+.step-row .status-radio-group {
+  padding-left: 40px;
+}
+
+.step-row .status-label {
+  font-size: 0.75rem;
+  padding: 6px 10px;
+}
+
+/* === Responsive === */
+@media (min-width: 768px) {
+  .mini-progress {
+    display: block;
+  }
+
+  .step-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .step-row .status-radio-group {
+    padding-left: 0;
+    flex-shrink: 0;
+  }
+
+  .step-row .status-label {
+    font-size: 0.8rem;
+    padding: 8px 14px;
+  }
+
+  .overview-circles {
+    justify-content: space-between;
+  }
+}

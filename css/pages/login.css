@@ -1,0 +1,134 @@
+/* ========================================
+   LOGIN.CSS — Login Page Styles
+   ======================================== */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.login-bg .hero-shape {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.25;
+}
+.login-bg .hero-shape-1 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(0, 255, 135, 0.15), transparent);
+  top: -80px;
+  right: -80px;
+}
+.login-bg .hero-shape-2 {
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(0, 180, 255, 0.1), transparent);
+  bottom: -60px;
+  left: -60px;
+}
+
+.login-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 420px;
+  background: rgba(18, 18, 26, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-xl);
+  padding: 40px 32px;
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.login-logo {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.login-logo-text {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -2px;
+}
+.login-logo-sub {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.login-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+/* Password toggle */
+.password-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: var(--transition);
+  background: none;
+  border: none;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.password-toggle:hover {
+  color: var(--primary);
+}
+
+/* Error message */
+.login-error {
+  display: none;
+  padding: 12px 16px;
+  background: rgba(255, 61, 90, 0.1);
+  border: 1px solid rgba(255, 61, 90, 0.2);
+  border-radius: var(--radius-sm);
+  color: var(--danger);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 24px;
+}
+.login-footer a {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  transition: var(--transition);
+}
+.login-footer a:hover {
+  color: var(--primary);
+}
+
+/* Form button full width */
+.login-card .btn {
+  width: 100%;
+}
+
+/* Input icon overrides for login */
+.login-card .form-input-icon .icon svg,
+.login-card .password-toggle svg {
+  display: block;
+}

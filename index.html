@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Street Workout — Maîtrise ton corps</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/pages/landing.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <a href="index.html" class="nav-logo">SW</a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Accueil</a>
+      <a href="progression.html">Progression</a>
+      <a href="streetlifting.html">Streetlifting</a>
+      <a href="login.html">Connexion</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <div class="mobile-menu-header">
+      <span class="nav-logo">SW</span>
+      <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Fermer le menu">✕</button>
+    </div>
+    <div class="mobile-menu-links">
+      <a href="index.html" class="active">
+        <span class="nav-icon">🏠</span> Accueil
+      </a>
+      <a href="progression.html">
+        <span class="nav-icon">📈</span> Progression
+      </a>
+      <a href="streetlifting.html">
+        <span class="nav-icon">🏋️</span> Streetlifting
+      </a>
+      <a href="login.html">
+        <span class="nav-icon">🔑</span> Connexion
+      </a>
+    </div>
+  </div>
+  <div class="menu-backdrop" id="menu-backdrop"></div>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="hero-shape hero-shape-1"></div>
+      <div class="hero-shape hero-shape-2"></div>
+      <div class="hero-shape hero-shape-3"></div>
+      <div class="hero-grid"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Votre coach digital de rue
+      </div>
+      <h1>Maîtrise ton corps.<br><span>Dépasse tes limites.</span></h1>
+      <p class="hero-subtitle">Le tracker de progression ultime pour athlètes de rue.</p>
+      <p class="hero-tags">STREET WORKOUT · CALISTHÉNIE · STREETLIFTING</p>
+      <div class="hero-actions">
+        <a href="login.html" class="btn btn-primary">
+          <span class="btn-text">Commencer maintenant</span>
+        </a>
+        <a href="#exercises" class="btn btn-secondary">Voir la progression</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="section stats-section">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item reveal">
+          <div class="stat-number" data-target="6">0</div>
+          <div class="stat-label">Exercices maîtrisables</div>
+        </div>
+        <div class="stat-item reveal reveal-delay-1">
+          <div class="stat-number" data-target="3">0</div>
+          <div class="stat-label">Niveaux de pratique</div>
+        </div>
+        <div class="stat-item reveal reveal-delay-2">
+          <div class="stat-number" data-target="100">0</div>
+          <div class="stat-label">% Calisthénie</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Exercises Preview -->
+  <section class="section" id="exercises">
+    <div class="container">
+      <h2 class="section-title reveal">Les Fondamentaux</h2>
+      <p class="section-subtitle reveal">Six exercices clés pour une maîtrise totale du poids de corps.</p>
+      <div class="grid grid-3">
+        <div class="card exercise-card reveal reveal-delay-1" onclick="window.location.href='login.html'">
+          <div class="card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="4"/><line x1="12" y1="4" x2="12" y2="12"/><circle cx="12" cy="14" r="2"/><line x1="8" y1="18" x2="12" y2="14"/><line x1="16" y1="18" x2="12" y2="14"/></svg>
+          </div>
+          <div class="exercise-name">Tractions</div>
+          <p class="exercise-desc">Le roi du haut du corps. De la suspension à la traction une main.</p>
+          <span class="badge badge-orange">Débutant → Avancé</span>
+        </div>
+        <div class="card exercise-card reveal reveal-delay-2" onclick="window.location.href='login.html'">
+          <div class="card-icon" style="background: rgba(0,180,255,0.1); color: var(--accent-blue);">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="2" height="20" rx="1"/><rect x="16" y="2" width="2" height="20" rx="1"/><circle cx="12" cy="9" r="3"/><line x1="9" y1="16" x2="12" y2="12"/><line x1="15" y1="16" x2="12" y2="12"/></svg>
+          </div>
+          <div class="exercise-name">Dips</div>
+          <p class="exercise-desc">Poussée verticale puissante. Des barres parallèles au lesté lourd.</p>
+          <span class="badge badge-blue">Intermédiaire</span>
+        </div>
+        <div class="card exercise-card reveal reveal-delay-3" onclick="window.location.href='login.html'">
+          <div class="card-icon" style="background: rgba(255,107,53,0.1); color: var(--accent-orange);">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="2" y1="18" x2="22" y2="18"/><circle cx="12" cy="12" r="3"/><line x1="9" y1="15" x2="6" y2="18"/><line x1="15" y1="15" x2="18" y2="18"/><line x1="10" y1="9" x2="8" y2="6"/><line x1="14" y1="9" x2="16" y2="6"/></svg>
+          </div>
+          <div class="exercise-name">Pompes</div>
+          <p class="exercise-desc">La base universelle. Des genoux aux pompes en appui renversé.</p>
+          <span class="badge badge-orange">Débutant</span>
+        </div>
+        <div class="card exercise-card reveal reveal-delay-4" onclick="window.location.href='login.html'">
+          <div class="card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="6" r="3"/><path d="M12 9v3l-4 8h8l-4-8"/></svg>
+          </div>
+          <div class="exercise-name">Squats</div>
+          <p class="exercise-desc">Force des jambes explosive. Du squat assisté au pistol squat.</p>
+          <span class="badge badge-primary">Fondamental</span>
+        </div>
+        <div class="card exercise-card reveal reveal-delay-5" onclick="window.location.href='login.html'">
+          <div class="card-icon" style="background: rgba(255,61,90,0.1); color: var(--danger);">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="4"/><path d="M12 4v4"/><circle cx="12" cy="11" r="3"/><path d="M8 17l4-3 4 3"/><line x1="8" y1="17" x2="8" y2="20"/><line x1="16" y1="17" x2="16" y2="20"/></svg>
+          </div>
+          <div class="exercise-name">Muscle-up</div>
+          <p class="exercise-desc">Le mouvement emblématique. Transition explosive barre haute.</p>
+          <span class="badge badge-danger">Avancé</span>
+        </div>
+        <div class="card exercise-card reveal reveal-delay-6" onclick="window.location.href='login.html'">
+          <div class="card-icon" style="background: rgba(0,255,135,0.1); color: var(--primary);">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><path d="M6 6v2"/><path d="M18 6v2"/><circle cx="12" cy="14" r="3"/><line x1="6" y1="14" x2="9" y2="14"/><line x1="15" y1="14" x2="18" y2="14"/></svg>
+          </div>
+          <div class="exercise-name">Front Lever</div>
+          <p class="exercise-desc">Gainage ultime. Position horizontale suspendue à la barre.</p>
+          <span class="badge badge-danger">Expert</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it Works -->
+  <section class="section" style="background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="container">
+      <h2 class="section-title reveal">Comment ça marche</h2>
+      <p class="section-subtitle reveal">Trois étapes simples pour suivre ta progression.</p>
+      <div class="steps-grid">
+        <div class="step-item reveal reveal-delay-1">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h4>Connecte-toi</h4>
+            <p>Crée ta session et accède à ton espace personnel dédié.</p>
+          </div>
+        </div>
+        <div class="step-item reveal reveal-delay-2">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h4>Entre tes données</h4>
+            <p>Renseigne tes performances : reps, poids, niveaux d'exercices.</p>
+          </div>
+        </div>
+        <div class="step-item reveal reveal-delay-3">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h4>Suis ta progression</h4>
+            <p>Visualise ton évolution et débloque de nouveaux paliers.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div>
+        <div class="footer-logo">SW</div>
+        <div class="footer-tagline">Street Workout Tracker</div>
+      </div>
+      <div class="footer-links">
+        <a href="login.html">Connexion</a>
+        <a href="progression.html">Progression</a>
+        <a href="streetlifting.html">Streetlifting</a>
+      </div>
+    </div>
+    <div class="footer-bottom container" style="margin-top: 24px;">
+      Fait avec passion pour la communauté Street Workout.
+    </div>
+  </footer>
+
+  <script src="js/storage.js"></script>
+  <script src="js/nav.js"></script>
+  <script>
+    /* Animated counters on scroll */
+    document.addEventListener('DOMContentLoaded', function() {
+      initScrollReveal();
+
+      var counters = document.querySelectorAll('.stat-number[data-target]');
+      var counterObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            var target = parseInt(entry.target.getAttribute('data-target'));
+            animateCounter(entry.target, target, 1200);
+            counterObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.5 });
+
+      counters.forEach(function(c) { counterObserver.observe(c); });
+    });
+  </script>
+</body>
+</html>

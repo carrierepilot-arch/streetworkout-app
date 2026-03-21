@@ -1,0 +1,300 @@
+/* ========================================
+   LANDING.CSS — Landing Page Styles
+   ======================================== */
+
+/* === Hero === */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 16px 80px;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* Geometric background shapes */
+.hero-shape {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+}
+.hero-shape-1 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(0, 255, 135, 0.2), transparent);
+  top: -100px;
+  right: -100px;
+  animation: float-slow 8s ease-in-out infinite;
+}
+.hero-shape-2 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(0, 180, 255, 0.12), transparent);
+  bottom: -50px;
+  left: -80px;
+  animation: float 6s ease-in-out infinite;
+}
+.hero-shape-3 {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(255, 107, 53, 0.1), transparent);
+  top: 40%;
+  left: 60%;
+  animation: float-slow 10s ease-in-out infinite;
+}
+
+/* Grid overlay */
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: 50px;
+  background: rgba(0, 255, 135, 0.08);
+  border: 1px solid rgba(0, 255, 135, 0.15);
+  color: var(--primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  animation: fadeInUp 0.6s ease forwards;
+}
+.hero-badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  animation: pulse-green 2s ease-in-out infinite;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 16px;
+  animation: fadeInUp 0.6s ease 0.1s forwards;
+  opacity: 0;
+}
+.hero h1 span {
+  color: var(--primary);
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  animation: fadeInUp 0.6s ease 0.2s forwards;
+  opacity: 0;
+}
+.hero-tags {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin-bottom: 36px;
+  animation: fadeInUp 0.6s ease 0.25s forwards;
+  opacity: 0;
+  letter-spacing: 2px;
+}
+
+.hero-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  animation: fadeInUp 0.6s ease 0.35s forwards;
+  opacity: 0;
+}
+
+/* === Stats Section === */
+.stats-section {
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  text-align: center;
+}
+.stat-item {
+  padding: 16px;
+}
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* === Exercises Preview === */
+.exercise-card {
+  cursor: pointer;
+}
+.exercise-card .card-icon {
+  font-size: 2rem;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-lg);
+}
+.exercise-card .exercise-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.exercise-card .exercise-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+/* === How it works === */
+.steps-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.step-item {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+.step-number {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: rgba(0, 255, 135, 0.1);
+  color: var(--primary);
+  font-size: 1.25rem;
+  font-weight: 700;
+  border: 1px solid rgba(0, 255, 135, 0.2);
+}
+.step-content h4 {
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+}
+.step-content p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* === Footer === */
+.site-footer {
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  padding: 48px 16px 24px;
+}
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  text-align: center;
+}
+.footer-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+.footer-tagline {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.footer-links {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.footer-links a {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+.footer-links a:hover {
+  color: var(--primary);
+}
+.footer-bottom {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+/* === Responsive === */
+@media (min-width: 768px) {
+  .hero h1 {
+    font-size: 3.2rem;
+  }
+  .hero-actions {
+    flex-direction: row;
+    justify-content: center;
+  }
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .steps-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .step-item {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .footer-content {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    text-align: left;
+  }
+  .footer-links {
+    justify-content: flex-end;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero h1 {
+    font-size: 3.8rem;
+  }
+  .hero-subtitle {
+    font-size: 1.25rem;
+  }
+}

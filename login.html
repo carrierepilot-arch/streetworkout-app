@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion — Street Workout</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/pages/login.css">
+</head>
+<body>
+
+  <div class="login-page">
+    <!-- Background shapes -->
+    <div class="login-bg">
+      <div class="hero-shape hero-shape-1"></div>
+      <div class="hero-shape hero-shape-2"></div>
+    </div>
+
+    <!-- Login Card -->
+    <div class="login-card card-glass">
+      <div class="login-logo">
+        <div class="login-logo-text">SW</div>
+        <div class="login-logo-sub">Street Workout Tracker</div>
+      </div>
+
+      <h2 class="login-title">Connexion</h2>
+
+      <div class="login-error" id="login-error"></div>
+
+      <form id="login-form" autocomplete="off">
+        <!-- Username -->
+        <div class="form-group">
+          <div class="form-input-icon">
+            <span class="icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </span>
+            <input type="text" id="login-username" class="form-input" placeholder="Nom d'utilisateur" autocomplete="off" required>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <div class="form-input-icon" style="position:relative;">
+            <span class="icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </span>
+            <input type="password" id="login-password" class="form-input" placeholder="Mot de passe" autocomplete="off" required>
+            <button type="button" class="password-toggle" id="toggle-password" aria-label="Afficher le mot de passe">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary" id="login-submit">
+          <span class="btn-text">Se connecter</span>
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <a href="index.html">← Retour à l'accueil</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      initLoginForm();
+    });
+  </script>
+</body>
+</html>
