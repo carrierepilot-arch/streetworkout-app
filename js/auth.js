@@ -26,6 +26,7 @@ async function isLoggedIn() {
 
 /* ── Login email/password ── */
 async function loginWithEmail(email, password) {
+  if (!SB) throw new Error('Supabase non configuré. Configure les clés dans supabase-config.js.');
   var result = await SB.auth.signInWithPassword({ email: email, password: password });
   if (result.error) throw result.error;
   return result.data;
@@ -33,6 +34,7 @@ async function loginWithEmail(email, password) {
 
 /* ── Inscription email/password ── */
 async function signupWithEmail(email, password, prenom) {
+  if (!SB) throw new Error('Supabase non configuré. Configure les clés dans supabase-config.js.');
   var result = await SB.auth.signUp({
     email: email,
     password: password,
@@ -44,6 +46,7 @@ async function signupWithEmail(email, password, prenom) {
 
 /* ── Login Google OAuth ── */
 async function loginWithGoogle() {
+  if (!SB) throw new Error('Supabase non configuré. Configure les clés dans supabase-config.js.');
   var result = await SB.auth.signInWithOAuth({
     provider: 'google',
     options: { redirectTo: window.location.origin + '/auth-callback.html' }
@@ -73,6 +76,18 @@ function initLoginForm() {
   var signupForm = document.getElementById('signup-form');
   var googleBtn = document.getElementById('google-login-btn');
   var tabs = document.querySelectorAll('.auth-tab');
+
+  /* Warn if Supabase not configured */
+  if (!SB) {
+    var banner = document.createElement('div');
+    banner.style.cssText = 'background:#fef3c7;color:#92400e;padding:14px 18px;border-radius:10px;margin:0 0 20px;font-size:13px;line-height:1.5;border:1px solid #fcd34d;';
+    banner.innerHTML = '<strong>⚠️ Supabase non configuré</strong><br>Remplace les clés dans <code>js/supabase-config.js</code> puis redéploie.';
+    var firstForm = loginForm || signupForm;
+    if (firstForm && firstForm.parentNode) {
+      firstForm.parentNode.insertBefore(banner, firstForm);
+    }
+    return;
+  }
 
   /* If already logged in, redirect */
   (async function() {
