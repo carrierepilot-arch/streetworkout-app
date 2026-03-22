@@ -29,7 +29,7 @@ function showSkillsList() {
     var pct = total > 0 ? Math.round((mastered / total) * 100) : 0;
 
     html +=
-      '<div class="skill-card" onclick="showSkillDetail(\'' + ex.id + '\')">' +
+      '<div class="skill-card" onclick="SkillSwiper.open(\'' + ex.id + '\')">' +
         '<div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">' +
           '<div style="width:44px;height:44px;border-radius:12px;background:' + (ex.color || 'var(--blue)') + ';' +
             'display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:18px">' +

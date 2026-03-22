@@ -117,6 +117,37 @@ async function _handleGenerate() {
   }
 }
 
+/* ══ Carte exercice ══ */
+function _renderExerciceCard(ex, index) {
+  var musclesHtml = '';
+  if (ex.muscles && ex.muscles.length) {
+    musclesHtml = '<div class="ex-muscles">' +
+      ex.muscles.slice(0, 3).map(function(m) {
+        return '<span class="muscle-tag">' + m + '</span>';
+      }).join('') +
+      '</div>';
+  }
+  var noteHtml = ex.note
+    ? '<div class="ex-note">' + ex.note + '</div>'
+    : '';
+
+  return '<div class="ex-card">' +
+    '<div class="ex-card-num">' + (index + 1) + '</div>' +
+    '<div class="ex-card-body">' +
+      '<div class="ex-card-name">' + ex.nom + '</div>' +
+      '<div class="ex-card-params">' +
+        '<span class="ex-param">' + ex.series + ' s\u00e9ries</span>' +
+        '<span class="ex-param-sep">\u00d7</span>' +
+        '<span class="ex-param">' + ex.reps + '</span>' +
+        '<span class="ex-param-sep">\u00b7</span>' +
+        '<span class="ex-param">' + ex.repos + 's repos</span>' +
+      '</div>' +
+      musclesHtml +
+      noteHtml +
+    '</div>' +
+    '</div>';
+}
+
 /* ══ Rendu du programme ══ */
 function _renderProgram(program) {
   var section = document.getElementById('section-result');
@@ -153,40 +184,7 @@ function _renderProgram(program) {
   var exEl = document.getElementById('exercises-list');
   if (exEl) {
     exEl.innerHTML = program.exercices.map(function(ex, i) {
-      var visual = (typeof getExerciseVisual === 'function')
-        ? getExerciseVisual(ex.id)
-        : { svg: '<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="28" fill="none"/></svg>' };
-
-      var muscleTagsHtml = '';
-      if (ex.muscles && ex.muscles.length) {
-        muscleTagsHtml = '<div class="exercise-muscles">' +
-          ex.muscles.slice(0, 3).map(function(m) {
-            return '<span class="muscle-tag">' + m + '</span>';
-          }).join('') +
-          '</div>';
-      }
-
-      var tipHtml = ex.notes
-        ? '<div class="exercise-tip">' + ex.notes + '</div>'
-        : '';
-
-      var wgerBadge = ex.source === 'wger'
-        ? '<span class="wger-badge">Wger</span>'
-        : '';
-
-      return '<div class="exercise-program-card">' +
-        '<div class="exercise-program-num">' + (i + 1) + '</div>' +
-        '<div class="exercise-program-visual">' + visual.svg + '</div>' +
-        '<div class="exercise-program-info">' +
-          '<div class="exercise-program-name">' + ex.nom + '</div>' +
-          '<div class="exercise-program-params">' +
-            ex.series + ' s\u00e9ries \u00d7 ' + ex.reps + ' reps · Repos ' + ex.repos + 's' +
-          '</div>' +
-          muscleTagsHtml +
-          tipHtml +
-          wgerBadge +
-        '</div>' +
-        '</div>';
+      return _renderExerciceCard(ex, i);
     }).join('');
   }
 

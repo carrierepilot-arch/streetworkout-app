@@ -176,6 +176,65 @@
   margin-top: 4px;
 }
 
+/* === Nouvelles cartes exercice (ex-card) === */
+.ex-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md, 12px);
+  margin-bottom: 10px;
+  transition: border-color 0.2s;
+}
+.ex-card-num {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--accent, #3B82F6);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.ex-card-body { flex: 1; min-width: 0; }
+.ex-card-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-primary, #fff);
+  margin-bottom: 6px;
+}
+.ex-card-params {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--text-secondary, #94a3b8);
+  margin-bottom: 8px;
+}
+.ex-param { white-space: nowrap; }
+.ex-param-sep {
+  color: var(--text-muted, #475569);
+  margin: 0 2px;
+}
+.ex-muscles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+.ex-note {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #94a3b8);
+  font-style: italic;
+  line-height: 1.4;
+}
+
 /* === Actions === */
 .program-actions {
   display: flex;
