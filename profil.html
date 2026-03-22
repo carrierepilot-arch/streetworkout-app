@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon Profil — Street Workout</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/pages/profil.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <a href="index.html" class="nav-logo">SW</a>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="profil.html" class="active">Profil</a>
+      <a href="progression.html">Progression</a>
+      <a href="entrainement.html">Entraînement</a>
+      <a href="analytics.html">Analytics</a>
+      <a href="programme.html">Programme</a>
+      <a href="streetlifting.html">Streetlifting</a>
+      <a href="abonnement.html">Plans</a>
+      <a href="#" data-action="logout">Déconnexion</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <div class="mobile-menu-header">
+      <span class="nav-logo">SW</span>
+      <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Fermer">✕</button>
+    </div>
+    <div class="mobile-menu-links">
+      <a href="dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+      <a href="profil.html" class="active"><span class="nav-icon">👤</span> Profil</a>
+      <a href="progression.html"><span class="nav-icon">📈</span> Progression</a>
+      <a href="entrainement.html"><span class="nav-icon">💪</span> Entraînement</a>
+      <a href="analytics.html"><span class="nav-icon">📉</span> Analytics</a>
+      <a href="programme.html"><span class="nav-icon">📋</span> Programme</a>
+      <a href="streetlifting.html"><span class="nav-icon">🏋️</span> Streetlifting</a>
+      <a href="abonnement.html"><span class="nav-icon">💎</span> Plans</a>
+      <a href="#" data-action="logout"><span class="nav-icon">🚪</span> Déconnexion</a>
+    </div>
+  </div>
+  <div class="menu-backdrop" id="menu-backdrop"></div>
+
+  <!-- App Layout -->
+  <div class="app-layout">
+    <!-- Sidebar (desktop) -->
+    <aside class="sidebar">
+      <div class="sidebar-links">
+        <a href="dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="profil.html" class="active"><span class="nav-icon">👤</span> Profil</a>
+        <a href="progression.html"><span class="nav-icon">📈</span> Progression</a>
+        <a href="entrainement.html"><span class="nav-icon">💪</span> Entraînement</a>
+        <a href="analytics.html"><span class="nav-icon">📉</span> Analytics</a>
+        <a href="programme.html"><span class="nav-icon">📋</span> Programme</a>
+        <a href="streetlifting.html"><span class="nav-icon">🏋️</span> Streetlifting</a>
+        <a href="abonnement.html"><span class="nav-icon">💎</span> Plans</a>
+        <a href="#" data-action="logout"><span class="nav-icon">🚪</span> Déconnexion</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- HERO PROFIL -->
+      <section class="profil-hero reveal">
+        <div class="profil-hero-avatar" id="hero-avatar">A</div>
+        <div class="profil-hero-info">
+          <div class="profil-hero-name" id="hero-name">Athlète</div>
+          <div class="profil-hero-pseudo" id="hero-pseudo"></div>
+          <div class="profil-hero-badge" id="hero-badge">🌱 Débutant</div>
+        </div>
+        <div class="profil-hero-stats">
+          <div class="profil-stat">
+            <span class="profil-stat-value" id="stat-score">0</span>
+            <span class="profil-stat-label">Score</span>
+          </div>
+          <div class="profil-stat">
+            <span class="profil-stat-value" id="stat-seances">0</span>
+            <span class="profil-stat-label">Séances</span>
+          </div>
+          <div class="profil-stat">
+            <span class="profil-stat-value" id="stat-skills">0</span>
+            <span class="profil-stat-label">Skills</span>
+          </div>
+          <div class="profil-stat">
+            <span class="profil-stat-value" id="stat-badges">0</span>
+            <span class="profil-stat-label">Badges</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 1 — IDENTITÉ -->
+      <section class="section reveal">
+        <div class="section-header">
+          <h2 class="section-title">Identité</h2>
+          <button class="btn-edit" id="btn-edit-identity">✏️ Modifier</button>
+        </div>
+
+        <!-- Mode lecture -->
+        <div id="identity-view" class="identity-view">
+          <div class="identity-avatar-picker">
+            <div class="identity-avatar-display" id="identity-avatar">A</div>
+            <div class="avatar-color-swatches" id="avatar-colors"></div>
+          </div>
+          <div class="identity-fields">
+            <div class="identity-field">
+              <span class="identity-field-label">Prénom</span>
+              <span class="identity-field-value" id="view-prenom">Non renseigné</span>
+            </div>
+            <div class="identity-field">
+              <span class="identity-field-label">Pseudo</span>
+              <span class="identity-field-value" id="view-pseudo">Non renseigné</span>
+            </div>
+            <div class="identity-field">
+              <span class="identity-field-label">Bio</span>
+              <span class="identity-field-value" id="view-bio">Pas encore de bio.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mode édition (caché par défaut) -->
+        <div id="identity-edit" class="identity-edit" style="display:none">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Prénom</label>
+              <input type="text" id="input-prenom" class="form-input" placeholder="Ton prénom" maxlength="30">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pseudo</label>
+              <input type="text" id="input-pseudo" class="form-input" placeholder="@pseudo" maxlength="20">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bio courte</label>
+            <textarea id="input-bio" class="form-input form-textarea"
+              placeholder="Décris ton parcours en quelques mots..." maxlength="150" rows="3"></textarea>
+            <span class="char-counter"><span id="bio-count">0</span>/150</span>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" id="btn-save-identity">💾 Sauvegarder</button>
+            <button class="btn btn-secondary" id="btn-cancel-identity">Annuler</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2 — OBJECTIFS FITNESS -->
+      <section class="section reveal">
+        <h2 class="section-title">Objectifs fitness</h2>
+        <p class="section-subtitle">Sélectionne tes objectifs — ils influencent les recommandations du coach IA.</p>
+        <div class="objectifs-grid" id="objectifs-grid"></div>
+        <button class="btn btn-primary" id="btn-save-objectifs" style="margin-top: 16px">
+          💾 Sauvegarder les objectifs
+        </button>
+      </section>
+
+      <!-- SECTION 3 — BADGES & ACHIEVEMENTS -->
+      <section class="section reveal">
+        <h2 class="section-title">Badges &amp; Achievements</h2>
+        <p class="section-subtitle">
+          <span id="badges-count">0</span> badge(s) débloqué(s) sur
+          <span id="badges-total">0</span>
+        </p>
+        <div class="badges-grid" id="badges-grid"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Bottom Navigation (mobile) -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html">
+      <span class="nav-icon">📊</span>
+      Dashboard
+    </a>
+    <a href="profil.html" class="active">
+      <span class="nav-icon">👤</span>
+      Profil
+    </a>
+    <a href="entrainement.html">
+      <span class="nav-icon">💪</span>
+      Entraînement
+    </a>
+    <a href="programme.html">
+      <span class="nav-icon">📋</span>
+      Programme
+    </a>
+    <a href="progression.html">
+      <span class="nav-icon">📈</span>
+      Progress.
+    </a>
+  </nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/profil.js"></script>
+  <link rel="stylesheet" href="css/chatbot.css">
+  <script src="js/chatbot.js"></script>
+</body>
+</html>
