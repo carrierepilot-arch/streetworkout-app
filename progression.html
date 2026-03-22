@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Progression — Street Workout</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base-v2.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/layout.css">
@@ -19,12 +21,12 @@
       <a href="dashboard.html">Dashboard</a>
       <a href="profil.html">Profil</a>
       <a href="progression.html" class="active">Progression</a>
-      <a href="entrainement.html">Entraînement</a>
+      <a href="entrainement.html">Entra&icirc;nement</a>
       <a href="analytics.html">Analytics</a>
       <a href="programme.html">Programme</a>
       <a href="streetlifting.html">Streetlifting</a>
       <a href="abonnement.html">Plans</a>
-      <a href="#" data-action="logout">Déconnexion</a>
+      <a href="#" data-action="logout">D&eacute;connexion</a>
     </div>
     <button class="hamburger" id="hamburger" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -35,18 +37,18 @@
   <div class="mobile-menu" id="mobile-menu">
     <div class="mobile-menu-header">
       <span class="nav-logo">SW</span>
-      <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Fermer">✕</button>
+      <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Fermer">&#10005;</button>
     </div>
     <div class="mobile-menu-links">
       <a href="dashboard.html">Dashboard</a>
       <a href="profil.html">Profil</a>
       <a href="progression.html" class="active">Progression</a>
-      <a href="entrainement.html">Entraînement</a>
+      <a href="entrainement.html">Entra&icirc;nement</a>
       <a href="analytics.html">Analytics</a>
       <a href="programme.html">Programme</a>
       <a href="streetlifting.html">Streetlifting</a>
       <a href="abonnement.html">Plans</a>
-      <a href="#" data-action="logout">Déconnexion</a>
+      <a href="#" data-action="logout">D&eacute;connexion</a>
     </div>
   </div>
   <div class="menu-backdrop" id="menu-backdrop"></div>
@@ -59,43 +61,28 @@
         <a href="dashboard.html">Dashboard</a>
         <a href="profil.html">Profil</a>
         <a href="progression.html" class="active">Progression</a>
-        <a href="entrainement.html">Entraînement</a>
+        <a href="entrainement.html">Entra&icirc;nement</a>
         <a href="analytics.html">Analytics</a>
         <a href="programme.html">Programme</a>
         <a href="streetlifting.html">Streetlifting</a>
         <a href="abonnement.html">Plans</a>
-        <a href="#" data-action="logout">Déconnexion</a>
+        <a href="#" data-action="logout">D&eacute;connexion</a>
       </div>
     </aside>
 
     <!-- Main Content -->
-    <main class="main-content">
-      <h2 style="margin-bottom: 8px;">Progression</h2>
-      <p style="color: var(--text-secondary); margin-bottom: 24px;">Suis ton évolution étape par étape pour chaque exercice fondamental.</p>
+    <main class="main-content" style="max-width:520px;margin:0 auto;padding:24px 16px">
 
-      <!-- Catégories -->
-      <div class="progression-tabs">
-        <button class="prog-tab prog-tab--active" data-cat="all" onclick="filterCategory('all', this)">Tous</button>
-        <button class="prog-tab" data-cat="pull" onclick="filterCategory('pull', this)">Traction</button>
-        <button class="prog-tab" data-cat="push" onclick="filterCategory('push', this)">Poussée</button>
-        <button class="prog-tab" data-cat="skills" onclick="filterCategory('skills', this)">Statique</button>
-        <button class="prog-tab" data-cat="legs" onclick="filterCategory('legs', this)">Jambes</button>
+      <!-- Skills List View -->
+      <div id="skills-list">
+        <h2 style="font-size:24px;font-weight:800;margin-bottom:4px">Progression</h2>
+        <p style="color:var(--text-500);margin-bottom:24px;font-size:15px">D&eacute;bloque chaque niveau pour progresser.</p>
+        <div id="skills-cards"></div>
       </div>
 
-      <!-- Overview -->
-      <div class="progression-overview">
-        <div class="overview-header">
-          <div>
-            <h3>Vue d'ensemble</h3>
-            <div class="global-score" id="global-score">0% du parcours complet</div>
-            <div class="global-count" id="global-count">0/33 étapes</div>
-          </div>
-        </div>
-        <div class="overview-circles" id="overview-circles"></div>
-      </div>
+      <!-- Skill Detail View (hidden by default) -->
+      <div id="skill-detail" style="display:none"></div>
 
-      <!-- Accordion List -->
-      <div id="progression-list"></div>
     </main>
   </div>
 
@@ -103,7 +90,7 @@
   <nav class="bottom-nav">
     <a href="dashboard.html">Dashboard</a>
     <a href="progression.html" class="active">Progression</a>
-    <a href="entrainement.html">Entraînement</a>
+    <a href="entrainement.html">Entra&icirc;nement</a>
     <a href="analytics.html">Analytics</a>
     <a href="streetlifting.html">Streetlifting</a>
   </nav>
@@ -115,6 +102,7 @@
   <script src="js/nav.js"></script>
   <script src="js/exercise-visuals.js"></script>
   <script src="js/progression.js"></script>
+  <script src="js/progression-v2.js"></script>
   <link rel="stylesheet" href="css/chatbot.css">
   <script src="js/chatbot.js"></script>
 </body>
