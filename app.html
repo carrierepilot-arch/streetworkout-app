@@ -229,30 +229,59 @@
 
 </main><!-- /app-wrap -->
 
-<!-- ═══════ MODAL TEST DE NIVEAU ═══════ -->
-<div class="modal-overlay" id="modal-test">
-  <div class="modal-box" style="position:relative;">
-    <button id="modal-test-close" style="position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:var(--gris-clair);display:flex;align-items:center;justify-content:center;cursor:pointer;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-    <h3 class="modal-title">Test de niveau</h3>
-    <div class="form-group">
-      <label class="form-label" for="test-tractions">Tractions max (reps)</label>
-      <input class="form-input" type="number" id="test-tractions" min="0" placeholder="0">
+<!-- ═══════ MODAL TEST INTERACTIF ═══════ -->
+<div class="test-overlay" id="test-overlay">
+  <button class="test-close" id="test-close">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+
+  <!-- Screen 1: Intro -->
+  <div class="test-screen active" id="test-screen-intro">
+    <div class="test-intro-title">Test de niveau</div>
+    <div class="test-intro-sub">4 exercices chronométrés avec repos entre chaque. Donne tout !</div>
+    <div class="test-exercises-list" id="test-exercises-list"></div>
+    <button class="btn-accent btn-full" id="test-btn-start">COMMENCER</button>
+  </div>
+
+  <!-- Screen 2: Exercise timer -->
+  <div class="test-screen" id="test-screen-exercise">
+    <div class="test-exercise-name" id="test-ex-name"></div>
+    <div class="test-exercise-info" id="test-ex-info"></div>
+    <div class="timer-wrap">
+      <svg class="timer-svg" width="100%" height="100%" viewBox="0 0 200 200">
+        <circle class="timer-circle-bg" cx="100" cy="100" r="90"/>
+        <circle class="timer-circle-fg" id="timer-circle" cx="100" cy="100" r="90"
+                stroke-dasharray="565.49" stroke-dashoffset="0"/>
+      </svg>
+      <div class="timer-text" id="timer-text">60</div>
     </div>
-    <div class="form-group">
-      <label class="form-label" for="test-dips">Dips max (reps)</label>
-      <input class="form-input" type="number" id="test-dips" min="0" placeholder="0">
+    <div class="score-input-wrap" id="score-input-wrap" style="display:none;">
+      <label id="score-label">Résultat :</label>
+      <input class="score-input" type="number" id="score-input" min="0" placeholder="0">
+      <button class="btn-accent" id="test-btn-next">OK</button>
     </div>
-    <div class="form-group">
-      <label class="form-label" for="test-pompes">Pompes max (reps)</label>
-      <input class="form-input" type="number" id="test-pompes" min="0" placeholder="0">
+  </div>
+
+  <!-- Screen 3: Rest -->
+  <div class="test-screen" id="test-screen-rest">
+    <div class="rest-title">REPOS</div>
+    <div class="rest-sub" id="rest-sub">Prochain exercice dans…</div>
+    <div class="rest-time-big" id="rest-time">4:00</div>
+    <div class="rest-controls">
+      <button class="btn-ghost-small" id="rest-minus">−1 min</button>
+      <button class="btn-ghost-small" id="rest-plus">+1 min</button>
     </div>
-    <div class="form-group">
-      <label class="form-label" for="test-gainage">Gainage max (secondes)</label>
-      <input class="form-input" type="number" id="test-gainage" min="0" placeholder="0">
-    </div>
-    <button class="btn-primary" id="btn-submit-test">VALIDER MON TEST</button>
+    <button class="btn-accent" id="rest-skip">PASSER LE REPOS</button>
+  </div>
+
+  <!-- Screen 4: Results -->
+  <div class="test-screen" id="test-screen-results">
+    <div class="results-title">Résultats</div>
+    <div class="results-score-big" id="results-score">0</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:4px;">/100</div>
+    <div class="results-level" id="results-level"></div>
+    <div class="results-detail" id="results-detail"></div>
+    <button class="btn-accent btn-full" id="results-close">FERMER</button>
   </div>
 </div>
 

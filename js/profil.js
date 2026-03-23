@@ -128,13 +128,14 @@ var SW_PROFIL = (function() {
 
     var nivEl = document.getElementById('stat-niveau');
     if (nivEl) {
-      var count = seances.length;
-      var niv = count >= 31 ? 'Expert' : count >= 16 ? 'Avancé' : count >= 6 ? 'Intermédiaire' : 'Débutant';
-      nivEl.textContent = niv;
+      nivEl.textContent = p.niveau || 'Débutant';
     }
 
     var sesEl = document.getElementById('stat-seances');
-    if (sesEl) sesEl.textContent = seances.length;
+    if (sesEl) {
+      var done = seances.filter(function(s) { return s.statut === 'effectuee'; }).length;
+      sesEl.textContent = done;
+    }
   }
 
   /* ── Toast ── */
