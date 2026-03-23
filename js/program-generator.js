@@ -203,6 +203,88 @@ function generateProgram(config, userProfile) {
   };
 }
 
+/* ── fetchExercisesFromAPI : appel via proxy Vercel /api/exercisedb ── */
+async function fetchExercisesFromAPI(type) {
+  /* Utilise EXERCISEDB_API (client sécurisé, jamais la clé en clair) */
+  if (typeof EXERCISEDB_API === 'undefined') return null;
+
+  var bodyPartMap = {
+    push:      'chest',
+    pull:      'back',
+    upper:     'back',
+    lower:     'upper legs',
+    core:      'waist',
+    full_body: null,
+    skills:    'upper arms'
+  };
+
+  var bodyPart = bodyPartMap[type] || null;
+
+  try {
+    var exercises;
+    if (bodyPart) {
+      exercises = await EXERCISEDB_API.getByBodyPart(bodyPart);
+    } else {
+      exercises = await EXERCISEDB_API.getExercises();
+    }
+
+    if (!exercises || exercises.length === 0) return null;
+
+    /* Map to program-generator format */
+    return exercises.map(function(ex) {
+      return {
+        id:      ex.id,
+        nom:     ex.nom || ex.name || ex.id,
+        muscles: ex.muscles || [],
+        series:  3,
+        reps:    '8–12',
+        repos:   90,
+        source:  'exercisedb'
+      };
+    });
+  } catch(e) {
+    console.warn('[ExerciseDB] fetchExercisesFromAPI failed:', e.message);
+    return null;
+  }
+}
+
+/* ── generateProgram — async, API-first avec fallback SW_DB ── */
+var _originalGenerateProgram = generateProgram;
+
+async function generateProgram(config, userProfile) {
+  var type = (config && config.type) || 'full_body';
+
+  /* Étape 1 : Tenter ExerciseDB via proxy Vercel */
+  var apiExercises = null;
+  try {
+    apiExercises = await fetchExercisesFromAPI(type);
+  } catch(e) { /* non bloquant */ }
+
+  /* Étape 2 : Construire le programme (SW_DB pour la structure) */
+  var program = _originalGenerateProgram(config, userProfile);
+
+  if (apiExercises && apiExercises.length >= 3) {
+    /* Enrichir : remplacer les exercices SW_DB par les résultats API */
+    var count = Math.min(apiExercises.length, program.exercices.length);
+    for (var i = 0; i < count; i++) {
+      program.exercices[i] = Object.assign({}, program.exercices[i], {
+        id:     apiExercises[i].id,
+        nom:    apiExercises[i].nom,
+        muscles: apiExercises[i].muscles.length > 0
+                  ? apiExercises[i].muscles
+                  : program.exercices[i].muscles,
+        source: 'exercisedb'
+      });
+    }
+    console.log('[Programme] Source exercices:', program.exercices[0] && program.exercices[0].source || 'fallback');
+  } else {
+    program.exercices.forEach(function(ex) { ex.source = ex.source || 'sw_db'; });
+    console.log('[Programme] Source exercices:', 'fallback');
+  }
+
+  return program;
+}
+
 /* -- Sauvegarder le programme genere -- */
 function saveGeneratedProgram(program) {
   if (typeof SW === 'undefined') return;

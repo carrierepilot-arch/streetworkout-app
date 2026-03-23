@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "api/exercisedb.js": {
+      "runtime": "@vercel/edge"
+    }
+  },
+  "headers": [
+    {
+      "source": "/js/config.js",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store" }]
+    }
+  ]
+}

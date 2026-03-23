@@ -1109,6 +1109,13 @@ async function initEntrainement() {
     console.warn('Auth error (non bloquant):', e);
   }
 
+  /* Initialiser API_MERGER en arrière-plan (non-bloquant) */
+  if (typeof API_MERGER !== 'undefined') {
+    API_MERGER.init().catch(function(e) {
+      console.warn('[initEntrainement] API_MERGER init failed (non-bloquant):', e);
+    });
+  }
+
   renderTodayCard();
   renderTodaySession();
   renderCalendarSection();
