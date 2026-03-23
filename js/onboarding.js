@@ -1,416 +1,494 @@
-// js/onboarding.js — Flux onboarding complet
+﻿// js/onboarding.js â€” Onboarding questionnaire 8 Ã©tapes
 
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// SVG Silhouettes morphologie
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function _obBodyPath(sx, wx, hx) {
+  // cx=30, viewBox 60x130
+  // sx=Ã©paule demi-largeur, wx=taille demi-largeur, hx=hanche demi-largeur
+  var cx = 30, shY = 28, waY = 56, hiY = 74, crY = 82, ftY = 122;
+  var lO = 13, lI = 5, nkW = 4;
+  var d = 'M' + (cx - nkW) + ',19 ';
+  d += 'L' + (cx - sx)  + ',' + shY + ' ';
+  d += 'C' + (cx - sx)  + ',' + (waY - 10) + ' ' + (cx - wx) + ',' + (waY - 4) + ' ' + (cx - wx) + ',' + waY + ' ';
+  d += 'C' + (cx - wx)  + ',' + (waY + 6)  + ' ' + (cx - hx) + ',' + (hiY - 3) + ' ' + (cx - hx) + ',' + hiY + ' ';
+  if (hx > lO) {
+    d += 'C' + (cx - hx) + ',' + (crY - 4) + ' ' + (cx - lO) + ',' + (crY - 1) + ' ' + (cx - lO) + ',' + crY + ' ';
+  } else {
+    d += 'L' + (cx - lO) + ',' + crY + ' ';
+  }
+  d += 'L' + (cx - lO) + ',' + ftY + ' ';
+  d += 'L' + (cx - lI) + ',' + ftY + ' ';
+  d += 'L' + (cx - lI) + ',' + crY + ' ';
+  d += 'Q' + cx       + ',' + (crY + 3) + ' ' + (cx + lI) + ',' + crY + ' ';
+  d += 'L' + (cx + lI) + ',' + ftY + ' ';
+  d += 'L' + (cx + lO) + ',' + ftY + ' ';
+  d += 'L' + (cx + lO) + ',' + crY + ' ';
+  if (hx > lO) {
+    d += 'C' + (cx + lO) + ',' + (crY - 1) + ' ' + (cx + hx) + ',' + (crY - 4) + ' ' + (cx + hx) + ',' + hiY + ' ';
+  } else {
+    d += 'L' + (cx + hx) + ',' + hiY + ' ';
+  }
+  d += 'C' + (cx + hx) + ',' + (hiY - 3) + ' ' + (cx + wx) + ',' + (waY + 6)  + ' ' + (cx + wx) + ',' + waY + ' ';
+  d += 'C' + (cx + wx) + ',' + (waY - 4)  + ' ' + (cx + sx) + ',' + (waY - 10) + ' ' + (cx + sx) + ',' + shY + ' ';
+  d += 'L' + (cx + nkW) + ',19 Z';
+  return d;
+}
+
+var _MORPHO_PARAMS = [
+  [14,  8, 11],  // 0: TrÃ¨s athlÃ©tique
+  [14, 10, 13],  // 1: AthlÃ©tique
+  [14, 12, 14],  // 2: Svelte
+  [15, 14, 15],  // 3: Normal
+  [15, 17, 17],  // 4: EnveloppÃ©
+  [16, 20, 19],  // 5: Corpulent
+  [17, 23, 20]   // 6: Fort
+];
+var _MORPHO_LABELS = [
+  'TrÃ¨s athlÃ©tique', 'AthlÃ©tique', 'Svelte', 'Normal', 'EnveloppÃ©', 'Corpulent', 'Fort'
+];
+
+function _obMorphoSVG(idx, active) {
+  var p = _MORPHO_PARAMS[idx];
+  var d = _obBodyPath(p[0], p[1], p[2]);
+  var fill = active ? '#2563EB' : '#CBD5E1';
+  return '<svg viewBox="0 0 60 130" width="56" height="72" xmlns="http://www.w3.org/2000/svg">' +
+    '<circle cx="30" cy="10" r="9" fill="' + fill + '"/>' +
+    '<path d="' + d + '" fill="' + fill + '"/>' +
+    '</svg>';
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Objet principal OB
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 var OB = {
   step: 0,
-  sub: 0,
   data: {},
 
-  // Definition des sous-questions par etape
-  questions: [
-    // ETAPE 0 — Profil
+  QUESTIONS: [
     {
-      step: '01', label: 'TON PROFIL',
-      type: 'text', key: 'prenom',
-      title: 'Comment tu t\'appelles ?',
-      placeholder: 'Ton pr\u00e9nom'
-    },
-    {
-      step: '01', label: 'TON PROFIL',
-      type: 'choice-single', key: 'genre',
-      title: 'Quel est ton genre ?',
+      id: 'motivation', step: '01', label: 'MOTIVATION',
+      type: 'choice-single',
+      title: 'Qu\'est-ce qui te motive \u00e0 te lancer\u00a0?',
       choices: [
-        { value: 'homme', label: 'Homme', icon: '\u2642' },
-        { value: 'femme', label: 'Femme', icon: '\u2640' },
-        { value: 'autre', label: 'Autre', icon: '\u25C7' }
+        { value: 'perte_poids',   label: 'Perdre du poids',        icon: '\uD83D\uDD25' },
+        { value: 'muscle',        label: 'Prendre du muscle',       icon: '\uD83D\uDCAA' },
+        { value: 'skills',        label: 'Apprendre des figures',   icon: '\uD83E\uDD38' },
+        { value: 'sante',         label: '\u00catre en bonne sant\u00e9', icon: '\u2764\uFE0F' },
+        { value: 'stress',        label: 'R\u00e9duire le stress',   icon: '\uD83E\uDDD8' },
+        { value: 'defi',          label: 'Me challenger',           icon: '\uD83C\uDFC6' }
       ]
     },
-
-    // ETAPE 1 — Corps
     {
-      step: '02', label: 'TON CORPS',
-      type: 'ruler', key: 'taille',
-      title: 'Quelle est ta <span>taille</span> actuelle ?',
+      id: 'skills', step: '02', label: 'OBJECTIFS',
+      type: 'choice-multi',
+      title: 'Quels mouvements veux-tu ma\u00eeteriser\u00a0?',
+      choices: [
+        { value: 'muscle_up',   label: 'Muscle Up',       icon: '\u2B06\uFE0F' },
+        { value: 'front_lever', label: 'Front Lever',     icon: '\u2194\uFE0F' },
+        { value: 'handstand',   label: 'Handstand',       icon: '\uD83E\uDD32' },
+        { value: 'planche',     label: 'Planche',         icon: '\u2708\uFE0F' },
+        { value: 'l_sit',       label: 'L-Sit',           icon: '\uD83D\uDCCF' },
+        { value: 'dips',        label: 'Dips / Traction', icon: '\uD83D\uDD01' }
+      ]
+    },
+    {
+      id: 'anneeNaissance', step: '03', label: 'TON PROFIL',
+      type: 'drum',
+      title: 'Quelle est ton <span>ann\u00e9e de naissance</span>\u00a0?',
+      min: 1960, max: 2010, default: 1995
+    },
+    {
+      id: 'taille', step: '04', label: 'TON CORPS',
+      type: 'ruler',
+      title: 'Quelle est ta <span>taille</span>\u00a0?',
       unit: 'cm', min: 140, max: 220, default: 175
     },
     {
-      step: '02', label: 'TON CORPS',
-      type: 'ruler', key: 'poids',
-      title: 'Quel est ton <span>poids</span> actuel ?',
-      unit: 'kg', min: 40, max: 150, default: 75
+      id: 'poids', step: '05', label: 'TON CORPS',
+      type: 'ruler',
+      title: 'Quel est ton <span>poids</span>\u00a0?',
+      unit: 'kg', min: 40, max: 150, default: 75, showBMI: true
     },
     {
-      step: '02', label: 'TON CORPS',
-      type: 'morpho', key: 'morpho_actuelle',
-      title: 'Quelle est ta <span>morphologie</span> actuelle ?',
-      feedback: [
-        { range: [0,0.15], label: 'Masse grasse (Id\u00e9al)', value: '7\u201310%', desc: 'Votre silhouette est presque parfaite ! Continuez comme \u00e7a !', color: 'var(--success)' },
-        { range: [0.15,0.35], label: 'Masse grasse', value: '11\u201315%', desc: 'Bonne condition physique g\u00e9n\u00e9rale.', color: 'var(--blue)' },
-        { range: [0.35,0.55], label: 'Masse grasse', value: '16\u201320%', desc: 'Avec un programme adapt\u00e9, tu peux facilement progresser.', color: 'var(--blue)' },
-        { range: [0.55,0.75], label: 'Masse grasse', value: '21\u201325%', desc: 'Un bon programme de street workout va tout changer.', color: 'var(--warning)' },
-        { range: [0.75,0.9], label: 'Masse grasse', value: '26\u201330%', desc: 'Bonne nouvelle : les d\u00e9butants progressent tr\u00e8s vite !', color: 'var(--warning)' },
-        { range: [0.9,1], label: 'Masse grasse', value: '30%+', desc: 'Petit \u00e0 petit ! Cet objectif est pratique et adapt\u00e9.', color: 'var(--danger)' }
-      ]
+      id: 'morphologie', step: '06', label: 'MORPHOLOGIE',
+      type: 'morpho',
+      title: 'Quelle est ta <span>silhouette</span> actuelle\u00a0?',
+      default: 3
     },
     {
-      step: '02', label: 'TON CORPS',
-      type: 'ruler', key: 'poids_cible',
-      title: 'Quel est ton <span>poids cible</span> ?',
-      unit: 'kg', min: 40, max: 150, default: 70
-    },
-    {
-      step: '02', label: 'TON CORPS',
-      type: 'morpho', key: 'morpho_cible',
-      title: 'Quelle est ta forme corporelle <span>cible</span> ?',
-      feedback: [
-        { range: [0,0.2], label: 'Pourcentage de graisse cible', value: '4\u20136%', desc: 'Petit \u00e0 petit ! Cet objectif est pratique et adapt\u00e9 aux d\u00e9butants.', color: 'var(--success)' },
-        { range: [0.2,0.4], label: 'Pourcentage de graisse cible', value: '7\u201310%', desc: 'Corps cisel\u00e9 \u2014 objectif atteignable avec de la r\u00e9gularit\u00e9.', color: 'var(--success)' },
-        { range: [0.4,0.6], label: 'Pourcentage de graisse cible', value: '11\u201315%', desc: 'Forme athl\u00e9tique \u2014 tr\u00e8s r\u00e9aliste en 3 \u00e0 6 mois.', color: 'var(--blue)' },
-        { range: [0.6,0.8], label: 'Pourcentage de graisse cible', value: '16\u201320%', desc: 'Objectif raisonnable et motivant.', color: 'var(--blue)' },
-        { range: [0.8,1], label: 'Pourcentage de graisse cible', value: '20%+', desc: 'Chaque petit pas compte. Tu peux y arriver !', color: 'var(--warning)' }
-      ]
-    },
-
-    // ETAPE 2 — Fitness
-    {
-      step: '03', label: '\u00c9VALUATION FITNESS',
-      type: 'choice-single', key: 'niveau_pompes',
-      title: 'Combien de pompes peux-tu faire en une s\u00e9rie ?',
+      id: 'niveau', step: '07', label: 'FITNESS',
+      type: 'choice-single',
+      title: 'Quel est ton <span>niveau</span> actuel\u00a0?',
       choices: [
-        { value: 'debutant', label: 'D\u00e9butant', sublabel: '0\u20135 pompes', icon: '\u25C7' },
-        { value: 'intermediaire', label: 'Interm\u00e9diaire', sublabel: '5\u201315 pompes', icon: '\u25C8' },
-        { value: 'avance', label: 'Avanc\u00e9', sublabel: 'Au moins 15 pompes', icon: '\u25C6',
-          feedback: 'Tu es clairement dans le top niveau ! On va vraiment te challenger.' }
+        { value: 'debutant',      label: 'D\u00e9butant',      sublabel: 'Je d\u00e9bute ou peu actif',              icon: '\uD83C\uDF31' },
+        { value: 'intermediaire', label: 'Interm\u00e9diaire', sublabel: 'Je m\'entra\u00eene parfois',             icon: '\u26A1' },
+        { value: 'avance',        label: 'Avanc\u00e9',        sublabel: 'Je m\'entra\u00eene r\u00e9guli\u00e8rement', icon: '\uD83D\uDD25' },
+        { value: 'elite',         label: '\u00c9lite',         sublabel: 'Sportif de haut niveau',                  icon: '\uD83C\uDFC6' }
       ]
     },
     {
-      step: '03', label: '\u00c9VALUATION FITNESS',
-      type: 'choice-single', key: 'niveau_tractions',
-      title: 'Combien de tractions peux-tu faire ?',
+      id: 'frequence', step: '08', label: 'PROGRAMME',
+      type: 'choice-single',
+      title: '\u00c0 quelle <span>fr\u00e9quence</span> veux-tu t\'entra\u00eener\u00a0?',
       choices: [
-        { value: 'zero', label: 'Aucune pour l\'instant', sublabel: 'Pas de barre ou pas encore', icon: '\u25C7' },
-        { value: 'debutant', label: 'Quelques-unes', sublabel: '1 \u00e0 5 tractions', icon: '\u25C8' },
-        { value: 'avance', label: 'Bien entra\u00een\u00e9', sublabel: '5 tractions ou plus', icon: '\u25C6',
-          feedback: 'Excellent niveau ! Les tractions sont la cl\u00e9 de la calisth\u00e9nie.' }
-      ]
-    },
-    {
-      step: '03', label: '\u00c9VALUATION FITNESS',
-      type: 'choice-single', key: 'type_exercice',
-      title: 'Quel type d\'exercice pr\u00e9f\u00e8res-tu ?',
-      choices: [
-        { value: 'poids_corps', label: 'Sans \u00e9quipement', sublabel: 'Pompes, squats, gainage', icon: '\u2298' },
-        { value: 'barre', label: 'Avec barre de traction', sublabel: 'Pull-ups, dips, skills', icon: '\u229F',
-          feedback: 'La barre de traction = l\'outil n\u00b01 du street workout. Excellent choix !' },
-        { value: 'leste', label: 'Avec lest', sublabel: 'Gilet lest\u00e9, ceinture', icon: '\u229E' },
-        { value: 'mixte', label: 'Peu importe', sublabel: 'Tout ce qui est efficace', icon: '\u2295' }
-      ]
-    },
-    {
-      step: '03', label: '\u00c9VALUATION FITNESS',
-      type: 'choice-single', key: 'lieu',
-      title: 'O\u00f9 t\'entra\u00eenes-tu habituellement ?',
-      choices: [
-        { value: 'exterieur', label: 'En ext\u00e9rieur', sublabel: 'Parc, barre de rue, terrain', icon: '\u2299' },
-        { value: 'maison', label: '\u00c0 la maison', sublabel: 'Barre de porte, sol', icon: '\u229F' },
-        { value: 'salle', label: 'En salle', sublabel: 'Gym ou salle de sport', icon: '\u229E' },
-        { value: 'partout', label: 'Peu importe', sublabel: 'Je m\'adapte', icon: '\u2295',
-          feedback: 'Parfait ! Un vrai warrior du street workout s\'adapte \u00e0 tout !' }
-      ]
-    },
-    {
-      step: '03', label: '\u00c9VALUATION FITNESS',
-      type: 'slider-steps', key: 'frequence',
-      title: '\u00c0 quelle fr\u00e9quence veux-tu t\'entra\u00eener ?',
-      steps: ['1\u00d7/sem', '2\u00d7/sem', '3\u00d7/sem', '4\u00d7/sem', '5\u00d7/sem', '6\u00d7/sem'],
-      default: 2,
-      feedbacks: [
-        'Parfait pour commencer doucement.',
-        'Un bon rythme pour progresser r\u00e9guli\u00e8rement.',
-        'Tr\u00e8s bon rythme ! Tu vas progresser vite.',
-        'Rythme avanc\u00e9 \u2014 assure-toi de bien r\u00e9cup\u00e9rer.',
-        'Niveau athl\u00e8te \u2014 requiert une bonne condition physique.',
-        'Entra\u00eenement quotidien \u2014 r\u00e9serv\u00e9 aux sportifs confirm\u00e9s.'
-      ]
-    },
-    {
-      step: '03', label: '\u00c9VALUATION FITNESS',
-      type: 'choice-single', key: 'intensite',
-      title: 'Quel niveau d\'intensit\u00e9 pr\u00e9f\u00e8res-tu ?',
-      choices: [
-        { value: 'facile', label: 'Facile \u00e0 commencer', sublabel: 'Je reviens doucement', icon: '\u270B' },
-        { value: 'modere', label: 'Transpiration l\u00e9g\u00e8re', sublabel: 'Un effort confortable', icon: '\u25F7' },
-        { value: 'exigeant', label: 'Un peu exigeant', sublabel: 'Je veux me d\u00e9passer', icon: '\u26A1',
-          feedback: 'Repousse tes limites ! Sur le chemin pour te d\u00e9passer, on sera l\u00e0 pour te soutenir.' },
-        { value: 'maximum', label: 'Maximum', sublabel: 'Je veux tout donner', icon: '\u25C6' }
-      ]
-    },
-    {
-      step: '03', label: '\u00c9VALUATION FITNESS',
-      type: 'choice-multi', key: 'blessures',
-      title: 'Des inconforts ou blessures \u00e0 prendre en compte ?',
-      choices: [
-        { value: 'aucun', label: 'Aucun', icon: '\u2298' },
-        { value: 'genou', label: 'Genou', icon: '\u22D9' },
-        { value: 'dos_bas', label: 'Bas du dos', icon: '\u2291' },
-        { value: 'epaule', label: '\u00c9paule', icon: '\u22A2' },
-        { value: 'poignet', label: 'Poignet', icon: '\u22A3' },
-        { value: 'coude', label: 'Coude', icon: '\u22A4' }
+        { value: 1, label: '1 fois par semaine',    sublabel: 'Pour commencer doucement',   icon: '\uD83D\uDE0C' },
+        { value: 2, label: '2 fois par semaine',    sublabel: 'Rythme confortable',          icon: '\uD83D\uDC4D' },
+        { value: 3, label: '3 fois par semaine',    sublabel: 'Recommand\u00e9 pour progresser', icon: '\u2B50' },
+        { value: 4, label: '4 fois par semaine',    sublabel: 'Entra\u00eenement intensif',   icon: '\uD83D\uDCAA' },
+        { value: 5, label: '5 fois ou plus',        sublabel: 'Mode athl\u00e8te',           icon: '\uD83C\uDFC5' }
       ]
     }
   ],
 
-  // Rendu
-  render: function() {
-    var q = this.questions[this.sub];
-    if (!q) { this.showLoading(); return; }
-
-    var totalSubs = this.questions.length;
+  // â”€â”€ Render frame â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  render: function () {
     var self = this;
-
-    var progressHtml = '';
-    for (var i = 0; i < totalSubs; i++) {
-      var cls = i < this.sub ? 'progress-seg--done' : (i === this.sub ? 'progress-seg--active' : '');
-      progressHtml += '<div class="progress-seg ' + cls + '"></div>';
+    var q = this.QUESTIONS[this.step];
+    var n = this.QUESTIONS.length;
+    var segs = '';
+    for (var i = 0; i < n; i++) {
+      var cls = i < this.step ? 'ob-progress-seg--done' : (i === this.step ? 'ob-progress-seg--active' : '');
+      segs += '<div class="ob-progress-seg ' + cls + '"></div>';
     }
-
+    var answered = this._isAnswered(q);
     var app = document.getElementById('app');
     app.innerHTML =
       '<div class="ob-page">' +
         '<div class="ob-top">' +
-          '<button class="back-btn" id="ob-back">&#8592;</button>' +
-          '<div style="flex:1">' +
-            '<div class="onboarding-header">' +
-              '<span class="onboarding-step-label">' + q.step + ' &nbsp; ' + q.label + '</span>' +
-            '</div>' +
-            '<div class="onboarding-progress">' + progressHtml + '</div>' +
+          '<button class="ob-back-btn" id="ob-back">&#8592;</button>' +
+          '<div class="ob-step-info">' +
+            '<span class="ob-step-label">' + q.step + ' &nbsp; ' + q.label + '</span>' +
+            '<div class="ob-progress">' + segs + '</div>' +
           '</div>' +
         '</div>' +
         '<div class="ob-content">' +
-          '<h1 class="question-title">' + q.title + '</h1>' +
-          '<div id="question-body">' + this.renderQuestion(q) + '</div>' +
+          '<h1 class="ob-question-title">' + q.title + '</h1>' +
+          '<div id="question-body">' + this._renderQuestion(q) + '</div>' +
         '</div>' +
         '<div class="ob-bottom">' +
-          '<button class="btn btn-dark btn--full" id="btn-next">SUIVANT</button>' +
+          '<button class="btn-suivant" id="btn-next"' + (answered ? '' : ' disabled') + '>SUIVANT</button>' +
         '</div>' +
       '</div>';
-
-    document.getElementById('ob-back').addEventListener('click', function() { self.back(); });
-    document.getElementById('btn-next').addEventListener('click', function() { self.next(); });
-    this.bindQuestion(q);
+    document.getElementById('ob-back').addEventListener('click', function () { self.back(); });
+    document.getElementById('btn-next').addEventListener('click', function () { self.next(); });
+    this._bind(q);
   },
 
-  renderQuestion: function(q) {
-    if (q.type === 'text') {
-      return '<input type="text" class="input" id="q-input" placeholder="' + q.placeholder + '"' +
-        ' value="' + (this.data[q.key] || '') + '" style="font-size:20px;text-align:center;padding:20px">';
-    }
-    if (q.type === 'ruler') {
-      var val = this.data[q.key] || q.default;
-      return '<div class="ruler-wrap">' +
-          '<div class="ruler-value" id="ruler-val">' + val + '</div>' +
-          '<span class="ruler-unit">' + q.unit + '</span>' +
-        '</div>' +
-        '<div class="ruler-track" id="ruler-track">' +
-          '<div class="ruler-cursor"></div>' +
-          '<div class="ruler-ticks" id="ruler-ticks"></div>' +
-        '</div>';
-    }
-    if (q.type === 'morpho') {
-      var val = this.data[q.key] !== undefined ? this.data[q.key] : 0.2;
-      var fb = null;
-      for (var i = 0; i < q.feedback.length; i++) {
-        if (val >= q.feedback[i].range[0] && val <= q.feedback[i].range[1]) { fb = q.feedback[i]; break; }
-      }
-      if (!fb) fb = q.feedback[0];
-      return '<div style="height:160px;background:#F0F4FF;border-radius:16px;margin-bottom:16px;display:flex;align-items:center;justify-content:center;color:#94A3B8;font-size:14px;">' +
-          '[Illustration morphologie]' +
-        '</div>' +
-        '<input type="range" class="morpho-slider" id="morpho-slider"' +
-          ' min="0" max="100" value="' + Math.round(val * 100) + '" style="--pct:' + Math.round(val * 100) + '%">' +
-        '<div class="morpho-labels"><span>Cisel\u00e9e</span><span>Dodue</span></div>' +
-        '<div class="feedback-box" id="morpho-fb">' +
-          '<div class="feedback-box-title" style="color:' + fb.color + '">' + fb.label + ' \u2014 ' + fb.value + '</div>' +
-          '<div class="feedback-box-text">' + fb.desc + '</div>' +
-        '</div>';
-    }
-    if (q.type === 'choice-single' || q.type === 'choice-multi') {
-      var selected = this.data[q.key];
-      var html = '';
-      for (var i = 0; i < q.choices.length; i++) {
-        var c = q.choices[i];
-        var isActive = selected === c.value || (Array.isArray(selected) && selected.indexOf(c.value) !== -1);
-        html += '<div class="choice-item' + (isActive ? ' choice-item--active' : '') + '"' +
-          ' data-value="' + c.value + '" data-key="' + q.key + '" data-multi="' + (q.type === 'choice-multi') + '">' +
-          '<div class="choice-icon">' + (c.icon || '\u25C7') + '</div>' +
-          '<div style="flex:1">' +
-            '<div class="choice-label">' + c.label + '</div>' +
-            (c.sublabel ? '<div class="choice-sublabel">' + c.sublabel + '</div>' : '') +
-          '</div>' +
-          '<div class="choice-check"></div>' +
-        '</div>';
-        if (c.feedback && isActive) {
-          html += '<div class="feedback-box"><div class="feedback-box-text">' + c.feedback + '</div></div>';
-        }
-      }
-      return html;
-    }
-    if (q.type === 'slider-steps') {
-      var val = this.data[q.key] !== undefined ? this.data[q.key] : q.default;
-      return '<div style="text-align:center;font-size:28px;font-weight:800;margin:16px 0" id="step-val">' + q.steps[val] + '</div>' +
-        '<input type="range" class="morpho-slider" id="step-slider"' +
-          ' min="0" max="' + (q.steps.length - 1) + '" value="' + val + '" style="--pct:' + ((val / (q.steps.length - 1)) * 100) + '%">' +
-        '<div class="morpho-labels"><span>Moins</span><span>Plus</span></div>' +
-        '<div class="feedback-box" id="step-fb">' +
-          '<div class="feedback-box-text">' + q.feedbacks[val] + '</div>' +
-        '</div>';
-    }
+  _isAnswered: function (q) {
+    if (q.type === 'drum' || q.type === 'ruler' || q.type === 'morpho') return true;
+    if (q.type === 'choice-single') return this.data[q.id] !== undefined;
+    if (q.type === 'choice-multi')  return Array.isArray(this.data[q.id]) && this.data[q.id].length > 0;
+    return true;
+  },
+
+  // â”€â”€ Render question content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  _renderQuestion: function (q) {
+    if (q.type === 'choice-single' || q.type === 'choice-multi') return this._renderChoices(q);
+    if (q.type === 'drum')   return this._renderDrum(q);
+    if (q.type === 'ruler')  return this._renderRuler(q);
+    if (q.type === 'morpho') return this._renderMorpho(q);
     return '';
   },
 
-  bindQuestion: function(q) {
-    var self = this;
-
-    // Bind choice clicks
-    var choiceItems = document.querySelectorAll('.choice-item');
-    for (var ci = 0; ci < choiceItems.length; ci++) {
-      (function(item) {
-        item.addEventListener('click', function() {
-          var key = item.getAttribute('data-key');
-          var value = item.getAttribute('data-value');
-          var multi = item.getAttribute('data-multi') === 'true';
-          self.selectChoice(key, value, multi);
-        });
-      })(choiceItems[ci]);
-    }
-
-    if (q.type === 'ruler') {
-      this.initRuler(q);
-    }
-    if (q.type === 'morpho') {
-      var slider = document.getElementById('morpho-slider');
-      if (slider) {
-        slider.addEventListener('input', function() {
-          var val = slider.value / 100;
-          self.data[q.key] = val;
-          slider.style.setProperty('--pct', slider.value + '%');
-          var fb = null;
-          for (var i = 0; i < q.feedback.length; i++) {
-            if (val >= q.feedback[i].range[0] && val <= q.feedback[i].range[1]) { fb = q.feedback[i]; break; }
-          }
-          if (!fb) fb = q.feedback[0];
-          var fbEl = document.getElementById('morpho-fb');
-          if (fbEl) fbEl.innerHTML =
-            '<div class="feedback-box-title" style="color:' + fb.color + '">' + fb.label + ' \u2014 ' + fb.value + '</div>' +
-            '<div class="feedback-box-text">' + fb.desc + '</div>';
-        });
-        self.data[q.key] = slider.value / 100;
-      }
-    }
-    if (q.type === 'slider-steps') {
-      var slider = document.getElementById('step-slider');
-      if (slider) {
-        slider.addEventListener('input', function() {
-          var val = parseInt(slider.value);
-          self.data[q.key] = val;
-          slider.style.setProperty('--pct', (val / (q.steps.length - 1) * 100) + '%');
-          var sv = document.getElementById('step-val');
-          if (sv) sv.textContent = q.steps[val];
-          var fb = document.getElementById('step-fb');
-          if (fb) fb.innerHTML = '<div class="feedback-box-text">' + q.feedbacks[val] + '</div>';
-        });
-        self.data[q.key] = parseInt(slider.value);
-      }
-    }
-  },
-
-  initRuler: function(q) {
-    var self = this;
-    var track = document.getElementById('ruler-track');
-    var ticks = document.getElementById('ruler-ticks');
-    var valEl = document.getElementById('ruler-val');
-    if (!track || !ticks) return;
-
-    var val = this.data[q.key] || q.default;
-    var TICK_W = 12;
-
+  _renderChoices: function (q) {
+    var sel = this.data[q.id];
+    var multi = q.type === 'choice-multi';
     var html = '';
-    for (var i = q.min; i <= q.max; i++) {
-      var major = i % 10 === 0;
-      html += '<div class="ruler-tick ' + (major ? 'ruler-tick--major' : 'ruler-tick--minor') + '" data-v="' + i + '"></div>';
+    for (var i = 0; i < q.choices.length; i++) {
+      var c = q.choices[i];
+      var active = multi
+        ? (Array.isArray(sel) && sel.indexOf(c.value) !== -1)
+        : sel === c.value;
+      var valStr = typeof c.value === 'number' ? String(c.value) : c.value;
+      html +=
+        '<div class="ob-choice' + (active ? ' ob-choice--active' : '') + '"' +
+        ' data-value="' + valStr + '" data-isnum="' + (typeof c.value === 'number') + '" data-multi="' + multi + '">' +
+        '<div class="ob-choice-icon">' + (c.icon || '&#9671;') + '</div>' +
+        '<div class="ob-choice-text">' +
+          '<div class="ob-choice-label">' + c.label + '</div>' +
+          (c.sublabel ? '<div class="ob-choice-sublabel">' + c.sublabel + '</div>' : '') +
+        '</div>' +
+        '<div class="ob-choice-check"></div>' +
+        '</div>';
     }
-    ticks.innerHTML = html;
-
-    var idx = val - q.min;
-    var centerX = track.offsetWidth / 2;
-    track.scrollLeft = idx * TICK_W - centerX + TICK_W / 2;
-
-    track.addEventListener('scroll', function() {
-      var scrollCenter = track.scrollLeft + track.offsetWidth / 2;
-      var newVal = Math.round(scrollCenter / TICK_W) + q.min;
-      var clamped = Math.min(q.max, Math.max(q.min, newVal));
-      if (valEl) valEl.textContent = clamped;
-      self.data[q.key] = clamped;
-    });
-    self.data[q.key] = val;
+    return '<div class="ob-choices-list">' + html + '</div>';
   },
 
-  selectChoice: function(key, value, multi) {
+  _renderDrum: function (q) {
+    var items = '';
+    for (var yr = q.min; yr <= q.max; yr++) {
+      items += '<li class="drum-picker-item" data-val="' + yr + '">' + yr + '</li>';
+    }
+    return '<div class="drum-picker-wrap">' +
+      '<div class="drum-picker-selection"></div>' +
+      '<div class="drum-picker-fade drum-picker-fade--top"></div>' +
+      '<div class="drum-picker-fade drum-picker-fade--bottom"></div>' +
+      '<div class="drum-picker-scroll" id="drum-scroll">' +
+        '<ul class="drum-picker-list" id="drum-list">' + items + '</ul>' +
+      '</div>' +
+    '</div>';
+  },
+
+  _renderRuler: function (q) {
+    var val = this.data[q.id] !== undefined ? this.data[q.id] : q.default;
+    var ticks = '';
+    for (var v = q.min; v <= q.max; v++) {
+      var major = v % 10 === 0;
+      ticks += '<div class="ruler-tick' + (major ? ' ruler-tick--major' : '') + '" data-v="' + v + '">' +
+        (major ? '<span class="ruler-tick-label">' + v + '</span>' : '') +
+      '</div>';
+    }
+    var bmiHtml = '';
+    if (q.showBMI) {
+      bmiHtml = '<div id="bmi-display" class="bmi-badge">' + this._bmiHTML(val, this.data.taille || 175) + '</div>';
+    }
+    return '<div class="ruler-value-display">' +
+        '<span class="ruler-value-number" id="ruler-val">' + val + '</span>' +
+        '<span class="ruler-value-unit">' + q.unit + '</span>' +
+      '</div>' +
+      bmiHtml +
+      '<div class="ruler-wrap" id="ruler-wrap">' +
+        '<div class="ruler-track" id="ruler-track">' +
+          '<div class="ruler-ticks" id="ruler-ticks">' + ticks + '</div>' +
+        '</div>' +
+        '<div class="ruler-center-line"></div>' +
+      '</div>';
+  },
+
+  _bmiHTML: function (poids, taille) {
+    var h = taille / 100;
+    var bmi = (poids / (h * h)).toFixed(1);
+    var label, color;
+    if      (bmi < 18.5) { label = 'Insuffisance pond\u00e9rale'; color = '#3B82F6'; }
+    else if (bmi < 25)   { label = 'Poids normal \u2713';          color = '#10B981'; }
+    else if (bmi < 30)   { label = 'Surpoids';                     color = '#F59E0B'; }
+    else                 { label = 'Ob\u00e9sit\u00e9';            color = '#EF4444'; }
+    return '<span style="color:' + color + '">IMC</span> <strong>' + bmi + '</strong> \u2014 ' + label;
+  },
+
+  _renderMorpho: function (q) {
+    var val = this.data[q.id] !== undefined ? this.data[q.id] : q.default;
+    var items = '';
+    for (var i = 0; i < 7; i++) {
+      items +=
+        '<div class="morpho-item' + (i === val ? ' morpho-item--active' : '') + '" data-idx="' + i + '">' +
+          _obMorphoSVG(i, i === val) +
+          '<span class="morpho-item-label">' + _MORPHO_LABELS[i] + '</span>' +
+        '</div>';
+    }
+    return '<div class="morpho-track" id="morpho-track">' + items + '</div>' +
+      '<div class="ob-morpho-label" id="morpho-cur">' + _MORPHO_LABELS[val] + '</div>';
+  },
+
+  // â”€â”€ Bind interactions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  _bind: function (q) {
+    var self = this;
+    if (q.type === 'choice-single' || q.type === 'choice-multi') {
+      var items = document.querySelectorAll('.ob-choice');
+      for (var ci = 0; ci < items.length; ci++) {
+        (function (item) {
+          item.addEventListener('click', function () {
+            var raw = item.getAttribute('data-value');
+            var isNum = item.getAttribute('data-isnum') === 'true';
+            var multi = item.getAttribute('data-multi') === 'true';
+            var val = isNum ? Number(raw) : raw;
+            self._selectChoice(q, val, multi);
+          });
+        })(items[ci]);
+      }
+    }
+    if (q.type === 'drum')   this._initDrum(q);
+    if (q.type === 'ruler')  this._initRuler(q);
+    if (q.type === 'morpho') this._initMorpho(q);
+  },
+
+  _selectChoice: function (q, val, multi) {
     if (multi) {
-      if (!this.data[key]) this.data[key] = [];
-      var idx = this.data[key].indexOf(value);
+      if (!Array.isArray(this.data[q.id])) this.data[q.id] = [];
+      var idx = this.data[q.id].indexOf(val);
       if (idx >= 0) {
-        this.data[key].splice(idx, 1);
+        this.data[q.id].splice(idx, 1);
       } else {
-        if (value === 'aucun') {
-          this.data[key] = ['aucun'];
-        } else {
-          this.data[key] = this.data[key].filter(function(v) { return v !== 'aucun'; });
-          this.data[key].push(value);
-        }
+        this.data[q.id].push(val);
       }
     } else {
-      this.data[key] = value;
+      this.data[q.id] = val;
     }
     this.render();
   },
 
-  next: function() {
-    var q = this.questions[this.sub];
-    if (q && q.type === 'text') {
-      var inp = document.getElementById('q-input');
-      if (inp) this.data[q.key] = inp.value;
-    }
-    this.sub++;
-    if (this.sub >= this.questions.length) {
-      this.showLoading();
-    } else {
-      this.render();
+  // â”€â”€ Drum picker (iOS scroll-snap) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  _initDrum: function (q) {
+    var self = this;
+    var scroll = document.getElementById('drum-scroll');
+    if (!scroll) return;
+    var ITEM_H = 44;
+    var val = this.data[q.id] !== undefined ? this.data[q.id] : q.default;
+    this.data[q.id] = val;
+    var targetIdx = val - q.min;
+    setTimeout(function () {
+      scroll.scrollTop = targetIdx * ITEM_H;
+      self._drumHighlight(scroll, targetIdx);
+    }, 20);
+    var ticking = false;
+    scroll.addEventListener('scroll', function () {
+      if (!ticking) {
+        requestAnimationFrame(function () {
+          var idx = Math.round(scroll.scrollTop / ITEM_H);
+          idx = Math.min(q.max - q.min, Math.max(0, idx));
+          self.data[q.id] = q.min + idx;
+          self._drumHighlight(scroll, idx);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+  },
+
+  _drumHighlight: function (scroll, activeIdx) {
+    var items = scroll.querySelectorAll('.drum-picker-item');
+    for (var i = 0; i < items.length; i++) {
+      items[i].classList.toggle('drum-picker-item--selected', i === activeIdx);
     }
   },
 
-  back: function() {
-    if (this.sub > 0) { this.sub--; this.render(); }
+  // â”€â”€ Ruler horizontal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  _initRuler: function (q) {
+    var self = this;
+    var track = document.getElementById('ruler-track');
+    if (!track) return;
+    var TICK_W = 12;
+    var val = this.data[q.id] !== undefined ? this.data[q.id] : q.default;
+    this.data[q.id] = val;
+    setTimeout(function () {
+      track.scrollLeft = (val - q.min) * TICK_W;
+    }, 20);
+    var ticking = false;
+    track.addEventListener('scroll', function () {
+      if (!ticking) {
+        requestAnimationFrame(function () {
+          var idx = Math.round(track.scrollLeft / TICK_W);
+          idx = Math.min(q.max - q.min, Math.max(0, idx));
+          var newVal = q.min + idx;
+          self.data[q.id] = newVal;
+          var el = document.getElementById('ruler-val');
+          if (el) el.textContent = newVal;
+          if (q.showBMI) {
+            var bmiEl = document.getElementById('bmi-display');
+            if (bmiEl) bmiEl.innerHTML = self._bmiHTML(newVal, self.data.taille || 175);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+  },
+
+  // â”€â”€ Morpho silhouettes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  _initMorpho: function (q) {
+    var self = this;
+    var track = document.getElementById('morpho-track');
+    if (!track) return;
+    var val = this.data[q.id] !== undefined ? this.data[q.id] : q.default;
+    this.data[q.id] = val;
+    // Scroll to active item
+    setTimeout(function () {
+      var items = track.querySelectorAll('.morpho-item');
+      if (items[val]) {
+        var itemCenter = items[val].offsetLeft + items[val].offsetWidth / 2;
+        track.scrollLeft = itemCenter - track.clientWidth / 2;
+      }
+    }, 30);
+    // Click handler
+    var clickItems = track.querySelectorAll('.morpho-item');
+    for (var ci = 0; ci < clickItems.length; ci++) {
+      (function (item) {
+        item.addEventListener('click', function () {
+          var idx = parseInt(item.getAttribute('data-idx'), 10);
+          self.data[q.id] = idx;
+          self._morphoHighlight(track, idx);
+          // Smooth scroll to clicked item
+          var iCenter = item.offsetLeft + item.offsetWidth / 2;
+          track.scrollTo({ left: iCenter - track.clientWidth / 2, behavior: 'smooth' });
+        });
+      })(clickItems[ci]);
+    }
+    // Scroll listener
+    var ticking = false;
+    track.addEventListener('scroll', function () {
+      if (!ticking) {
+        requestAnimationFrame(function () {
+          var center = track.scrollLeft + track.clientWidth / 2;
+          var allItems = track.querySelectorAll('.morpho-item');
+          var closest = 0, minDist = Infinity;
+          for (var i = 0; i < allItems.length; i++) {
+            var ic = allItems[i].offsetLeft + allItems[i].offsetWidth / 2;
+            var dist = Math.abs(ic - center);
+            if (dist < minDist) { minDist = dist; closest = i; }
+          }
+          if (self.data[q.id] !== closest) {
+            self.data[q.id] = closest;
+            self._morphoHighlight(track, closest);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+  },
+
+  _morphoHighlight: function (track, activeIdx) {
+    var items = track.querySelectorAll('.morpho-item');
+    for (var i = 0; i < items.length; i++) {
+      var active = (i === activeIdx);
+      items[i].classList.toggle('morpho-item--active', active);
+      var fill = active ? '#2563EB' : '#CBD5E1';
+      var shapes = items[i].querySelectorAll('circle, path');
+      for (var s = 0; s < shapes.length; s++) { shapes[s].setAttribute('fill', fill); }
+    }
+    var lbl = document.getElementById('morpho-cur');
+    if (lbl) lbl.textContent = _MORPHO_LABELS[activeIdx];
+  },
+
+  // â”€â”€ Navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  next: function () {
+    if (this.step < this.QUESTIONS.length - 1) {
+      this.step++;
+      this.render();
+    } else {
+      this.showLoading();
+    }
+  },
+
+  back: function () {
+    if (this.step > 0) { this.step--; this.render(); }
     else { window.history.back(); }
   },
 
-  showLoading: function() {
+  // â”€â”€ Loading animation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  showLoading: function () {
     var self = this;
-    var app = document.getElementById('app');
-    var prenom = this.data.prenom || 'toi';
-    var items = [
-      'Analyse des donn\u00e9es corporelles',
+    // Sauvegarder le profil
+    if (typeof SW !== 'undefined') {
+      var profile = {};
+      for (var k in this.data) { if (Object.prototype.hasOwnProperty.call(this.data, k)) profile[k] = this.data[k]; }
+      profile.setupDone = true;
+      SW.save('userProfile', profile);
+    }
+    var steps = [
+      'Analyse de ton profil',
       'Calcul de ton niveau',
       'S\u00e9lection des exercices',
-      'Objectif et concentration',
-      'Cr\u00e9ation de ton programme'
+      'Construction du planning',
+      'Finalisation du programme'
     ];
-
-    var loadingHtml = '';
-    for (var i = 0; i < items.length; i++) {
-      loadingHtml +=
-        '<div class="loading-item" id="li-' + i + '">' +
-          '<div style="display:flex;align-items:center;margin-bottom:6px">' +
-            '<span class="loading-label">' + items[i] + '</span>' +
+    var itemsHtml = '';
+    for (var i = 0; i < steps.length; i++) {
+      itemsHtml +=
+        '<div class="loading-item">' +
+          '<div class="loading-item-header">' +
+            '<span class="loading-item-label">' + steps[i] + '</span>' +
             '<span class="loading-check" id="lc-' + i + '">\u2713</span>' +
           '</div>' +
           '<div class="loading-bar-track">' +
@@ -418,169 +496,84 @@ var OB = {
           '</div>' +
         '</div>';
     }
-
+    var app = document.getElementById('app');
     app.innerHTML =
-      '<div class="ob-page ob-page--center">' +
-        '<h2 style="font-size:22px;font-weight:800;text-align:center;margin-bottom:8px">' +
-          'Ton coach cr\u00e9e ton programme...' +
+      '<div class="ob-page ob-loading">' +
+        '<h2 style="font-size:22px;font-weight:800;text-align:center;margin-bottom:8px;color:#0F172A">' +
+          'Ton programme se pr\u00e9pare...' +
         '</h2>' +
-        '<p style="text-align:center;color:var(--text-500);margin-bottom:32px">' +
-          'Personnalis\u00e9 pour ' + prenom +
-        '</p>' +
-        '<div id="loading-items">' + loadingHtml + '</div>' +
+        '<p style="text-align:center;color:#64748B;margin-bottom:32px">Personnalis\u00e9 pour toi</p>' +
+        '<div style="width:100%;max-width:360px">' + itemsHtml + '</div>' +
       '</div>';
-
-    // Animation sequentielle
     var idx = 0;
-    var animate = function() {
-      if (idx >= items.length) {
-        setTimeout(function() { self.showResult(); }, 600);
-        return;
-      }
+    function runNext() {
+      if (idx >= steps.length) { setTimeout(function () { self.showResult(); }, 500); return; }
       var bar = document.getElementById('lb-' + idx);
-      var check = document.getElementById('lc-' + idx);
       if (bar) {
-        setTimeout(function() { bar.style.width = '100%'; }, 50);
-        var currentIdx = idx;
-        setTimeout(function() {
-          var c = document.getElementById('lc-' + currentIdx);
-          if (c) c.style.opacity = '1';
+        setTimeout(function () { bar.style.width = '100%'; }, 50);
+        var cur = idx;
+        setTimeout(function () {
+          var check = document.getElementById('lc-' + cur);
+          if (check) check.style.opacity = '1';
           idx++;
-          setTimeout(animate, 200);
-        }, 700);
+          setTimeout(runNext, 180);
+        }, 760);
       }
-    };
-    setTimeout(animate, 300);
-
-    // Sauvegarder les donnees
-    if (typeof SW !== 'undefined') {
-      SW.save('userProfile', this.data);
-      SW.save('userStats', {
-        poids: this.data.poids,
-        taille: this.data.taille,
-        tractions: this.data.niveau_tractions === 'avance' ? 8 : this.data.niveau_tractions === 'debutant' ? 3 : 0,
-        pompes: this.data.niveau_pompes === 'avance' ? 15 : this.data.niveau_pompes === 'intermediaire' ? 8 : 3,
-        niveau: this.data.niveau_pompes === 'avance' ? 'intermediaire' : 'debutant',
-        prenom: this.data.prenom
-      });
     }
+    setTimeout(runNext, 300);
   },
 
-  showResult: function() {
-    var poids = this.data.poids || 75;
-    var poidsCible = this.data.poids_cible || 70;
-    var today = new Date();
-    var targetDate = new Date(today);
-    targetDate.setDate(today.getDate() + 28);
-
-    var targetStr = targetDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
-    var targetShort = targetDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
-
-    var niveau = 'D\u00e9butant';
-    if (this.data.niveau_pompes === 'avance') niveau = 'Avanc\u00e9';
-    else if (this.data.niveau_pompes === 'intermediaire') niveau = 'Interm\u00e9diaire';
-
-    var freq = '3\u00d7/semaine';
-    if (this.data.frequence !== undefined) {
-      freq = ['1\u00d7', '2\u00d7', '3\u00d7', '4\u00d7', '5\u00d7', '6\u00d7'][this.data.frequence] + '/semaine';
-    }
-
-    // Summary rows
-    var summaryData = [
-      ['Zone cibl\u00e9e', 'CORPS COMPLET'],
-      ['Niveau', niveau],
-      ['Dur\u00e9e', '20\u201345 min/s\u00e9ance'],
-      ['Fr\u00e9quence', freq]
+  // â”€â”€ RÃ©sumÃ© final â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  showResult: function () {
+    var niveauMap = { debutant: 'D\u00e9butant', intermediaire: 'Interm\u00e9diaire', avance: 'Avanc\u00e9', elite: '\u00c9lite' };
+    var niveau = niveauMap[this.data.niveau] || 'D\u00e9butant';
+    var morphoLabel = _MORPHO_LABELS[this.data.morphologie !== undefined ? this.data.morphologie : 3];
+    var age = new Date().getFullYear() - (this.data.anneeNaissance || 1995);
+    var taille = this.data.taille || 175;
+    var poids  = this.data.poids  || 75;
+    var freq   = this.data.frequence || 3;
+    var h = taille / 100;
+    var bmi = (poids / (h * h)).toFixed(1);
+    var rows = [
+      ['Niveau',             niveau],
+      ['\u00c2ge',            age + ' ans'],
+      ['Taille',             taille + ' cm'],
+      ['Poids',              poids + ' kg'],
+      ['IMC',                bmi],
+      ['Silhouette',         morphoLabel],
+      ['Fr\u00e9quence',     freq + '\u00d7/semaine']
     ];
-    var summaryHtml = '';
-    for (var i = 0; i < summaryData.length; i++) {
-      summaryHtml += '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">' +
-        '<span style="color:var(--text-500)">' + summaryData[i][0] + '</span>' +
-        '<strong>' + summaryData[i][1] + '</strong>' +
-      '</div>';
+    var rowsHtml = '';
+    for (var i = 0; i < rows.length; i++) {
+      rowsHtml +=
+        '<div class="ob-summary-row">' +
+          '<span class="ob-summary-label">' + rows[i][0] + '</span>' +
+          '<span class="ob-summary-value">'  + rows[i][1] + '</span>' +
+        '</div>';
     }
-
     var app = document.getElementById('app');
     app.innerHTML =
       '<div class="ob-page" style="overflow-y:auto">' +
         '<div class="ob-content">' +
-          '<p style="text-align:center;color:var(--text-500);margin-bottom:4px">D\'apr\u00e8s tes r\u00e9ponses,</p>' +
-          '<h2 style="text-align:center;margin-bottom:4px">Retrouve ton meilleur toi le</h2>' +
-          '<h2 style="text-align:center;color:var(--blue);margin-bottom:24px">' + targetStr + '</h2>' +
-          '<svg class="projection-curve" viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg">' +
-            '<defs>' +
-              '<linearGradient id="curveGrad" x1="0" y1="0" x2="1" y2="0">' +
-                '<stop offset="0%" stop-color="#EF4444"/>' +
-                '<stop offset="60%" stop-color="#8B5CF6"/>' +
-                '<stop offset="100%" stop-color="#06B6D4"/>' +
-              '</linearGradient>' +
-            '</defs>' +
-            '<path d="M20,20 C60,20 80,100 200,110 C240,113 280,115 300,115" fill="none" stroke="url(#curveGrad)" stroke-width="4" stroke-linecap="round"/>' +
-            '<circle cx="20" cy="20" r="6" fill="#EF4444"/>' +
-            '<circle cx="200" cy="110" r="8" fill="white" stroke="#2563EB" stroke-width="3"/>' +
-            '<rect x="140" y="80" width="110" height="28" rx="14" fill="#2563EB"/>' +
-            '<text x="196" y="99" text-anchor="middle" fill="white" font-size="13" font-weight="700">Corps de r\u00eave</text>' +
-            '<text x="20" y="135" fill="#94A3B8" font-size="11">Aujourd\'hui</text>' +
-            '<text x="170" y="135" fill="#0F172A" font-size="11" font-weight="600">' + targetShort + '</text>' +
-            '<text x="16" y="16" fill="#94A3B8" font-size="11">' + poids + ' kg</text>' +
-          '</svg>' +
-          '<div class="card" style="margin:16px 0">' +
-            '<h3 style="margin-bottom:12px">Routine de remise en forme</h3>' +
-            this.renderMiniCal(today, targetDate) +
+          '<div style="text-align:center;margin:32px 0 20px">' +
+            '<div style="font-size:52px;margin-bottom:12px">\uD83C\uDFAF</div>' +
+            '<h2 style="font-size:22px;font-weight:800;color:#0F172A;margin-bottom:8px">Ton programme est pr\u00eat\u00a0!</h2>' +
+            '<p style="color:#64748B;font-size:15px">Voici ton profil fitness personnalis\u00e9</p>' +
           '</div>' +
-          '<div class="card card--elevated" style="margin-bottom:16px">' +
-            '<h3 style="margin-bottom:16px">R\u00e9sum\u00e9 du plan</h3>' +
-            summaryHtml +
-          '</div>' +
+          '<div class="ob-summary-card">' + rowsHtml + '</div>' +
         '</div>' +
         '<div class="ob-bottom">' +
-          '<a href="dashboard.html" class="btn btn-primary btn--full">Obtenir mon programme &#8594;</a>' +
+          '<a href="index.html" class="btn-start">COMMENCER MON PROGRAMME \u2192</a>' +
         '</div>' +
       '</div>';
   },
 
-  renderMiniCal: function(start, end) {
-    var days = [];
-    var cur = new Date(start);
-    for (var i = 0; i < 28; i++) {
-      days.push(new Date(cur));
-      cur.setDate(cur.getDate() + 1);
-    }
-    var heads = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-    var html = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px">';
-    for (var h = 0; h < heads.length; h++) {
-      html += '<div style="text-align:center;font-size:10px;font-weight:600;color:var(--text-300);padding:4px">' + heads[h] + '</div>';
-    }
-    html += '</div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">';
-
-    var firstDay = start.getDay();
-    for (var p = 0; p < firstDay; p++) {
-      html += '<div></div>';
-    }
-
-    for (var d = 0; d < days.length; d++) {
-      var isStart = d === 0;
-      var isEnd = d === days.length - 1;
-      html += '<div style="aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;' +
-        'align-items:center;justify-content:center;font-size:12px;font-weight:500;' +
-        'background:' + (isStart || isEnd ? 'var(--blue)' : 'var(--bg)') + ';' +
-        'color:' + (isStart || isEnd ? 'white' : 'var(--text-700)') + '">' +
-        (isStart ? '<span style="font-size:7px;font-weight:700">D\u00c9BUT</span>' : '') +
-        (isEnd ? '<span style="font-size:7px;font-weight:700">SUCC\u00c8S</span>' : '') +
-        days[d].getDate() +
-      '</div>';
-    }
-
-    html += '</div>';
-    return html;
-  },
-
-  init: function() {
-    // Verifier si deja onboarde
+  // â”€â”€ Init â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  init: function () {
     if (typeof SW !== 'undefined') {
       var existing = SW.load('userProfile');
-      if (existing && existing.prenom) {
-        window.location.href = 'dashboard.html';
+      if (existing && existing.setupDone) {
+        window.location.href = 'index.html';
         return;
       }
     }
@@ -588,4 +581,4 @@ var OB = {
   }
 };
 
-document.addEventListener('DOMContentLoaded', function() { OB.init(); });
+document.addEventListener('DOMContentLoaded', function () { OB.init(); });
