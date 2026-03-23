@@ -21,11 +21,11 @@
 }
 
 .btn-primary {
-  background: var(--primary);
+  background: var(--accent, #6C63FF);
   color: #FFFFFF;
 }
 .btn-primary:hover {
-  background: var(--primary-dark);
+  background: var(--accent-hover, #5a52d5);
   transform: translateY(-1px);
   box-shadow: var(--shadow-primary);
 }
@@ -85,10 +85,10 @@
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 24px;
+  border-radius: 16px;
+  padding: 20px;
   transition: var(--transition);
-  box-shadow: var(--shadow-card);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
 }
 .card:hover {
   transform: translateY(-1px);
@@ -101,10 +101,10 @@
 }
 
 .card-glass {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(22,33,62,0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: 1px solid var(--border);
 }
 
 .card-icon {
@@ -192,10 +192,10 @@
 .form-input {
   width: 100%;
   padding: 14px 16px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
+  background: #2a2a3e;
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: var(--radius-md);
-  color: var(--text-primary);
+  color: #e2e8f0;
   font-size: 16px;
   min-height: 44px;
   transition: var(--transition);

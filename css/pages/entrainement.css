@@ -23,11 +23,11 @@
 
 .cal-day--today {
   border-color: var(--primary);
-  background: rgba(37, 99, 235, 0.07);
+  background: rgba(108, 99, 255, 0.07);
 }
 
 .cal-day--done {
-  background: rgba(37, 99, 235, 0.04);
+  background: rgba(108, 99, 255, 0.04);
 }
 
 .cal-day-name {
@@ -153,13 +153,13 @@
 
 .planning-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(37, 99, 235, 0.2);
+  border-color: rgba(108, 99, 255, 0.2);
 }
 
 .planning-today {
   border-color: var(--primary);
-  background: rgba(37, 99, 235, 0.05);
-  box-shadow: 0 0 20px rgba(37, 99, 235, 0.1);
+  background: rgba(108, 99, 255, 0.05);
+  box-shadow: 0 0 20px rgba(108, 99, 255, 0.1);
 }
 
 .planning-jour {
@@ -228,12 +228,12 @@
 }
 
 .serie-dot:hover {
-  color: rgba(37, 99, 235, 0.5);
+  color: rgba(108, 99, 255, 0.5);
 }
 
 .serie-dot.done {
   color: var(--primary);
-  text-shadow: 0 0 6px rgba(37, 99, 235, 0.5);
+  text-shadow: 0 0 6px rgba(108, 99, 255, 0.5);
 }
 
 .exo-check {
@@ -1034,3 +1034,49 @@
   cursor: pointer;
 }
 .day-editor-close:hover { background: var(--bg-elevated-hover, rgba(255,255,255,.1)); }
+
+/* === API Status Panel === */
+.api-status-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin: 16px 0;
+}
+.api-status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.api-status-title { font-weight: 600; color: var(--text-primary); font-size: 14px; }
+.api-test-btn {
+  background: var(--accent, #6C63FF);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.api-test-btn:hover { background: var(--accent-hover, #5a52d5); }
+.api-status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.api-status-item:last-child { border-bottom: none; }
+.api-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  display: inline-block; margin-right: 8px;
+}
+.api-dot.active  { background: #10B981; box-shadow: 0 0 6px #10B981; }
+.api-dot.error   { background: #EF4444; box-shadow: 0 0 6px #EF4444; }
+.api-dot.loading { background: #F59E0B; animation: api-pulse 1s infinite; }
+.api-dot.unknown { background: #64748b; }
+@keyframes api-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }

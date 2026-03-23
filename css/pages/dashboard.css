@@ -219,7 +219,7 @@
   left: 0;
   width: 4px;
   height: 100%;
-  background: var(--primary, #2563EB);
+  background: var(--primary, #6C63FF);
   border-radius: 4px 0 0 4px;
 }
 .stat-card:nth-child(2)::before { background: #3B82F6; }

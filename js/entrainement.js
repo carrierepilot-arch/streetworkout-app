@@ -1009,6 +1009,95 @@ async function renderHistory() {
 }
 
 /* ══════════════════════════════════════════════════
+   API STATUS PANEL
+   ══════════════════════════════════════════════════ */
+async function testAllAPIs() {
+  var apis = [
+    {
+      name: 'ExerciseDB (RapidAPI)',
+      test: async function() {
+        var key = (typeof RAPIDAPI_KEY !== 'undefined' && RAPIDAPI_KEY)
+                  ? RAPIDAPI_KEY
+                  : (typeof window._env !== 'undefined' ? window._env.RAPIDAPI_KEY : null);
+        if (!key || key === 'YOUR_API_KEY') return { status: 'error', msg: 'Clé API non configurée' };
+        var res = await fetch('https://exercisedb.p.rapidapi.com/exercises?limit=1', {
+          headers: { 'X-RapidAPI-Key': key, 'X-RapidAPI-Host': 'exercisedb.p.rapidapi.com' }
+        });
+        if (!res.ok) return { status: 'error', msg: 'HTTP ' + res.status };
+        var data = await res.json();
+        return data && data.length > 0
+          ? { status: 'active', msg: 'Opérationnelle ✓ (' + data.length + ' exercice reçu)' }
+          : { status: 'error', msg: 'Réponse vide' };
+      }
+    },
+    {
+      name: 'ChatGPT / OpenAI',
+      test: async function() {
+        var key = (typeof OPENAI_KEY !== 'undefined' && OPENAI_KEY)
+                  ? OPENAI_KEY
+                  : (typeof window._env !== 'undefined' ? window._env.OPENAI_KEY : null);
+        if (!key || key === 'YOUR_OPENAI_KEY') return { status: 'error', msg: 'Clé API non configurée' };
+        var res = await fetch('https://api.openai.com/v1/models', {
+          headers: { 'Authorization': 'Bearer ' + key }
+        });
+        return res.ok
+          ? { status: 'active', msg: 'Connectée ✓' }
+          : { status: 'error', msg: 'HTTP ' + res.status };
+      }
+    },
+    {
+      name: 'Supabase (base de données)',
+      test: async function() {
+        if (typeof SB === 'undefined' || SB === null) return { status: 'error', msg: 'Non initialisée' };
+        try {
+          var result = await SB.from('sessions').select('id').limit(1);
+          return result.error
+            ? { status: 'error', msg: result.error.message }
+            : { status: 'active', msg: 'Connectée ✓' };
+        } catch(e) {
+          return { status: 'error', msg: e.message };
+        }
+      }
+    },
+    {
+      name: 'localStorage (stockage local)',
+      test: async function() {
+        try {
+          localStorage.setItem('_api_test', '1');
+          localStorage.removeItem('_api_test');
+          var sessions = (typeof SW !== 'undefined') ? (SW.load('sw_sessions') || []) : [];
+          return { status: 'active', msg: sessions.length + ' séance(s) sauvegardée(s)' };
+        } catch(e) {
+          return { status: 'error', msg: e.message };
+        }
+      }
+    }
+  ];
+
+  var list = document.getElementById('apiStatusList');
+  if (!list) return;
+
+  list.innerHTML = apis.map(function(a) {
+    return '<div class="api-status-item">' +
+      '<span><span class="api-dot loading"></span>' + a.name + '</span>' +
+      '<span style="color:#F59E0B;font-size:12px">Test en cours...</span>' +
+    '</div>';
+  }).join('');
+
+  var results = await Promise.allSettled(apis.map(function(a) { return a.test(); }));
+
+  list.innerHTML = apis.map(function(a, i) {
+    var r = results[i].status === 'fulfilled' ? results[i].value : { status: 'error', msg: 'Erreur inattendue' };
+    var dotClass = r.status === 'active' ? 'active' : 'error';
+    var msgColor = r.status === 'active' ? '#10B981' : '#EF4444';
+    return '<div class="api-status-item">' +
+      '<span><span class="api-dot ' + dotClass + '"></span>' + a.name + '</span>' +
+      '<span style="color:' + msgColor + ';font-size:12px">' + r.msg + '</span>' +
+    '</div>';
+  }).join('');
+}
+
+/* ══════════════════════════════════════════════════
    INIT
    ══════════════════════════════════════════════════ */
 async function initEntrainement() {
@@ -1035,6 +1124,9 @@ async function initEntrainement() {
     renderCalendarSection();
     try { renderHistory(); } catch(e) {}
   });
+
+  // Test APIs automatiquement après chargement
+  setTimeout(testAllAPIs, 1200);
 }
 
 document.addEventListener('DOMContentLoaded', initEntrainement);
