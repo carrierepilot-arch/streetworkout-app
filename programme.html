@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/pages/programme.css">
+  <link rel="stylesheet" href="css/forge.css">
 </head>
 <body>
 
@@ -169,21 +170,22 @@
   </div>
 
   <!-- Bottom Navigation (mobile) -->
-  <nav class="bottom-nav">
-    <a href="dashboard.html">
-      Dashboard
+  <nav class="forge-bottom-nav">
+    <a href="index.html" id="nav-entrainement">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Entraînement</span>
     </a>
-    <a href="progression.html">
-      Progression
+    <a href="progression.html" id="nav-decouvrir">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span>Découvrir</span>
     </a>
-    <a href="entrainement.html">
-      Entraînement
+    <a href="analytics.html" id="nav-rapport">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span>Rapport</span>
     </a>
-    <a href="programme.html" class="active">
-      Programme
-    </a>
-    <a href="analytics.html">
-      Analytics
+    <a href="profil.html" id="nav-profil">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Profil</span>
     </a>
   </nav>
 

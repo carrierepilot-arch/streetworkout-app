@@ -1174,3 +1174,9 @@ p { font-size: 15px; color: var(--gris-texte); line-height: 1.65; }
 
 /* Désactiver l'ancienne bottom-nav de style.css */
 .app-bottom-nav { display: none !important; }
+
+/* ── Guard : une seule barre de navigation visible ── */
+body:has(.forge-bottom-nav) .bottom-nav,
+body:has(.forge-bottom-nav) .top-nav,
+body:has(.forge-bottom-nav) .sidebar,
+body:has(.forge-bottom-nav) .navbar { display: none !important; }

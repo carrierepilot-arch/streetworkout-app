@@ -202,19 +202,19 @@
 
   <!-- BOTTOM NAV MOBILE -->
   <nav class="forge-bottom-nav">
-    <a href="index.html" class="active">
+    <a href="index.html" id="nav-entrainement">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       <span>Entraînement</span>
     </a>
-    <a href="progression.html">
+    <a href="progression.html" id="nav-decouvrir">
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <span>Découvrir</span>
     </a>
-    <a href="analytics.html">
+    <a href="analytics.html" id="nav-rapport">
       <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       <span>Rapport</span>
     </a>
-    <a href="profil.html">
+    <a href="profil.html" id="nav-profil">
       <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       <span>Profil</span>
     </a>
@@ -253,6 +253,14 @@
       pill.classList.add('active');
     });
   });
+})();
+</script>
+
+<script>
+(function(){
+  var page=location.pathname.split('/').pop()||'index.html';
+  var map={'index.html':'nav-entrainement','entrainement.html':'nav-entrainement','progression.html':'nav-decouvrir','analytics.html':'nav-rapport','profil.html':'nav-profil'};
+  var id=map[page];if(id){var el=document.getElementById(id);if(el)el.classList.add('active');}
 })();
 </script>
 
