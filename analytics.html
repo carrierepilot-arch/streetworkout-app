@@ -143,6 +143,23 @@
         <div id="an-heatmap-container"></div>
       </div>
 
+      <!-- ══════════════ CALENDRIER DE SUIVI ══════════════ -->
+      <div class="card" id="calendrier-section" style="margin-top:1.5rem;">
+        <h3 style="margin-bottom:4px;">📅 Calendrier de suivi</h3>
+        <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:16px;">Visualise tes jours d'entraînement et planifie tes séances.</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <button id="cal-prev" style="background:none;border:1px solid #E5E7EB;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:14px;">◀</button>
+          <span id="cal-month-label" style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.2rem;text-transform:uppercase;color:#0D0D0D;"></span>
+          <button id="cal-next" style="background:none;border:1px solid #E5E7EB;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:14px;">▶</button>
+        </div>
+        <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;"></div>
+        <div style="margin-top:12px;display:flex;gap:16px;font-size:12px;color:#6B7280;">
+          <span>🟢 Séance effectuée</span>
+          <span>⬜ Jour de repos</span>
+          <span style="font-weight:700;color:#0D0D0D;">● Aujourd'hui</span>
+        </div>
+      </div>
+
       <!-- Radar comparaison niveaux -->
       <div class="chart-section" style="margin-top:1.5rem;">
         <h3>Comparaison aux standards</h3>
@@ -232,46 +249,109 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="js/analytics.js"></script>
   <script>
+  /* ════════════ CALENDRIER DE SUIVI ════════════ */
+  (function(){
+    var MOIS=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+    var JOURS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+    var curYear=new Date().getFullYear(), curMonth=new Date().getMonth();
+
+    function getSeanceDates(){
+      var dates=new Set();
+      try{
+        var seances=JSON.parse(localStorage.getItem('sw_seances')||'[]');
+        seances.forEach(function(s){if(s.date)dates.add(s.date.substring(0,10));});
+        var hist=JSON.parse(localStorage.getItem('sw_history')||'[]');
+        hist.forEach(function(h){if(h.date)dates.add(h.date.substring(0,10));});
+        var gen=JSON.parse(localStorage.getItem('sw_generated_sessions')||'[]');
+        gen.forEach(function(g){if(g.date)dates.add(g.date);});
+      }catch(e){}
+      return dates;
+    }
+
+    function renderCalendar(year,month){
+      var label=document.getElementById('cal-month-label');
+      var grid=document.getElementById('cal-grid');
+      if(!label||!grid) return;
+      label.textContent=MOIS[month]+' '+year;
+
+      var dates=getSeanceDates();
+      var today=new Date(); var todayStr=today.toISOString().slice(0,10);
+      var first=new Date(year,month,1);
+      var lastDay=new Date(year,month+1,0).getDate();
+      var startDay=(first.getDay()+6)%7;/* lundi=0 */
+
+      var html='';
+      JOURS.forEach(function(j){html+='<div style="font-size:11px;font-weight:700;color:#9CA3AF;padding:4px;">'+j+'</div>';});
+      for(var i=0;i<startDay;i++) html+='<div></div>';
+      for(var d=1;d<=lastDay;d++){
+        var ds=year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+        var isToday=ds===todayStr;
+        var isDone=dates.has(ds);
+        var bg=isDone?'#C8FF00':isToday?'#0A0A0A':'#F9FAFB';
+        var color=isDone?'#0A0A0A':isToday?'#fff':'#374151';
+        var border=isToday&&!isDone?'2px solid #0A0A0A':'1px solid '+(isDone?'#B0E000':'#E5E7EB');
+        html+='<div style="padding:8px 4px;border-radius:8px;background:'+bg+';color:'+color+';font-weight:'+(isToday||isDone?'700':'400')+';font-size:14px;border:'+border+';">'+d+'</div>';
+      }
+      grid.innerHTML=html;
+    }
+
+    document.addEventListener('DOMContentLoaded',function(){
+      renderCalendar(curYear,curMonth);
+      var prev=document.getElementById('cal-prev'),next=document.getElementById('cal-next');
+      if(prev) prev.addEventListener('click',function(){curMonth--;if(curMonth<0){curMonth=11;curYear--;}renderCalendar(curYear,curMonth);});
+      if(next) next.addEventListener('click',function(){curMonth++;if(curMonth>11){curMonth=0;curYear++;}renderCalendar(curYear,curMonth);});
+    });
+  })();
+  </script>
+  <script>
   /* ════════════ TEST DE NIVEAU — Logique JS ════════════ */
   (function() {
-    /* Barèmes de référence */
+    /* Barèmes de référence — calibrés street workout */
     var BAREMES = {
       pullups: [
-        { min: 0,  max: 4,  niveau: 'Débutant',       score: 10 },
-        { min: 5,  max: 9,  niveau: 'Novice',          score: 25 },
-        { min: 10, max: 14, niveau: 'Intermédiaire',   score: 50 },
-        { min: 15, max: 19, niveau: 'Avancé',          score: 75 },
-        { min: 20, max: 999,niveau: 'Expert',          score: 100 }
+        { min: 0,  max: 5,  niveau: 'Débutant',       score: 10 },
+        { min: 6,  max: 12, niveau: 'Novice',          score: 25 },
+        { min: 13, max: 20, niveau: 'Intermédiaire',   score: 45 },
+        { min: 21, max: 30, niveau: 'Avancé',          score: 70 },
+        { min: 31, max: 50, niveau: 'Élite',           score: 90 },
+        { min: 51, max: 999,niveau: 'Légende',         score: 100 }
       ],
       pushups: [
-        { min: 0,  max: 14, niveau: 'Débutant',       score: 10 },
-        { min: 15, max: 29, niveau: 'Novice',          score: 25 },
-        { min: 30, max: 49, niveau: 'Intermédiaire',   score: 50 },
-        { min: 50, max: 79, niveau: 'Avancé',          score: 75 },
-        { min: 80, max: 999,niveau: 'Expert',          score: 100 }
+        { min: 0,  max: 15, niveau: 'Débutant',       score: 10 },
+        { min: 16, max: 30, niveau: 'Novice',          score: 25 },
+        { min: 31, max: 50, niveau: 'Intermédiaire',   score: 45 },
+        { min: 51, max: 80, niveau: 'Avancé',          score: 70 },
+        { min: 81, max: 120,niveau: 'Élite',           score: 90 },
+        { min: 121,max: 999,niveau: 'Légende',         score: 100 }
       ],
       dips: [
-        { min: 0,  max: 7,  niveau: 'Débutant',       score: 10 },
-        { min: 8,  max: 14, niveau: 'Novice',          score: 25 },
-        { min: 15, max: 24, niveau: 'Intermédiaire',   score: 50 },
-        { min: 25, max: 39, niveau: 'Avancé',          score: 75 },
-        { min: 40, max: 999,niveau: 'Expert',          score: 100 }
+        { min: 0,  max: 5,  niveau: 'Débutant',       score: 10 },
+        { min: 6,  max: 15, niveau: 'Novice',          score: 25 },
+        { min: 16, max: 25, niveau: 'Intermédiaire',   score: 45 },
+        { min: 26, max: 40, niveau: 'Avancé',          score: 70 },
+        { min: 41, max: 60, niveau: 'Élite',           score: 90 },
+        { min: 61, max: 999,niveau: 'Légende',         score: 100 }
       ],
       squats: [
-        { min: 0,  max: 19, niveau: 'Débutant',       score: 10 },
-        { min: 20, max: 39, niveau: 'Novice',          score: 25 },
-        { min: 40, max: 69, niveau: 'Intermédiaire',   score: 50 },
-        { min: 70, max: 99, niveau: 'Avancé',          score: 75 },
-        { min: 100,max: 999,niveau: 'Expert',          score: 100 }
+        { min: 0,  max: 20, niveau: 'Débutant',       score: 10 },
+        { min: 21, max: 40, niveau: 'Novice',          score: 25 },
+        { min: 41, max: 70, niveau: 'Intermédiaire',   score: 45 },
+        { min: 71, max: 100,niveau: 'Avancé',          score: 70 },
+        { min: 101,max: 150,niveau: 'Élite',           score: 90 },
+        { min: 151,max: 999,niveau: 'Légende',         score: 100 }
       ],
       plank: [
-        { min: 0,  max: 29, niveau: 'Débutant',       score: 10 },
-        { min: 30, max: 59, niveau: 'Novice',          score: 25 },
-        { min: 60, max: 119,niveau: 'Intermédiaire',   score: 50 },
-        { min: 120,max: 179,niveau: 'Avancé',          score: 75 },
-        { min: 180,max: 999,niveau: 'Expert',          score: 100 }
+        { min: 0,  max: 30, niveau: 'Débutant',       score: 10 },
+        { min: 31, max: 60, niveau: 'Novice',          score: 25 },
+        { min: 61, max: 120,niveau: 'Intermédiaire',   score: 45 },
+        { min: 121,max: 180,niveau: 'Avancé',          score: 70 },
+        { min: 181,max: 300,niveau: 'Élite',           score: 90 },
+        { min: 301,max: 999,niveau: 'Légende',         score: 100 }
       ]
     };
+
+    /* Pondérations (total = 100%) */
+    var POIDS = { pullups: 0.40, dips: 0.25, pushups: 0.20, squats: 0.15 };
 
     function getScore(key, val) {
       if (!val || val <= 0) return 0;
@@ -283,10 +363,10 @@
     }
 
     function getNiveauLabel(score) {
-      if (score >= 90) return { label: 'Expert',        emoji: '🏆', color: '#F59E0B' };
+      if (score >= 90) return { label: 'Élite',         emoji: '🏆', color: '#F59E0B' };
       if (score >= 70) return { label: 'Avancé',        emoji: '⚡', color: '#3B82F6' };
       if (score >= 45) return { label: 'Intermédiaire', emoji: '💪', color: '#10B981' };
-      if (score >= 20) return { label: 'Novice',        emoji: '🔥', color: '#8B5CF6' };
+      if (score >= 25) return { label: 'Novice',        emoji: '🔥', color: '#8B5CF6' };
       return               { label: 'Débutant',        emoji: '🌱', color: '#6B7280' };
     }
 
@@ -315,9 +395,15 @@
           Gainage:   getScore('plank',   plank)
         };
 
-        /* Score global (moyenne pondérée) */
-        var filled = Object.values(scores).filter(function(v) { return v > 0; });
-        var avgScore = filled.length > 0 ? Math.round(filled.reduce(function(a, b) { return a + b; }, 0) / filled.length) : 0;
+        /* Score global pondéré : tractions 40%, dips 25%, pompes 20%, squats 15% */
+        var weightedSum = 0, weightTotal = 0;
+        var scoreMap = {pullups: scores.Tractions, dips: scores.Dips, pushups: scores.Pompes, squats: scores.Squats};
+        for (var k in POIDS) {
+          if (scoreMap[k] > 0) { weightedSum += scoreMap[k] * POIDS[k]; weightTotal += POIDS[k]; }
+        }
+        /* Le gainage ajoute un bonus (max +5 points) */
+        var gainageBonus = Math.round(scores.Gainage * 0.05);
+        var avgScore = weightTotal > 0 ? Math.min(100, Math.round(weightedSum / weightTotal) + gainageBonus) : 0;
         var niveau = getNiveauLabel(avgScore);
 
         /* Identifier points forts et faibles */
@@ -352,17 +438,19 @@
         }
 
         if (axesEl) {
+          var valeurs = {Tractions: pullups+' reps', Pompes: pushups+' reps', Dips: dips+' reps', Squats: squats+' reps', Gainage: plank+'s'};
+          var coefs = {Tractions: '40%', Dips: '25%', Pompes: '20%', Squats: '15%', Gainage: 'bonus'};
           var html = '';
           Object.entries(scores).forEach(function(entry) {
             var key = entry[0], val = entry[1];
             if (val === 0 && key !== 'Tractions' && key !== 'Pompes') return;
-            var barColor = val >= 75 ? '#10B981' : val >= 50 ? '#3B82F6' : val >= 25 ? '#F59E0B' : '#EF4444';
+            var barColor = val >= 90 ? '#F59E0B' : val >= 70 ? '#10B981' : val >= 45 ? '#3B82F6' : val >= 25 ? '#8B5CF6' : '#EF4444';
             html += '<div class="test-axis-row">' +
-              '<span class="test-axis-label">' + key + '</span>' +
+              '<span class="test-axis-label">' + key + ' <small style="color:#9CA3AF;">(' + coefs[key] + ')</small></span>' +
               '<div class="test-axis-bar-track">' +
                 '<div class="test-axis-bar-fill" style="width:' + val + '%;background:' + barColor + '"></div>' +
               '</div>' +
-              '<span class="test-axis-pct">' + val + '%</span>' +
+              '<span class="test-axis-pct">' + valeurs[key] + '</span>' +
             '</div>';
           });
           axesEl.innerHTML = html;
@@ -403,10 +491,10 @@
     .test-input:focus { border-color: #2563EB; }
     .test-axes-grid { display: flex; flex-direction: column; gap: 10px; }
     .test-axis-row { display: flex; align-items: center; gap: 10px; }
-    .test-axis-label { width: 90px; font-size: 0.82rem; color: #6B7280; text-align: right; }
+    .test-axis-label { width: 120px; font-size: 0.82rem; color: #6B7280; text-align: right; }
     .test-axis-bar-track { flex: 1; height: 8px; background: #F3F4F6; border-radius: 4px; overflow: hidden; }
     .test-axis-bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
-    .test-axis-pct { width: 38px; font-size: 0.82rem; font-weight: 700; color: #0D0D0D; text-align: right; }
+    .test-axis-pct { width: 60px; font-size: 0.82rem; font-weight: 700; color: #0D0D0D; text-align: right; }
     /* Section Test de Niveau */
     #test-niveau-section {
       background-color: #FFFFFF;

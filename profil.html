@@ -165,7 +165,15 @@
             <div class="forge-form-section-title">Niveau</div>
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
               <span style="font-size:18px;font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;" data-profil="niveau">—</span>
-              <a href="onboarding.html" style="font-size:13px;font-weight:600;text-decoration:underline;color:var(--gris-texte);">Refaire le test</a>
+              <a href="analytics.html#test-niveau-section" style="font-size:13px;font-weight:600;text-decoration:underline;color:var(--gris-texte);">Refaire le test</a>
+            </div>
+          </div>
+
+          <!-- Performances réelles -->
+          <div class="forge-form-section">
+            <div class="forge-form-section-title">Performances réelles</div>
+            <div id="profil-perfs" style="display:flex;flex-direction:column;gap:10px;">
+              <p style="font-size:13px;color:var(--gris-texte);text-align:center;">Fais le <a href="analytics.html#test-niveau-section" style="color:var(--noir);font-weight:600;text-decoration:underline;">test de niveau</a> pour afficher tes performances.</p>
             </div>
           </div>
 
@@ -262,6 +270,37 @@ document.addEventListener('DOMContentLoaded', function(){
     btn.style.background = '#0A0A0A';
     setTimeout(function(){btn.textContent=orig;btn.style.background='';},2000);
   });
+
+  /* ── Performances réelles (depuis test de niveau) ── */
+  (function(){
+    var tn=null;
+    try{tn=JSON.parse(localStorage.getItem('sw_test_niveau')||'null');}catch(e){}
+    if(!tn){try{var sw=JSON.parse(localStorage.getItem('sw_test_niveau'));if(sw)tn=sw;}catch(e2){}}
+    var container=document.getElementById('profil-perfs');
+    if(!container||!tn) return;
+    var items=[
+      {label:'Tractions',value:tn.pullups,unit:'reps',icon:'🏋️'},
+      {label:'Pompes',value:tn.pushups,unit:'reps',icon:'💪'},
+      {label:'Dips',value:tn.dips,unit:'reps',icon:'🔥'},
+      {label:'Squats',value:tn.squats,unit:'reps',icon:'🦵'},
+      {label:'Gainage',value:tn.gainage,unit:'secondes',icon:'⏱'}
+    ];
+    var hasData=items.some(function(it){return it.value>0;});
+    if(!hasData) return;
+    var html='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">';
+    items.forEach(function(it){
+      if(!it.value&&it.value!==0) return;
+      html+='<div style="background:var(--gris-clair);border-radius:10px;padding:14px;text-align:center;">';
+      html+='<div style="font-size:20px;margin-bottom:4px;">'+it.icon+'</div>';
+      html+='<div style="font-family:\'Barlow Condensed\',sans-serif;font-weight:800;font-size:1.5rem;color:var(--noir);">'+it.value+'</div>';
+      html+='<div style="font-size:12px;color:var(--gris-texte);font-weight:600;">'+it.label+'</div>';
+      html+='<div style="font-size:11px;color:var(--gris-texte);">'+it.unit+'</div>';
+      html+='</div>';
+    });
+    html+='</div>';
+    if(tn.niveau_label) html+='<div style="text-align:center;margin-top:12px;font-size:13px;color:var(--gris-texte);">Niveau : <strong style="color:var(--noir);">'+tn.niveau_label+'</strong> · Score : <strong>'+tn.score_global+'/100</strong> · Test du '+tn.date+'</div>';
+    container.innerHTML=html;
+  })();
 });
 </script>
 

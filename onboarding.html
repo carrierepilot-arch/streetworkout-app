@@ -16,7 +16,7 @@
 <body class="forge-ob-body">
 
 <!-- ═══════════════════════════════════════════════════════
-     STEPS 1–8
+     STEPS 1–10
      ═══════════════════════════════════════════════════════ -->
 <div id="ob-steps-wrapper" style="min-height:100vh;display:flex;flex-direction:column;">
 
@@ -30,6 +30,8 @@
     <div class="forge-ob-progress-seg" data-seg="5"></div>
     <div class="forge-ob-progress-seg" data-seg="6"></div>
     <div class="forge-ob-progress-seg" data-seg="7"></div>
+    <div class="forge-ob-progress-seg" data-seg="8"></div>
+    <div class="forge-ob-progress-seg" data-seg="9"></div>
   </div>
 
   <!-- Top bar -->
@@ -37,7 +39,7 @@
     <button class="forge-ob-back" id="ob-back" aria-label="Retour" style="visibility:hidden;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
-    <span class="forge-ob-step-num" id="ob-step-num">1 / 8</span>
+    <span class="forge-ob-step-num" id="ob-step-num">1 / 10</span>
   </div>
 
   <!-- ÉTAPE 1 — Objectif -->
@@ -127,8 +129,34 @@
     </div>
   </div>
 
-  <!-- ÉTAPE 8 — Équipement -->
+  <!-- ÉTAPE 8 — Durée par séance -->
   <div class="forge-ob-content ob-screen" id="step-8">
+    <p class="forge-ob-question">Combien de temps par séance ?</p>
+    <div class="forge-ob-options" data-single="duree_seance">
+      <button class="forge-ob-option" data-value="30">30 minutes</button>
+      <button class="forge-ob-option" data-value="45">45 minutes</button>
+      <button class="forge-ob-option" data-value="60">1 heure</button>
+      <button class="forge-ob-option" data-value="90">1h30</button>
+      <button class="forge-ob-option" data-value="120">2 heures ou plus</button>
+    </div>
+  </div>
+
+  <!-- ÉTAPE 9 — Skills ciblés (optionnel) -->
+  <div class="forge-ob-content ob-screen" id="step-9">
+    <p class="forge-ob-question">Quel(s) skill(s) veux-tu travailler ?</p>
+    <p style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:8px;">Optionnel — sélectionne 0 à 3 skills</p>
+    <div class="forge-ob-options multi-col" data-multi="skills_cibles">
+      <button class="forge-ob-option" data-value="front_lever">Front Lever</button>
+      <button class="forge-ob-option" data-value="muscle_up">Muscle-Up</button>
+      <button class="forge-ob-option" data-value="handstand">Handstand / Poirier</button>
+      <button class="forge-ob-option" data-value="planche">Planche</button>
+      <button class="forge-ob-option" data-value="human_flag">Human Flag</button>
+      <button class="forge-ob-option" data-value="l_sit">L-Sit</button>
+    </div>
+  </div>
+
+  <!-- ÉTAPE 10 — Équipement -->
+  <div class="forge-ob-content ob-screen" id="step-10">
     <p class="forge-ob-question">Quel équipement as-tu ?</p>
     <div class="forge-ob-options" data-multi="equipement">
       <button class="forge-ob-option" data-value="Aucun">Aucun — poids du corps uniquement</button>
@@ -165,7 +193,7 @@
 
 <script>
 (function(){
-  var STEPS=8, cur=1;
+  var STEPS=10, cur=1;
   var profil={};
   var tailleCm=175, tailleUnit='cm', poidsKg=75, poidsUnit='kg', annee=1995;
 
@@ -191,7 +219,7 @@
 
   function isValid(step){
     // Étapes avec règles/drum : toujours valides
-    if(step===3||step===4||step===5) return true;
+    if(step===3||step===4||step===5||step===9) return true;
     var el=document.getElementById('step-'+step);
     if(!el) return true;
     var grp=el.querySelector('[data-single],[data-multi]');
