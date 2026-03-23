@@ -502,7 +502,7 @@
 }
 
 .timer-tab--active {
-  background: var(--bg-card, #1a1a1a);
+  background: var(--bg-card, #FFFFFF);
   color: var(--text-primary);
   box-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
@@ -741,7 +741,7 @@
 }
 
 .cal-modal-content {
-  background: var(--bg-card, #1a1a1a);
+  background: var(--bg-card, #FFFFFF);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 16px;
   padding: 24px;

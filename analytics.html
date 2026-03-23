@@ -392,59 +392,67 @@
     .test-niveau-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     @media (max-width: 480px) { .test-niveau-grid { grid-template-columns: 1fr; } }
     .test-field { display: flex; flex-direction: column; gap: 6px; }
-    .test-label { font-size: 0.85rem; font-weight: 600; color: #94a3b8; }
+    .test-label { font-size: 0.85rem; font-weight: 600; color: #6B7280; }
     .test-input {
-      background: #2a2a3e;
-      border: 1px solid rgba(255,255,255,0.15);
+      background: #F3F4F6;
+      border: 1px solid #E5E7EB;
       border-radius: 10px;
-      color: #e2e8f0;
+      color: #0D0D0D;
       font-size: 1rem;
       padding: 10px 14px;
       width: 100%;
       outline: none;
       transition: border-color 0.2s;
     }
-    .test-input::placeholder { color: #64748b; }
-    .test-input:focus { border-color: #6C63FF; }
+    .test-input::placeholder { color: #9CA3AF; }
+    .test-input:focus { border-color: #2563EB; }
     .test-axes-grid { display: flex; flex-direction: column; gap: 10px; }
     .test-axis-row { display: flex; align-items: center; gap: 10px; }
-    .test-axis-label { width: 90px; font-size: 0.82rem; color: #94a3b8; text-align: right; }
-    .test-axis-bar-track { flex: 1; height: 8px; background: rgba(255,255,255,0.12); border-radius: 4px; overflow: hidden; }
+    .test-axis-label { width: 90px; font-size: 0.82rem; color: #6B7280; text-align: right; }
+    .test-axis-bar-track { flex: 1; height: 8px; background: #F3F4F6; border-radius: 4px; overflow: hidden; }
     .test-axis-bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
-    .test-axis-pct { width: 38px; font-size: 0.82rem; font-weight: 700; color: #e2e8f0; text-align: right; }
-    /* Section Test de Niveau — fond sombre, texte clair */
+    .test-axis-pct { width: 38px; font-size: 0.82rem; font-weight: 700; color: #0D0D0D; text-align: right; }
+    /* Section Test de Niveau */
     #test-niveau-section {
-      background-color: #1e1e2e;
-      color: #e2e8f0;
+      background-color: #FFFFFF;
+      color: #0D0D0D;
+      border: 1px solid #E5E7EB;
+      border-radius: 16px;
     }
-    #test-niveau-section h3 { color: #ffffff; }
-    #test-niveau-section p { color: #94a3b8; }
-    /* Stats cards — fond sombre */
+    #test-niveau-section h3 { color: #0D0D0D; }
+    #test-niveau-section p { color: #6B7280; }
+    /* Stats cards */
     #analytics-overview .stat-card {
-      background-color: #1e1e2e;
-      color: #e2e8f0;
-      border-color: rgba(255,255,255,0.1);
+      background-color: #FFFFFF;
+      color: #0D0D0D;
+      border: 1px solid #E5E7EB;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
-    #analytics-overview .stat-card-title { color: #94a3b8; }
-    #analytics-overview .stat-card-value { color: #ffffff; }
+    #analytics-overview .stat-card:nth-child(1) { border-left: 4px solid #2563EB; }
+    #analytics-overview .stat-card:nth-child(2) { border-left: 4px solid #0D9488; }
+    #analytics-overview .stat-card:nth-child(3) { border-left: 4px solid #EA580C; }
+    #analytics-overview .stat-card:nth-child(4) { border-left: 4px solid #10B981; }
+    #analytics-overview .stat-card-title { color: #6B7280; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; }
+    #analytics-overview .stat-card-value { color: #0D0D0D; font-size: 28px; font-weight: 800; }
     /* Bouton principal */
     #btn-test-niveau {
-      background: #6C63FF;
+      background: #2563EB;
       color: #ffffff !important;
     }
     /* Session history */
     .session-history-list { display: flex; flex-direction: column; gap: 10px; }
-    .sh-item { background: #1e1e2e; border-radius: 12px; padding: 14px 16px; color: #e2e8f0; }
+    .sh-item { background: #F9FAFB; border-radius: 12px; padding: 14px 16px; color: #0D0D0D; border: 1px solid #F3F4F6; }
     .sh-item-header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
-    .sh-item-date { font-size: 0.82rem; color: #64748b; }
-    .sh-item-type { font-size: 0.9rem; font-weight: 700; color: #e2e8f0; flex: 1; }
-    .sh-item-stats { font-size: 0.82rem; color: #94a3b8; display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
-    .sh-progress-bar { height: 4px; background: rgba(255,255,255,0.12); border-radius: 2px; overflow: hidden; }
+    .sh-item-date { font-size: 0.82rem; color: #9CA3AF; }
+    .sh-item-type { font-size: 0.9rem; font-weight: 700; color: #0D0D0D; flex: 1; }
+    .sh-item-stats { font-size: 0.82rem; color: #6B7280; display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    .sh-progress-bar { height: 4px; background: #F3F4F6; border-radius: 2px; overflow: hidden; }
     .sh-progress-fill { height: 100%; border-radius: 2px; transition: width 0.4s; }
     /* Analytics table */
     .analytics-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .analytics-table th { padding: 8px 10px; text-align: left; color: #94a3b8; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.12); font-size: 11px; text-transform: uppercase; }
-    .analytics-table td { padding: 10px 10px; border-bottom: 1px solid rgba(255,255,255,0.06); color: var(--text-primary); }
+    .analytics-table th { padding: 8px 10px; text-align: left; color: #6B7280; font-weight: 600; border-bottom: 1px solid #E5E7EB; font-size: 11px; text-transform: uppercase; }
+    .analytics-table td { padding: 10px 10px; border-bottom: 1px solid #F3F4F6; color: #0D0D0D; }
   </style>
   <link rel="stylesheet" href="css/chatbot.css">
   <script src="js/chatbot.js"></script>

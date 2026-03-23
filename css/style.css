@@ -269,7 +269,36 @@ body {
 .mobile-menu-header, .mobile-menu-links,
 .menu-backdrop, .app-layout > .sidebar { display: none !important; }
 
+/* ======= RESET LAYOUT — forcer centrage sans décalage ======= */
+/* Annule le margin-left:240px de layout.css sur desktop */
+.app-layout {
+  display: block !important;
+  padding-top: 0 !important;
+}
+.app-layout .main-content,
+.main-content {
+  margin-left: 0 !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  padding-top: 16px !important;
+  padding-bottom: 100px !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  min-height: auto !important;
+}
+
 /* ======= RESPONSIVE ======= */
 @media (min-width: 480px) {
   body { border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+}
+@media (min-width: 1024px) {
+  /* override la règle layout.css qui ajoute margin-left:240px */
+  .app-layout .main-content {
+    margin-left: 0 !important;
+    padding: 24px 16px 100px !important;
+  }
+  /* ne jamais montrer la sidebar sur ces pages */
+  .sidebar { display: none !important; }
+  /* garder le bottom nav visible */
+  .bottom-nav { display: flex !important; }
 }
