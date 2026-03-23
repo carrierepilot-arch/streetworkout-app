@@ -2,312 +2,306 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Entraînement — Street Workout</title>
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/layout.css">
-  <link rel="stylesheet" href="css/animations.css">
-  <link rel="stylesheet" href="css/pages/entrainement.css">
-  <link rel="stylesheet" href="css/pages/streetlifting.css">
-  <link rel="stylesheet" href="css/pages/programme.css">
-  <link rel="stylesheet" href="css/workout-mode.css">
-  <link rel="stylesheet" href="css/app.css">
-  <style>
-    .page-tabs{display:flex;gap:0;border-bottom:2px solid var(--border,rgba(15,23,42,.1));margin-bottom:28px}
-    .page-tab{background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;padding:12px 24px;font-size:.95rem;font-weight:600;color:var(--text-muted,#64748B);cursor:pointer;font-family:inherit;transition:color .15s,border-color .15s}
-    .page-tab:hover{color:var(--text-primary,#0F172A)}
-    .page-tab.active{color:var(--primary,#2563EB);border-bottom-color:var(--primary,#2563EB)}
-  </style></head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Exercices à la Maison — Street Workout</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
 <body>
 
-  <!-- Top Navigation -->
-  <nav class="top-nav">
-    <a href="index.html" class="nav-logo">SW</a>
-    <div class="nav-links">
-      <a href="profil.html">Profil</a>
-      <a href="progression.html">Progression</a>
-      <a href="entrainement.html" class="active">Entraînement</a>
-      <a href="analytics.html">Analytics</a>
-      <a href="abonnement.html">Plans</a>
-      <a href="#" data-action="logout">Déconnexion</a>
-    </div>
-    <button class="hamburger" id="hamburger" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-  </nav>
+<!-- HEADER -->
+<header class="app-header">
+  <h1>EXERCICES<br>À LA MAISON</h1>
+  <div class="header-actions">
+    <span class="icon-flame">🔥</span>
+    <button class="btn-pro">👑 PRO ↑</button>
+  </div>
+</header>
 
-  <!-- Mobile Menu -->
-  <div class="mobile-menu" id="mobile-menu">
-    <div class="mobile-menu-header">
-      <span class="nav-logo">SW</span>
-      <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Fermer">✕</button>
+<!-- BARRE RECHERCHE -->
+<div class="search-bar">
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+       viewBox="0 0 24 24" fill="none" stroke="currentColor"
+       stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  </svg>
+  <input type="text" id="searchInput" placeholder="Rechercher dans les entraînements, les programmes..." autocomplete="off">
+</div>
+
+<!-- OBJECTIF HEBDOMADAIRE -->
+<section class="weekly-section">
+  <div class="section-header">
+    <h2>Objectif hebdomadaire</h2>
+    <span class="goal-counter" id="weeklyCounter">0/3 ✏️</span>
+  </div>
+  <div class="week-row" id="weekRow"></div>
+  <div class="motivation-card">
+    <div class="coach-avatar">💪</div>
+    <span id="motivationText">Pour te reconstruire, le meilleur moment est MAINTENANT !</span>
+  </div>
+</section>
+
+<!-- DÉFIS -->
+<section class="defi-section">
+  <h2>Défi</h2>
+  <div class="defi-scroll">
+    <div class="defi-card blue">
+      <img class="defi-card-bg"
+           src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&q=80&auto=format&fit=crop"
+           alt="Full Body" loading="lazy">
+      <div class="defi-card-content">
+        <div class="defi-days">28 JOURS</div>
+        <div class="defi-title">DÉFI DE CORPS ENTIER</div>
+        <div class="defi-desc">Commencez votre parcours pour cibler tous les groupes musculaires en 4 semaines !</div>
+        <button class="defi-btn">DÉBUT</button>
+      </div>
     </div>
-    <div class="mobile-menu-links">
-      <a href="profil.html">Profil</a>
-      <a href="progression.html">Progression</a>
-      <a href="entrainement.html" class="active">Entraînement</a>
-      <a href="analytics.html">Analytics</a>
-      <a href="abonnement.html">Plans</a>
-      <a href="#" data-action="logout">Déconnexion</a>
+    <div class="defi-card teal">
+      <img class="defi-card-bg"
+           src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=80&auto=format&fit=crop"
+           alt="Musculation" loading="lazy">
+      <div class="defi-card-content">
+        <div class="defi-days">30 JOURS</div>
+        <div class="defi-title">DEVENEZ MUSCLÉ AVEC LES HALTÈRES</div>
+        <div class="defi-desc">Utilisez les haltères pour développer des muscles plus gros en 30 jours !</div>
+        <button class="defi-btn">DÉBUT</button>
+      </div>
+    </div>
+    <div class="defi-card dark">
+      <img class="defi-card-bg"
+           src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80&auto=format&fit=crop"
+           alt="Abdos" loading="lazy">
+      <div class="defi-card-content">
+        <div class="defi-days">14 JOURS</div>
+        <div class="defi-title">BRÛLE LA GRAISSE DU VENTRE</div>
+        <div class="defi-desc">Exercices intenses pour abdos — travaille ton tronc rapidement !</div>
+        <button class="defi-btn">DÉBUT</button>
+      </div>
+    </div>
+    <div class="defi-card orange">
+      <img class="defi-card-bg"
+           src="https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=400&q=80&auto=format&fit=crop"
+           alt="Perte de poids" loading="lazy">
+      <div class="defi-card-content">
+        <div class="defi-days">30 JOURS</div>
+        <div class="defi-title">PERTE DE POIDS POUR HOMMES</div>
+        <div class="defi-desc">Perdez vos poignées d'amour en seulement 5 à 10 minutes par jour !</div>
+        <button class="defi-btn">DÉBUT</button>
+      </div>
     </div>
   </div>
-  <div class="menu-backdrop" id="menu-backdrop"></div>
+</section>
 
-  <!-- App Layout -->
-  <div class="app-layout">
-    <!-- Sidebar (desktop) -->
-    <aside class="sidebar">
-      <div class="sidebar-links">
-        <a href="profil.html">Profil</a>
-        <a href="progression.html">Progression</a>
-        <a href="entrainement.html" class="active">Entraînement</a>
-        <a href="analytics.html">Analytics</a>
-        <a href="abonnement.html">Plans</a>
-        <a href="#" data-action="logout">Déconnexion</a>
-      </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content">
-
-      <!-- Navigation par onglets -->
-      <div class="page-tabs">
-        <button class="page-tab active" data-tab="seances">Séances</button>
-        <button class="page-tab" data-tab="programme">Générer</button>
-        <button class="page-tab" data-tab="streetlifting">Lestage</button>
-      </div>
-
-      <!-- ═══════════ ONGLET 1 : Séances ═══════════ -->
-      <div id="tab-seances" class="tab-pane">
-
-        <h1 class="reveal">Entraînement</h1>
-
-        <!-- Agenda hebdomadaire -->
-        <section class="card reveal">
-          <h2>Cette semaine</h2>
-          <div id="weekly-calendar"></div>
-        </section>
-
-        <!-- Bouton lancer séance du jour -->
-        <section class="reveal">
-          <div id="today-workout-card" class="today-card"></div>
-        </section>
-
-        <!-- Planning hebdomadaire éditable -->
-        <section class="card reveal">
-          <h2>Programme de la semaine</h2>
-          <div class="planning-grid" id="planning-grid"></div>
-        </section>
-
-        <!-- Statut des APIs -->
-        <div class="api-status-panel" id="apiStatusPanel">
-          <div class="api-status-header">
-            <span class="api-status-title">⚡ Statut des APIs</span>
-            <button class="api-test-btn" onclick="testAllAPIs()">Tester</button>
-          </div>
-          <div class="api-status-list" id="apiStatusList">
-            <!-- rempli par JS -->
-          </div>
-        </div>
-
-        <!-- Séance du jour + Timer -->
-        <div class="training-layout">
-          <div class="training-main">
-            <section class="card session-section reveal">
-              <h2>Séance du jour</h2>
-              <h3 class="session-title" id="session-title"></h3>
-              <p class="session-duree">Durée estimée : <span id="dureeBadge">—</span></p>
-              <div id="session-content"></div>
-              <div class="save-session-wrap">
-                <button class="btn btn-primary" id="save-session">Sauvegarder la séance</button>
-              </div>
-            </section>
-          </div>
-          <div class="training-aside">
-            <section class="card timer-section reveal">
-              <h2>Timer</h2>
-              <div id="timer-container"></div>
-            </section>
-          </div>
-        </div>
-
-        <!-- Historique des séances -->
-        <section class="card reveal">
-          <h2>Historique des séances</h2>
-          <div class="history-list" id="history-list"></div>
-        </section>
-
-      </div><!-- /tab-seances -->
-
-      <!-- ═══════════ ONGLET 2 : Générer un programme ═══════════ -->
-      <div id="tab-programme" class="tab-pane" style="display:none">
-
-        <!-- Sélecteur de type de séance -->
-        <section class="section reveal">
-          <h1 style="margin-bottom:4px;">Générer un programme</h1>
-          <p style="color:var(--text-muted);margin-bottom:20px;">Adapté à ton niveau, ton équipement et tes objectifs</p>
-          <div class="session-type-grid" id="session-type-grid"></div>
-        </section>
-
-        <!-- Paramètres de génération -->
-        <section class="section reveal" id="section-params" style="display:none">
-          <div class="params-card">
-            <div class="param-group">
-              <label class="form-label">Jours disponibles par semaine</label>
-              <div class="days-selector" id="days-selector"></div>
-            </div>
-            <div class="param-group">
-              <label class="form-label" for="duration-select">⏱ Durée souhaitée</label>
-              <select id="duration-select" class="form-input">
-                <option value="5">5 min (Express)</option>
-                <option value="15">15 min (Court)</option>
-                <option value="30">30 min</option>
-                <option value="45">45 min</option>
-                <option value="60" selected>60 min (recommandé)</option>
-                <option value="90">90 min</option>
-              </select>
-            </div>
-            <div class="param-group">
-              <label class="form-label" for="niveau-select">🎯 Niveau</label>
-              <select id="niveau-select" class="form-input">
-                <option value="debutant">Débutant</option>
-                <option value="intermediaire" selected>Intermédiaire</option>
-                <option value="avance">Avancé</option>
-                <option value="elite">Élite</option>
-              </select>
-            </div>
-            <div class="param-group">
-              <label class="form-label" for="objectif-select">💪 Objectif</label>
-              <select id="objectif-select" class="form-input">
-                <option value="street_workout" selected>Street Workout</option>
-                <option value="force">Force maximale</option>
-                <option value="hypertrophie">Hypertrophie</option>
-                <option value="endurance">Endurance</option>
-              </select>
-            </div>
-            <button class="btn btn-primary" id="btn-generate" style="width:100%;margin-top:12px;padding:14px;font-size:1rem;border-radius:12px;">
-              ⚡ Générer mon programme
-            </button>
-          </div>
-        </section>
-
-        <!-- Programme généré -->
-        <section class="section reveal card" id="section-result" style="display:none">
-          <div id="program-header"></div>
-          <div class="program-block">
-            <div class="program-block-title">Échauffement</div>
-            <div id="warmup-list"></div>
-          </div>
-          <div class="program-block">
-            <div class="program-block-title">Exercices</div>
-            <div id="exercises-list"></div>
-          </div>
-          <div class="program-block">
-            <div class="program-block-title">Retour au calme</div>
-            <div id="cooldown-list"></div>
-          </div>
-          <div class="program-actions">
-            <button class="btn btn-primary" id="btn-start-program">Démarrer la séance</button>
-            <button class="btn btn-secondary" id="btn-save-program">Sauvegarder</button>
-            <button class="btn btn-secondary" id="btn-regenerate">Regénérer</button>
-          </div>
-        </section>
-
-        <!-- Programmes sauvegardés -->
-        <section class="section reveal">
-          <h2 style="margin-bottom:12px;">Programmes récents</h2>
-          <div id="programs-history"></div>
-        </section>
-
-      </div><!-- /tab-programme -->
-
-      <!-- ═══════════ ONGLET 3 : Streetlifting ═══════════ -->
-      <div id="tab-streetlifting" class="tab-pane" style="display:none">
-
-        <h1 style="margin-bottom:4px;">Entraînement Lesté</h1>
-        <p style="color:var(--text-muted);margin-bottom:20px;">Tracking des charges et records personnels pour les exercices avec lest (tractions, dips, pompes…).</p>
-
-        <!-- Equipment Section -->
-        <div class="card" style="margin-bottom:20px;">
-          <h3 style="margin-bottom:8px;">Mes équipements</h3>
-          <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:16px;">Sélectionne le matériel que tu possèdes.</p>
-          <div class="equipment-list" id="equipment-list"></div>
-        </div>
-
-        <!-- Record Forms & Tables -->
-        <div id="record-forms"></div>
-
-        <!-- Progress Chart -->
-        <div class="card" style="margin-top:20px;">
-          <h3 style="margin-bottom:12px;">Évolution du volume (charge × reps)</h3>
-          <div id="sl-chart-container"></div>
-        </div>
-
-      </div><!-- /tab-streetlifting -->
-
-    </main>
+<!-- EXERCICES CIBLÉS -->
+<section class="targeted-section">
+  <h2>Exercices ciblés</h2>
+  <div class="pills-row" id="pillsRow">
+    <button class="pill active" data-part="waist">Abdos</button>
+    <button class="pill" data-part="upper arms">Bras</button>
+    <button class="pill" data-part="chest">Poitrine</button>
+    <button class="pill" data-part="upper legs">Jambes</button>
+    <button class="pill" data-part="back">Épaules et dos</button>
   </div>
+  <div class="exercise-list" id="exerciseList">
+    <p style="padding:24px 16px;color:#9CA3AF;text-align:center;font-size:14px;">Chargement des exercices…</p>
+  </div>
+</section>
 
-  <!-- Bottom Navigation -->
-  <nav class="bottom-nav">
-    <a href="index.html" class="nav-item">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
-      <span>Entraîner</span>
-    </a>
-    <a href="progression.html" class="nav-item">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-      <span>Découvrir</span>
-    </a>
-    <a href="analytics.html" class="nav-item">
-      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      <span>Rapport</span>
-    </a>
-    <a href="profil.html" class="nav-item">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-      <span>Profil</span>
-    </a>
-  </nav>
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a href="entrainement.html" class="nav-item active">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <span>Entraînement</span>
+  </a>
+  <a href="progression.html" class="nav-item">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+    <span>Découvrir</span>
+  </a>
+  <a href="analytics.html" class="nav-item">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    <span>Rapport</span>
+  </a>
+  <a href="profil.html" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Paramètres</span>
+  </a>
+</nav>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script src="js/supabase-config.js"></script>
-  <script src="js/storage.js"></script>
-  <script>if(typeof SW!=='undefined'&&!(SW.load('userProfile')||{}).setupDone){window.location.href='onboarding.html';}</script>
-  <script src="js/auth.js"></script>
-  <script src="js/nav.js"></script>
-  <script src="js/timer.js"></script>
-  <script src="js/exercise-visuals.js"></script>
-  <script src="js/calendar.js"></script>
-  <script src="js/sw-database.js"></script>
-  <script src="js/wger-api.js"></script>
-  <script src="js/exercisedb-api.js"></script>
-  <script src="js/api-merger.js"></script>
-  <script src="js/wger-client.js"></script>
-  <script src="js/program-generator.js"></script>
-  <script src="js/workout-mode.js"></script>
-  <script src="js/programme.js"></script>
-  <script src="js/streetlifting.js"></script>
-  <script src="js/entrainement.js"></script>
-  <script>
-    (function(){
-      document.addEventListener('DOMContentLoaded',function(){
-        var tabs=document.querySelectorAll('.page-tab');
-        function switchTab(n){
-          tabs.forEach(function(t){t.classList.toggle('active',t.dataset.tab===n);});
-          document.querySelectorAll('.tab-pane').forEach(function(p){p.style.display='none';});
-          var pane=document.getElementById('tab-'+n);
-          if(pane)pane.style.display='';
-        }
-        tabs.forEach(function(t){t.addEventListener('click',function(){switchTab(t.dataset.tab);});});
-        var p=new URLSearchParams(window.location.search).get('tab');
-        if(p)switchTab(p);
-        var h=window.location.hash.replace('#','');
-        if(h&&document.getElementById('tab-'+h))switchTab(h);
-      });
-    })();
-  </script>
-  <link rel="stylesheet" href="css/chatbot.css">
-  <script src="js/chatbot.js"></script>
+<script src="js/storage.js"></script>
+<script>
+  if (typeof SW !== 'undefined' && !(SW.load('userProfile') || {}).setupDone) {
+    window.location.href = 'onboarding.html';
+  }
+</script>
+<script src="js/exercisedb-api.js"></script>
+<script>
+/* --- SEMAINE --- */
+(function buildWeek() {
+  var row = document.getElementById('weekRow');
+  if (!row) return;
+  var today = new Date();
+  var days = [], startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - ((today.getDay() + 6) % 7)); // lundi
+  for (var i = 0; i < 7; i++) {
+    var d = new Date(startOfWeek);
+    d.setDate(startOfWeek.getDate() + i);
+    days.push(d);
+  }
+  var labels = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  var seances = JSON.parse(localStorage.getItem('sw_seances') || '[]');
+  // aussi lire sw_sessions (clé alternative)
+  var sessions2 = (typeof SW !== 'undefined' && SW.load('sessions')) || [];
+  var allDates = new Set();
+  seances.forEach(function(s) { if (s.date) allDates.add(s.date.substring(0,10)); });
+  sessions2.forEach(function(s) { if (s.date) allDates.add(s.date.substring(0,10)); });
+  var html = '';
+  var doneCount = 0;
+  days.forEach(function(d, i) {
+    var dateStr = d.toISOString().slice(0,10);
+    var isToday = d.toDateString() === today.toDateString();
+    var done = allDates.has(dateStr);
+    if (done) doneCount++;
+    var cls = 'day-item' + (isToday ? ' today' : '') + (done ? ' done' : '');
+    html += '<div class="' + cls + '">';
+    html += '<div class="day-label">' + labels[i] + '</div>';
+    html += '<div class="day-num">' + d.getDate() + '</div>';
+    html += '</div>';
+  });
+  row.innerHTML = html;
+  var counter = document.getElementById('weeklyCounter');
+  if (counter) counter.textContent = doneCount + '/3 ✏️';
+  /* prénom */
+  if (typeof SW !== 'undefined') {
+    var profile = SW.load('userProfile');
+    if (profile && profile.prenom) {
+      var mt = document.getElementById('motivationText');
+      if (mt) mt.textContent = 'Salut ' + profile.prenom + ' 👋  Continue comme ça !';
+    }
+  }
+})();
+
+/* --- EXERCICES CIBLÉS --- */
+var FALLBACK_EX = {
+  'waist':      [
+    { nom:'Crunch',                muscles:'Abdominaux' },
+    { nom:'Planche',               muscles:'Core complet' },
+    { nom:'Mountain Climber',      muscles:'Core, cardio' },
+    { nom:'Relevé de jambes',      muscles:'Abdos inférieurs' }
+  ],
+  'upper arms': [
+    { nom:'Curl biceps',           muscles:'Biceps' },
+    { nom:'Dips (chaise)',         muscles:'Triceps, épaules' },
+    { nom:'Extension triceps',     muscles:'Triceps' }
+  ],
+  'chest': [
+    { nom:'Pompes',                muscles:'Pectoraux' },
+    { nom:'Pompes diamant',        muscles:'Pectoraux, triceps' },
+    { nom:'Pompes inclinées',      muscles:'Pectoraux supérieurs' }
+  ],
+  'upper legs': [
+    { nom:'Squats',                muscles:'Quadriceps, fessiers' },
+    { nom:'Fentes avant',          muscles:'Quadriceps' },
+    { nom:'Pistol squat',          muscles:'Quadriceps, équilibre' }
+  ],
+  'back': [
+    { nom:'Tractions',             muscles:'Dorsaux, biceps' },
+    { nom:'Superman',              muscles:'Lombaires' },
+    { nom:'Rowing au sol',         muscles:'Dos moyen' }
+  ]
+};
+
+var _currentPart = 'waist';
+var _apiReady = false;
+
+function renderExerciseList(bodyPart) {
+  var list = document.getElementById('exerciseList');
+  if (!list) return;
+  var exercises = [];
+
+  if (_apiReady && typeof EXERCISEDB_API !== 'undefined' && EXERCISEDB_API.isReady()) {
+    if (bodyPart === 'back') {
+      var b = EXERCISEDB_API.getByBodyPart('back');
+      var s = EXERCISEDB_API.getByBodyPart('shoulders');
+      exercises = b.concat(s).slice(0, 10);
+    } else {
+      exercises = EXERCISEDB_API.getByBodyPart(bodyPart).slice(0, 12);
+    }
+  }
+
+  if (!exercises || exercises.length === 0) {
+    exercises = (FALLBACK_EX[bodyPart] || []).map(function(f) {
+      return { nom: f.nom, muscles: [f.muscles], gif: null };
+    });
+  }
+
+  if (!exercises.length) {
+    list.innerHTML = '<p style="padding:20px 16px;color:#9CA3AF;text-align:center;">Aucun exercice trouvé</p>';
+    return;
+  }
+
+  list.innerHTML = exercises.map(function(ex) {
+    var thumb = ex.gif
+      ? '<img class="exercise-thumb" src="' + ex.gif + '" alt="' + (ex.nom||'') + '" loading="lazy">'
+      : '<div class="exercise-thumb">💪</div>';
+    var muscleText = Array.isArray(ex.muscles) ? ex.muscles.slice(0,2).join(', ') : (ex.muscles||'');
+    var name = ex.nom ? ex.nom.charAt(0).toUpperCase() + ex.nom.slice(1) : '';
+    return '<div class="exercise-item">' +
+      thumb +
+      '<div class="exercise-info"><h3>' + name + '</h3><p>' + muscleText + '</p></div>' +
+    '</div>';
+  }).join('');
+}
+
+/* Pills */
+var pillsRow = document.getElementById('pillsRow');
+if (pillsRow) {
+  pillsRow.addEventListener('click', function(e) {
+    var btn = e.target.closest('.pill');
+    if (!btn) return;
+    pillsRow.querySelectorAll('.pill').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    _currentPart = btn.dataset.part;
+    renderExerciseList(_currentPart);
+  });
+}
+
+/* Recherche */
+var searchInput = document.getElementById('searchInput');
+if (searchInput) {
+  searchInput.addEventListener('input', function() {
+    var q = this.value.trim().toLowerCase();
+    if (!q) { renderExerciseList(_currentPart); return; }
+    var pool = (_apiReady && typeof EXERCISEDB_API !== 'undefined' && EXERCISEDB_API.isReady())
+      ? EXERCISEDB_API._exercises
+      : Object.values(FALLBACK_EX).flat().map(function(f){ return { nom: f.nom, muscles: [f.muscles||''], gif: null }; });
+    var filtered = pool.filter(function(ex) {
+      var m = Array.isArray(ex.muscles) ? ex.muscles.join(' ') : (ex.muscles||'');
+      return ex.nom.toLowerCase().indexOf(q) !== -1 || m.toLowerCase().indexOf(q) !== -1;
+    }).slice(0, 15);
+    var list = document.getElementById('exerciseList');
+    if (!list) return;
+    if (!filtered.length) { list.innerHTML = '<p style="padding:20px 16px;color:#9CA3AF;text-align:center;">Aucun résultat</p>'; return; }
+    list.innerHTML = filtered.map(function(ex) {
+      var thumb = ex.gif ? '<img class="exercise-thumb" src="' + ex.gif + '" loading="lazy">' : '<div class="exercise-thumb">💪</div>';
+      var m = Array.isArray(ex.muscles) ? ex.muscles.slice(0,2).join(', ') : (ex.muscles||'');
+      var name = ex.nom ? ex.nom.charAt(0).toUpperCase() + ex.nom.slice(1) : '';
+      return '<div class="exercise-item">' + thumb + '<div class="exercise-info"><h3>' + name + '</h3><p>' + m + '</p></div></div>';
+    }).join('');
+  });
+}
+
+/* Init ExerciseDB + render initial */
+document.addEventListener('DOMContentLoaded', function() {
+  renderExerciseList(_currentPart);
+  if (typeof EXERCISEDB_API !== 'undefined') {
+    EXERCISEDB_API.init().then(function(ok) {
+      if (ok) { _apiReady = true; renderExerciseList(_currentPart); }
+    }).catch(function() { /* silently use fallback */ });
+  }
+});
+</script>
+
 </body>
 </html>
-
