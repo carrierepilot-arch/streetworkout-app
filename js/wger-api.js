@@ -1,89 +1,75 @@
 /* ========================================
-   WGER-API.JS — Wger.de API Integration
-   Free API (no key needed)
+   WGER-API.JS — Wger via Vercel Proxy (/api/wger)
+   Clé d'authentification gérée server-side
    ======================================== */
 
 var WGER_API = {
-  baseUrl: 'https://wger.de/api/v2',
-  timeout: 5000,
+  proxyUrl: '/api/wger',
+  timeout: 7000,
   cache: {},
   cacheExpiry: 3600000, /* 1 hour */
 
-  /**
-   * Fetch exercises from Wger
-   * @param {string} language - Language code (fr, en, de)
-   * @returns {Promise<Array>}
-   */
-  async getExercises(language = 'fr') {
-    var cacheKey = 'wger_exercises_' + language;
-    var now = Date.now();
-
-    /* Return cached if valid */
-    if (this.cache[cacheKey] && (now - this.cache[cacheKey].timestamp) < this.cacheExpiry) {
-      console.log('WGER: Using cached exercises');
-      return this.cache[cacheKey].data;
-    }
-
+  /* Helper: fetch avec timeout via AbortController */
+  _fetch: async function(url) {
+    var controller = new AbortController();
+    var timer = setTimeout(function() { controller.abort(); }, this.timeout);
     try {
-      var url = this.baseUrl + '/exercise/?language=' + language + '&limit=100';
-      var response = await fetch(url, { timeout: this.timeout });
-
-      if (!response.ok) throw new Error('Wger API error: ' + response.status);
-
-      var data = await response.json();
-      var exercises = (data.results || []).map(function(ex) {
-        return {
-          id: 'wger_' + ex.id,
-          nom: ex.name,
-          description: ex.description || '',
-          category: _mapWgerCategory(ex.category),
-          muscles: _mapWgerMuscles(ex.muscles || []),
-          equipment: _mapWgerEquipment(ex.equipment || []),
-          difficulty: 'intermediate', /* Wger doesn't provide difficulty niveau */
-          source: 'wger',
-          wger_id: ex.id
-        };
-      });
-
-      /* Cache results */
-      this.cache[cacheKey] = { data: exercises, timestamp: now };
-      console.log('WGER: Loaded ' + exercises.length + ' exercises');
-      return exercises;
+      var response = await fetch(url, { signal: controller.signal });
+      clearTimeout(timer);
+      return response;
     } catch(e) {
-      console.warn('WGER API failed (non-blocking):', e.message);
-      return []; /* Return empty, fall back to local */
+      clearTimeout(timer);
+      throw e;
     }
   },
 
-  /**
-   * Fetch muscle groups from Wger
-   * @returns {Promise<Object>}
-   */
-  async getMuscles() {
-    var cacheKey = 'wger_muscles';
+  /* Fetch exercices avec infos complètes depuis le proxy */
+  async getExercises() {
+    var cacheKey = 'wger_exercises';
     var now = Date.now();
-
     if (this.cache[cacheKey] && (now - this.cache[cacheKey].timestamp) < this.cacheExpiry) {
       return this.cache[cacheKey].data;
     }
 
     try {
-      var url = this.baseUrl + '/muscle/';
-      var response = await fetch(url, { timeout: this.timeout });
+      /* exerciseinfo inclut muscles, équipement, catégorie en un seul appel */
+      var url = this.proxyUrl + '?endpoint=exerciseinfo&params=limit%3D80%26language%3D2';
+      var response = await this._fetch(url);
 
-      if (!response.ok) throw new Error('Wger muscles API error');
+      if (!response.ok) throw new Error('Wger proxy error: ' + response.status);
 
       var data = await response.json();
-      var muscles = {};
-      (data.results || []).forEach(function(m) {
-        muscles['wger_' + m.id] = { id: m.id, nom: m.name };
-      });
+      var results = data.results || [];
 
-      this.cache[cacheKey] = { data: muscles, timestamp: now };
-      return muscles;
+      var exercises = results
+        .filter(function(ex) {
+          /* Keep only exercises that have a French translation */
+          return ex.translations && ex.translations.some(function(t) { return t.language === 2; });
+        })
+        .map(function(ex) {
+          var frTranslation = ex.translations.find(function(t) { return t.language === 2; });
+          var nom = frTranslation ? frTranslation.name : (ex.name || '');
+          if (!nom || nom.trim() === '') return null;
+
+          return {
+            id: 'wger_' + ex.id,
+            nom: nom,
+            description: frTranslation ? frTranslation.description : '',
+            muscles: _mapWgerMuscles((ex.muscles || []).map(function(m) { return m.id; })),
+            equipment: _mapWgerEquipment((ex.equipment || []).map(function(e) { return e.id; })),
+            difficulty: 'intermediate',
+            source: 'wger',
+            wger_id: ex.id
+          };
+        })
+        .filter(Boolean);
+
+      this.cache[cacheKey] = { data: exercises, timestamp: now };
+      console.log('[Wger] Loaded', exercises.length, 'exercises (via proxy)');
+      return exercises;
     } catch(e) {
-      console.warn('WGER muscles API failed:', e.message);
-      return {};
+      console.warn('[Wger] API failed (non-blocking):', e.message);
+      return [];
     }
   }
 };

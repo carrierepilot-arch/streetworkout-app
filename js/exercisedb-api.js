@@ -1,162 +1,132 @@
 /* ========================================
-   EXERCISEDB-API.JS — ExerciseDB RapidAPI Integration
-   Requires RapidAPI key
+   EXERCISEDB-API.JS — ExerciseDB via Vercel Proxy
+   Clé API stockée server-side dans Vercel ENV
+   Le client appelle /api/exercisedb (jamais RapidAPI directement)
    ======================================== */
 
 var EXERCISEDB_API = {
-  baseUrl: 'https://exercisedb.p.rapidapi.com',
-  host: 'exercisedb.p.rapidapi.com',
-  timeout: 5000,
+  proxyUrl: '/api/exercisedb',
+  timeout: 7000,
   cache: {},
   cacheExpiry: 3600000, /* 1 hour */
 
-  /**
-   * Get API key from environment
-   * @returns {string|null}
-   */
-  getApiKey: function() {
-    /* Try window.__ENV first (injected by Vercel) */
-    if (typeof window !== 'undefined' && window.__ENV && window.__ENV.RAPIDAPI_KEY) {
-      return window.__ENV.RAPIDAPI_KEY;
+  /* Helper: fetch avec timeout via AbortController */
+  _fetch: async function(url) {
+    var controller = new AbortController();
+    var timer = setTimeout(function() { controller.abort(); }, this.timeout);
+    try {
+      var response = await fetch(url, { signal: controller.signal });
+      clearTimeout(timer);
+      return response;
+    } catch(e) {
+      clearTimeout(timer);
+      throw e;
     }
-    /* Try localStorage for dev */
-    if (typeof localStorage !== 'undefined') {
-      var key = localStorage.getItem('rapidapi_key');
-      if (key) return key;
-    }
-    return null;
   },
 
-  /**
-   * Fetch all exercises
-   * @returns {Promise<Array>}
-   */
+  /* Fetch all exercises (general, split into relevant bodyParts for SW) */
   async getExercises() {
-    var cacheKey = 'exercisedb_exercises';
+    var cacheKey = 'exercisedb_all';
     var now = Date.now();
-
     if (this.cache[cacheKey] && (now - this.cache[cacheKey].timestamp) < this.cacheExpiry) {
-      console.log('ExerciseDB: Using cached exercises');
       return this.cache[cacheKey].data;
     }
 
-    var apiKey = this.getApiKey();
-    if (!apiKey) {
-      console.warn('ExerciseDB: No API key available (skipping)');
-      return [];
+    /* For street workout, only fetch relevant body parts to save quota */
+    var bodyParts = ['back', 'chest', 'shoulders', 'upper arms', 'upper legs', 'waist'];
+    var allExercises = [];
+
+    for (var i = 0; i < bodyParts.length; i++) {
+      try {
+        var exercises = await this.getByBodyPart(bodyParts[i]);
+        allExercises = allExercises.concat(exercises);
+      } catch(e) {
+        console.warn('ExerciseDB bodyPart failed:', bodyParts[i], e.message);
+      }
+    }
+
+    /* Deduplicate by id */
+    var seen = {};
+    allExercises = allExercises.filter(function(ex) {
+      if (seen[ex.id]) return false;
+      seen[ex.id] = true;
+      return true;
+    });
+
+    this.cache[cacheKey] = { data: allExercises, timestamp: now };
+    console.log('[ExerciseDB] Loaded', allExercises.length, 'exercises (via proxy)');
+    return allExercises;
+  },
+
+  /* Fetch exercises by body part via proxy */
+  async getByBodyPart(bodyPart) {
+    var cacheKey = 'exercisedb_bp_' + bodyPart;
+    var now = Date.now();
+    if (this.cache[cacheKey] && (now - this.cache[cacheKey].timestamp) < this.cacheExpiry) {
+      return this.cache[cacheKey].data;
     }
 
     try {
-      var url = this.baseUrl + '/exercises?limit=100';
-      var response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'x-rapidapi-key': apiKey,
-          'x-rapidapi-host': this.host
-        },
-        timeout: this.timeout
-      });
+      var url = this.proxyUrl + '?filter=bodyPart&value=' + encodeURIComponent(bodyPart) + '&limit=50';
+      var response = await this._fetch(url);
 
-      if (!response.ok) throw new Error('ExerciseDB API error: ' + response.status);
+      if (!response.ok) return [];
 
       var exercises = await response.json();
-      var mapped = (exercises || []).map(function(ex) {
+      /* Handle proxy error response (still returns 200 with error key) */
+      if (!Array.isArray(exercises)) return [];
+
+      var mapped = exercises.map(function(ex) {
         return {
           id: 'exercisedb_' + ex.id,
           nom: ex.name || '',
-          description: '',
-          category: ex.target || 'full_body',
           muscles: _mapExerciseDBMuscles(ex.target, ex.bodyPart),
           equipment: _mapExerciseDBEquipment(ex.equipment || []),
           difficulty: 'intermediate',
-          source: 'exercisedb',
-          exercisedb_id: ex.id
+          source: 'exercisedb'
         };
       });
 
       this.cache[cacheKey] = { data: mapped, timestamp: now };
-      console.log('ExerciseDB: Loaded ' + mapped.length + ' exercises');
       return mapped;
     } catch(e) {
-      console.warn('ExerciseDB API failed (non-blocking):', e.message);
+      console.warn('[ExerciseDB] bodyPart fetch failed (non-blocking):', e.message);
       return [];
     }
   },
 
-  /**
-   * Fetch exercises by body part
-   * @param {string} bodyPart - body part name
-   * @returns {Promise<Array>}
-   */
-  async getExercisesByBodyPart(bodyPart) {
-    var apiKey = this.getApiKey();
-    if (!apiKey) return [];
-
-    try {
-      var url = this.baseUrl + '/exercises/bodyPart/' + bodyPart;
-      var response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'x-rapidapi-key': apiKey,
-          'x-rapidapi-host': this.host
-        },
-        timeout: this.timeout
-      });
-
-      if (!response.ok) return [];
-
-      var exercises = await response.json();
-      return (exercises || []).map(function(ex) {
-        return {
-          id: 'exercisedb_' + ex.id,
-          nom: ex.name || '',
-          category: ex.target || bodyPart,
-          muscles: _mapExerciseDBMuscles(ex.target, ex.bodyPart),
-          equipment: _mapExerciseDBEquipment(ex.equipment || []),
-          source: 'exercisedb'
-        };
-      });
-    } catch(e) {
-      console.warn('ExerciseDB bodyPart fetch failed:', e.message);
-      return [];
+  /* Fetch exercises by muscle target via proxy */
+  async getByTarget(target) {
+    var cacheKey = 'exercisedb_target_' + target;
+    var now = Date.now();
+    if (this.cache[cacheKey] && (now - this.cache[cacheKey].timestamp) < this.cacheExpiry) {
+      return this.cache[cacheKey].data;
     }
-  },
-
-  /**
-   * Fetch exercises by target muscle
-   * @param {string} target - muscle target
-   * @returns {Promise<Array>}
-   */
-  async getExercisesByTarget(target) {
-    var apiKey = this.getApiKey();
-    if (!apiKey) return [];
 
     try {
-      var url = this.baseUrl + '/exercises/target/' + target;
-      var response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'x-rapidapi-key': apiKey,
-          'x-rapidapi-host': this.host
-        },
-        timeout: this.timeout
-      });
+      var url = this.proxyUrl + '?filter=target&value=' + encodeURIComponent(target) + '&limit=50';
+      var response = await this._fetch(url);
 
       if (!response.ok) return [];
 
       var exercises = await response.json();
-      return (exercises || []).map(function(ex) {
+      if (!Array.isArray(exercises)) return [];
+
+      var mapped = exercises.map(function(ex) {
         return {
           id: 'exercisedb_' + ex.id,
           nom: ex.name || '',
-          category: ex.target || 'full_body',
           muscles: _mapExerciseDBMuscles(ex.target, ex.bodyPart),
           equipment: _mapExerciseDBEquipment(ex.equipment || []),
+          difficulty: 'intermediate',
           source: 'exercisedb'
         };
       });
+
+      this.cache[cacheKey] = { data: mapped, timestamp: now };
+      return mapped;
     } catch(e) {
-      console.warn('ExerciseDB target fetch failed:', e.message);
+      console.warn('[ExerciseDB] target fetch failed (non-blocking):', e.message);
       return [];
     }
   }

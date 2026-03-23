@@ -562,11 +562,18 @@ function _getExercicesForType(type) {
   if (goal === 'endurance') trainingGoal = 'endurance';
   if (goal === 'skills' || goal === 'figures') trainingGoal = 'skills';
 
-  /* Step 2-3: Get from database, filter, validate */
-  var baseExercises = EXERCISE_DATABASE[type] || [];
-  
+  /* Step 2-3: Get exercises — API_MERGER first, local DATABASE as fallback */
+  var baseExercises;
+  if (typeof API_MERGER !== 'undefined' && API_MERGER.isLoaded) {
+    baseExercises = API_MERGER.getExercisesByType(type);
+    console.log('[Engine] API_MERGER: ' + baseExercises.length + ' exercises for ' + type);
+  } else {
+    baseExercises = EXERCISE_DATABASE[type] || [];
+    console.log('[Engine] Local DB: ' + baseExercises.length + ' exercises for ' + type);
+  }
+
   if (baseExercises.length === 0) {
-    console.warn('No exercises in database for type: ' + type);
+    console.warn('No exercises found for type: ' + type);
     return [];
   }
 
