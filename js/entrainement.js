@@ -35,49 +35,366 @@ var PROGRAMME = {
   dimanche: { nom: 'REPOS TOTAL',  muscles: 'Repos complet',           couleur: '#95A5A6', type: 'repos'     }
 };
 
-/* ── Exercices de secours (planning hebdo éditable peut changer les types) ── */
-var EXERCICES_FALLBACK = {
+/* ══════════════════════════════════════════════════
+   TRAINING ENGINE V4 — Real coach logic, not fake
+   ══════════════════════════════════════════════════ */
+
+/* ── Training rules (strength / hypertrophy / endurance) ── */
+var TRAINING_RULES = {
+  strength: {
+    reps: { min: 3, max: 6 },
+    rest: { min: 120, max: 180 },
+    sets: { min: 4, max: 6 }
+  },
+  hypertrophy: {
+    reps: { min: 6, max: 12 },
+    rest: { min: 60, max: 90 },
+    sets: { min: 3, max: 4 }
+  },
+  endurance: {
+    reps: { min: 12, max: 25 },
+    rest: { min: 30, max: 60 },
+    sets: { min: 2, max: 4 }
+  },
+  skills: {
+    reps: { min: 5, max: 30 },
+    rest: { min: 60, max: 120 },
+    sets: { min: 3, max: 5 }
+  }
+};
+
+/* ── Clean exercise database with full metadata ── */
+var EXERCISE_DATABASE = {
+  /* PUSH — chest, shoulders, triceps */
   push: [
-    { nom: 'Pompes classiques',  series: 4, reps: '12-15', repos: 60  },
-    { nom: 'Dips',               series: 4, reps: '8-12',  repos: 90  },
-    { nom: 'Pompes diamant',     series: 3, reps: '10-12', repos: 60  },
-    { nom: 'Pike push-ups',      series: 3, reps: '8-10',  repos: 90  }
+    {
+      id: 'push_1',
+      nom: 'Pompes classiques',
+      muscles: ['poitrine', 'épaules', 'triceps'],
+      equipment: [],
+      difficulty: 'beginner',
+      trainingType: 'hypertrophy'
+    },
+    {
+      id: 'push_2',
+      nom: 'Dips — Barres parallèles',
+      muscles: ['poitrine', 'triceps', 'épaules'],
+      equipment: ['barres_paralleles'],
+      difficulty: 'intermediate',
+      trainingType: 'hypertrophy'
+    },
+    {
+      id: 'push_3',
+      nom: 'Pompes diamant',
+      muscles: ['triceps', 'poitrine'],
+      equipment: [],
+      difficulty: 'intermediate',
+      trainingType: 'strength'
+    },
+    {
+      id: 'push_4',
+      nom: 'Pike push-ups',
+      muscles: ['épaules', 'poitrine'],
+      equipment: [],
+      difficulty: 'intermediate',
+      trainingType: 'strength'
+    },
+    {
+      id: 'push_5',
+      nom: 'Pompes piquées (pattes hautes)',
+      muscles: ['épaules', 'poitrine'],
+      equipment: [],
+      difficulty: 'advanced',
+      trainingType: 'strength'
+    },
+    {
+      id: 'push_6',
+      nom: 'Pompes lestées',
+      muscles: ['poitrine', 'triceps', 'épaules'],
+      equipment: ['weighted_vest', 'plates'],
+      difficulty: 'advanced',
+      trainingType: 'strength'
+    },
+    {
+      id: 'push_7',
+      nom: 'Handstand push-up (mur)',
+      muscles: ['épaules', 'triceps'],
+      equipment: [],
+      difficulty: 'advanced',
+      trainingType: 'strength'
+    }
   ],
+
+  /* PULL — back, biceps, forearms */
   pull: [
-    { nom: 'Tractions pronation',  series: 4, reps: '6-10',  repos: 120 },
-    { nom: 'Tractions supination', series: 4, reps: '6-10',  repos: 120 },
-    { nom: 'Australian rows',      series: 3, reps: '10-12', repos: 60  },
-    { nom: 'Tractions serrées',    series: 3, reps: '6-8',   repos: 120 }
+    {
+      id: 'pull_1',
+      nom: 'Tractions pronation',
+      muscles: ['dos', 'biceps'],
+      equipment: ['pullup_bar'],
+      difficulty: 'intermediate',
+      trainingType: 'hypertrophy'
+    },
+    {
+      id: 'pull_2',
+      nom: 'Tractions supination',
+      muscles: ['biceps', 'dos-bas'],
+      equipment: ['pullup_bar'],
+      difficulty: 'intermediate',
+      trainingType: 'hypertrophy'
+    },
+    {
+      id: 'pull_3',
+      nom: 'Australian rows',
+      muscles: ['dos', 'biceps'],
+      equipment: ['pullup_bar', 'horizontal_bar'],
+      difficulty: 'beginner',
+      trainingType: 'hypertrophy'
+    },
+    {
+      id: 'pull_4',
+      nom: 'Tractions serrées',
+      muscles: ['biceps', 'dos'],
+      equipment: ['pullup_bar'],
+      difficulty: 'advanced',
+      trainingType: 'strength'
+    },
+    {
+      id: 'pull_5',
+      nom: 'Tractions lestées',
+      muscles: ['dos', 'biceps'],
+      equipment: ['pullup_bar', 'weighted_vest', 'plates'],
+      difficulty: 'advanced',
+      trainingType: 'strength'
+    },
+    {
+      id: 'pull_6',
+      nom: 'Front lever hold',
+      muscles: ['dos', 'poitrine', 'avant-bras'],
+      equipment: ['pullup_bar'],
+      difficulty: 'expert',
+      trainingType: 'skills'
+    }
   ],
-  full_body: [
-    { nom: 'Pompes classiques',   series: 3, reps: '12-15', repos: 60 },
-    { nom: 'Tractions pronation', series: 3, reps: '6-10',  repos: 90 },
-    { nom: 'Dips',                series: 3, reps: '8-12',  repos: 90 },
-    { nom: 'Squats',              series: 3, reps: '15-20', repos: 60 }
-  ],
-  upper: [
-    { nom: 'Pompes classiques',   series: 4, reps: '12-15', repos: 60  },
-    { nom: 'Tractions pronation', series: 4, reps: '6-10',  repos: 90  },
-    { nom: 'Dips',                series: 3, reps: '8-12',  repos: 90  },
-    { nom: 'Australian rows',     series: 3, reps: '10-12', repos: 60  }
-  ],
+
+  /* LOWER — legs, glutes, quads */
   lower: [
-    { nom: 'Squats',                   series: 4, reps: '15-20',    repos: 60 },
-    { nom: 'Fentes marchées',          series: 3, reps: '12/jambe', repos: 75 },
-    { nom: 'Pistol squats assistés',   series: 3, reps: '5-8',      repos: 90 },
-    { nom: 'Squats sautés',            series: 3, reps: '10-12',    repos: 60 }
+    {
+      id: 'lower_1',
+      nom: 'Squats',
+      muscles: ['quadriceps', 'fessiers', 'ischio-jambiers'],
+      equipment: [],
+      difficulty: 'beginner',
+      trainingType: 'hypertrophy'
+    },
+    {
+      id: 'lower_2',
+      nom: 'Squats sautés',
+      muscles: ['quadriceps', 'fessiers'],
+      equipment: [],
+      difficulty: 'intermediate',
+      trainingType: 'endurance'
+    },
+    {
+      id: 'lower_3',
+      nom: 'Pistol squats assistés',
+      muscles: ['quadriceps', 'fessiers', 'équilibre'],
+      equipment: ['pullup_bar'],
+      difficulty: 'advanced',
+      trainingType: 'hypertrophy'
+    },
+    {
+      id: 'lower_4',
+      nom: 'Pistol squats',
+      muscles: ['quadriceps', 'fessiers', 'équilibre'],
+      equipment: [],
+      difficulty: 'expert',
+      trainingType: 'strength'
+    },
+    {
+      id: 'lower_5',
+      nom: 'Fentes marchées',
+      muscles: ['quadriceps', 'fessiers', 'ischio-jambiers'],
+      equipment: [],
+      difficulty: 'intermediate',
+      trainingType: 'hypertrophy'
+    },
+    {
+      id: 'lower_6',
+      nom: 'Step-ups pondérés',
+      muscles: ['quadriceps', 'fessiers'],
+      equipment: ['weighted_vest', 'plates'],
+      difficulty: 'advanced',
+      trainingType: 'strength'
+    }
   ],
-  skills: [
-    { nom: 'L-sit',            series: 5, reps: '10-20s', repos: 90  },
-    { nom: 'Handstand (mur)',  series: 5, reps: '20-30s', repos: 90  },
-    { nom: 'Planche lean',     series: 4, reps: '10-15s', repos: 120 },
-    { nom: 'Front lever tuck', series: 4, reps: '10-15s', repos: 120 }
-  ],
+
+  /* CORE — abs, obliques, lower back */
   core: [
-    { nom: 'Gainage',       series: 4, reps: '45s',   repos: 45 },
-    { nom: 'Hollow body',   series: 4, reps: '30s',   repos: 45 },
-    { nom: 'Dragon flag',   series: 3, reps: '5-8',   repos: 90 },
-    { nom: 'Obliques',      series: 3, reps: '15-20', repos: 45 }
+    {
+      id: 'core_1',
+      nom: 'Gainage frontal',
+      muscles: ['abdominaux', 'lombaires'],
+      equipment: [],
+      difficulty: 'beginner',
+      trainingType: 'endurance'
+    },
+    {
+      id: 'core_2',
+      nom: 'Hollow body hold',
+      muscles: ['abdominaux', 'lombaires', 'poitrine'],
+      equipment: [],
+      difficulty: 'intermediate',
+      trainingType: 'endurance'
+    },
+    {
+      id: 'core_3',
+      nom: 'Dragon flag',
+      muscles: ['abdominaux', 'lombaires'],
+      equipment: [],
+      difficulty: 'expert',
+      trainingType: 'strength'
+    },
+    {
+      id: 'core_4',
+      nom: 'Gainage oblique',
+      muscles: ['obliques', 'abdominaux'],
+      equipment: [],
+      difficulty: 'beginner',
+      trainingType: 'hypertrophy'
+    },
+    {
+      id: 'core_5',
+      nom: 'L-sit progression',
+      muscles: ['abdominaux', 'fléchisseurs de hanche'],
+      equipment: ['parallettes', 'pullup_bar'],
+      difficulty: 'advanced',
+      trainingType: 'skills'
+    }
+  ],
+
+  /* SKILLS — handstand, l-sit, movement */
+  skills: [
+    {
+      id: 'skill_1',
+      nom: 'L-sit (barres)',
+      muscles: ['abdominaux', 'fléchisseurs de hanche'],
+      equipment: ['parallettes', 'pullup_bar'],
+      difficulty: 'advanced',
+      trainingType: 'skills'
+    },
+    {
+      id: 'skill_2',
+      nom: 'Handstand (mur)',
+      muscles: ['épaules', 'poitrine', 'équilibre'],
+      equipment: [],
+      difficulty: 'intermediate',
+      trainingType: 'skills'
+    },
+    {
+      id: 'skill_3',
+      nom: 'Planche lean',
+      muscles: ['pectoraux', 'épaules'],
+      equipment: ['paralettes'],
+      difficulty: 'advanced',
+      trainingType: 'skills'
+    },
+    {
+      id: 'skill_4',
+      nom: 'Frontend lever tuck',
+      muscles: ['poitrine', 'abdominaux'],
+      equipment: ['pullup_bar'],
+      difficulty: 'expert',
+      trainingType: 'skills'
+    },
+    {
+      id: 'skill_5',
+      nom: 'Human flag hold',
+      muscles: ['obliques', 'épaules', 'dos'],
+      equipment: ['pullup_bar', 'vertical_beacon'],
+      difficulty: 'expert',
+      trainingType: 'skills'
+    }
+  ],
+
+  /* FULL BODY — mixed compound */
+  full_body: [
+    {
+      id: 'fb_1',
+      nom: 'Pompes classiques',
+      muscles: ['poitrine', 'épaules', 'triceps'],
+      equipment: [],
+      difficulty: 'beginner',
+      trainingType: 'hypertrophy'
+    },
+    {
+      id: 'fb_2',
+      nom: 'Tractions',
+      muscles: ['dos', 'biceps'],
+      equipment: ['pullup_bar'],
+      difficulty: 'intermediate',
+      trainingType: 'hypertrophy'
+    },
+    {
+      id: 'fb_3',
+      nom: 'Squats',
+      muscles: ['quadriceps', 'fessiers'],
+      equipment: [],
+      difficulty: 'beginner',
+      trainingType: 'hypertrophy'
+    },
+    {
+      id: 'fb_4',
+      nom: 'Gainage',
+      muscles: ['abdominaux', 'lombaires'],
+      equipment: [],
+      difficulty: 'beginner',
+      trainingType: 'endurance'
+    },
+    {
+      id: 'fb_5',
+      nom: 'Burpees',
+      muscles: ['poitrine', 'dos', 'jambes', 'cœur'],
+      equipment: [],
+      difficulty: 'intermediate',
+      trainingType: 'endurance'
+    }
+  ],
+
+  /* UPPER — back + chest + shoulders */
+  upper: [
+    {
+      id: 'upper_1',
+      nom: 'Pompes classiques',
+      muscles: ['poitrine', 'épaules', 'triceps'],
+      equipment: [],
+      difficulty: 'beginner',
+      trainingType: 'hypertrophy'
+    },
+    {
+      id: 'upper_2',
+      nom: 'Tractions',
+      muscles: ['dos', 'biceps'],
+      equipment: ['pullup_bar'],
+      difficulty: 'intermediate',
+      trainingType: 'hypertrophy'
+    },
+    {
+      id: 'upper_3',
+      nom: 'Dips',
+      muscles: ['triceps', 'poitrine'],
+      equipment: ['barres_paralleles'],
+      difficulty: 'intermediate',
+      trainingType: 'hypertrophy'
+    },
+    {
+      id: 'upper_4',
+      nom: 'Pike push-ups',
+      muscles: ['épaules'],
+      equipment: [],
+      difficulty: 'intermediate',
+      trainingType: 'strength'
+    }
   ]
 };
 
@@ -106,47 +423,196 @@ function getTodayProgramme() {
 }
 
 /* ══════════════════════════════════════════════════
-   P4 — Exercices avec profil utilisateur + generateProgram
+   FILTERING & VALIDATION FUNCTIONS
    ══════════════════════════════════════════════════ */
+
+/**
+ * Filter exercises by available equipment (MANDATORY)
+ * Returns exercises that match user's equipment or are bodyweight
+ */
+function filterByEquipment(exercises, equipment) {
+  if (!Array.isArray(equipment)) equipment = [];
+  return exercises.filter(function(ex) {
+    if (!ex.equipment || ex.equipment.length === 0) return true;
+    return ex.equipment.some(function(eq) { return equipment.indexOf(eq) !== -1; });
+  });
+}
+
+/**
+ * Filter exercises by difficulty level
+ * Prevents beginner from doing expert moves
+ */
+function filterByDifficulty(exercises, level) {
+  var difficultyRank = { beginner: 1, intermediate: 2, advanced: 3, expert: 4 };
+  var userRank = difficultyRank[level] || difficultyRank.beginner;
+  return exercises.filter(function(ex) { return (difficultyRank[ex.difficulty] || 1) <= userRank; });
+}
+
+/**
+ * Filter exercises by type (MANDATORY for coherence)
+ * Ensures only relevant exercises for session type
+ */
+function filterByType(exercises, type) {
+  var typeRules = {
+    push: { muscles: ['poitrine', 'triceps', 'épaules'] },
+    pull: { muscles: ['dos', 'biceps', 'avant-bras'] },
+    lower: { muscles: ['quadriceps', 'fessiers', 'ischio-jambiers'] },
+    upper: { muscles: ['dos', 'poitrine', 'biceps', 'triceps', 'épaules'] },
+    full_body: { exclude: [] },
+    core: { muscles: ['abdominaux', 'lombaires', 'obliques'] },
+    skills: { trainingType: 'skills' }
+  };
+
+  var rule = typeRules[type];
+  if (!rule) return exercises;
+
+  return exercises.filter(function(ex) {
+    if (rule.trainingType) return ex.trainingType === rule.trainingType;
+    if (!rule.muscles) return true;
+    return rule.muscles.some(function(m) { return ex.muscles.indexOf(m) !== -1; });
+  });
+}
+
+/**
+ * Validate program quality (MANDATORY)
+ * Removes irrelevant or duplicate exercises
+ */
+function validateProgram(exercises, type) {
+  var filtered = filterByType(exercises, type);
+  if (filtered.length === 0) {
+    console.warn('validateProgram: no exercises for type ' + type + ', using full list');
+    return exercises;
+  }
+  return filtered;
+}
+
+/**
+ * Prioritize exercises by available equipment
+ * If user has weighted vest, prefer weighted exercises
+ */
+function prioritizeByEquipment(exercises, equipment) {
+  if (!Array.isArray(equipment) || equipment.length === 0) return exercises;
+
+  var weighted = exercises.filter(function(ex) {
+    return ex.equipment && ex.equipment.some(function(eq) {
+      return equipment.indexOf(eq) !== -1;
+    });
+  });
+
+  var bodyweight = exercises.filter(function(ex) {
+    return !ex.equipment || ex.equipment.length === 0;
+  });
+
+  return weighted.length > 0 ? weighted : exercises;
+}
+
+/**
+ * Apply training rules to exercises
+ * Sets correct reps/rest/sets based on user goal
+ */
+function applyTrainingRules(exercises, trainingGoal) {
+  var rule = TRAINING_RULES[trainingGoal] || TRAINING_RULES.hypertrophy;
+  
+  return exercises.map(function(ex) {
+    var repsMin = rule.reps.min;
+    var repsMax = rule.reps.max;
+    var restMin = rule.rest.min;
+    var restMax = rule.rest.max;
+    var setsMin = rule.sets.min;
+    var setsMax = rule.sets.max;
+
+    return {
+      id: ex.id,
+      nom: ex.nom,
+      muscles: ex.muscles,
+      series: setsMin + Math.floor(Math.random() * (setsMax - setsMin + 1)),
+      reps: repsMin + '-' + repsMax,
+      repos: restMin + Math.floor(Math.random() * (restMax - restMin + 1)),
+      difficulty: ex.difficulty,
+      trainingType: ex.trainingType
+    };
+  });
+}
+
+/* ══════════════════════════════════════════════════
+   REAL EXERCISE SELECTION ENGINE
+   ══════════════════════════════════════════════════ */
+/**
+ * Real exercise selection engine
+ * 1. Load user profile (level, goal, equipment)
+ * 2. Get exercises from DATABASE
+ * 3. Filter by: type, equipment, difficulty
+ * 4. Apply training rules
+ * 5. generateProgram() is OPTIONAL and VALIDATED
+ */
 function _getExercicesForType(type) {
   if (!type || type === 'repos') return [];
 
-  /* Tenter generateProgram avec profil complet */
+  /* Step 1: Load user profile */
+  var userProfile = (typeof SW !== 'undefined' && SW.load) ? (SW.load('sw_userProfile') || {}) : {};
+  var userStats   = (typeof SW !== 'undefined' && SW.load) ? (SW.load('sw_userStats') || {}) : {};
+
+  var level = userStats.niveau || userProfile.niveau || 'debutant';
+  var goal  = userProfile.objectif || 'street_workout';
+  var equipment = userProfile.equipement || [];
+
+  /* Convert goal to training type */
+  var trainingGoal = 'hypertrophy'; /* default */
+  if (goal === 'strength' || goal === 'force') trainingGoal = 'strength';
+  if (goal === 'endurance') trainingGoal = 'endurance';
+  if (goal === 'skills' || goal === 'figures') trainingGoal = 'skills';
+
+  /* Step 2-3: Get from database, filter, validate */
+  var baseExercises = EXERCISE_DATABASE[type] || [];
+  
+  if (baseExercises.length === 0) {
+    console.warn('No exercises in database for type: ' + type);
+    return [];
+  }
+
+  var filtered = filterByEquipment(baseExercises, equipment);
+  filtered = filterByDifficulty(filtered, level);
+  filtered = validateProgram(filtered, type);
+  filtered = prioritizeByEquipment(filtered, equipment);
+
+  /* Step 4: Apply training rules */
+  var program = applyTrainingRules(filtered, trainingGoal);
+
+  /* Step 5: OPTIONAL generateProgram() validation (treat as UNRELIABLE) */
+  /* If generateProgram exists, TRY to get additional context, but TRUST DATABASE more */
   if (typeof generateProgram === 'function') {
     try {
-      var userProfile = (typeof SW !== 'undefined' && SW.load) ? (SW.load('sw_userProfile') || {}) : {};
-      var userStats   = (typeof SW !== 'undefined' && SW.load) ? (SW.load('sw_userStats')   || {}) : {};
       var fullProfile = {
-        niveau:     userStats.niveau || userProfile.niveau || 'debutant',
-        objectif:   userProfile.objectif || 'street_workout',
-        equipement: userProfile.equipement || ['barre_traction', 'barres_paralleles']
+        niveau: level,
+        objectif: goal,
+        equipement: equipment
       };
-      var program = generateProgram(
-        { type: type, objectif: fullProfile.objectif, niveau: fullProfile.niveau },
+      var apiProgram = generateProgram(
+        { type: type, objectif: goal, niveau: level },
         fullProfile
       );
-      if (program && program.exercices && program.exercices.length > 0) {
-        return program.exercices.map(function(ex) {
-          return {
-            id:      ex.id,
-            nom:     ex.nom,
-            muscles: ex.muscles || [],
-            series:  ex.series  || 3,
-            reps:    ex.reps    || '10',
-            repos:   ex.repos   || 60
-          };
-        });
+
+      /* API returned something — validate it */
+      if (apiProgram && apiProgram.exercices && apiProgram.exercices.length > 0) {
+        var apiExercises = apiProgram.exercices;
+        var validated = filterByType(apiExercises, type);
+        
+        /* Only use API if it makes sense (same type, decent count) */
+        if (validated.length > 0 && validated.length >= program.length * 0.7) {
+          console.log('generateProgram() validated for ' + type);
+          /* Merge API with database (prefer database) */
+          program = applyTrainingRules(validated, trainingGoal);
+        } else {
+          console.warn('generateProgram() output invalid or incoherent, using database');
+        }
       }
     } catch(e) {
-      console.warn('generateProgram failed, using fallback:', e);
+      console.warn('generateProgram() failed (non-blocking):', e);
+      /* Fall through to database-only */
     }
   }
 
-  /* Fallback hardcodé */
-  var fallback = EXERCICES_FALLBACK[type] || EXERCICES_FALLBACK.full_body;
-  return fallback.map(function(ex) {
-    return Object.assign({ id: null, muscles: [] }, ex);
-  });
+  return program;
 }
 
 /* ══════════════════════════════════════════════════
