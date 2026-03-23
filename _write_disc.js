@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+const fs = require('fs');
+const h = `<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
@@ -91,13 +92,13 @@
   </style>
 </head>
 <body>
-<script src="js/profil-loader.js"></script>
+<script src="js/profil-loader.js"><\/script>
 <script>
   (function(){
     var p=JSON.parse(localStorage.getItem('sw_profil')||'null');
     if(!p||!p.setup_done) window.location.href='onboarding.html';
   })();
-</script>
+<\/script>
 
 <div class="forge-wrapper">
 
@@ -303,7 +304,7 @@ document.addEventListener('DOMContentLoaded', function(){
     var pct = (lvl / 5) * 100;
     var labels = ['','Débutant','Novice','Intermédiaire','Avancé','Expert'];
     if(lvl>=3) mastered++;
-    grid.innerHTML += '<div class="tech-card" onclick="openTechLevel(''+t.name+'')">'+
+    grid.innerHTML += '<div class="tech-card" onclick="openTechLevel(\''+t.name+'\')">'+
       '<div class="tech-card-name">'+t.name+'</div>'+
       '<div class="tech-card-muscle">'+t.muscle+'</div>'+
       '<div class="tech-level-bar"><div class="tech-level-fill lvl'+lvl+'" style="width:'+pct+'%"></div></div>'+
@@ -353,7 +354,7 @@ function openDefiModal(key){
   var weeksEl = document.getElementById('defi-modal-weeks');
   weeksEl.innerHTML = data.weeks.map(function(w, i){
     return '<div style="background:#F4F4F4;border-radius:12px;padding:16px 18px;">' +
-      '<div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1rem;text-transform:uppercase;margin-bottom:10px;color:#0A0A0A;">'+w.label+'</div>'+
+      '<div style="font-family:\'Barlow Condensed\',sans-serif;font-weight:800;font-size:1rem;text-transform:uppercase;margin-bottom:10px;color:#0A0A0A;">'+w.label+'</div>'+
       w.exs.map(function(ex){ return '<div style="font-size:13px;color:#6B6B6B;padding:4px 0;border-bottom:1px solid #E5E5E5;">'+ex+'</div>'; }).join('')+
     '</div>';
   }).join('');
@@ -399,6 +400,8 @@ function showToast(msg){
   setTimeout(function(){t.style.opacity='0';t.style.transition='opacity .4s';},2000);
   setTimeout(function(){t.remove();},2500);
 }
-</script>
+<\/script>
 </body>
-</html>
+</html>`;
+fs.writeFileSync('progression.html', h, 'utf8');
+console.log('progression.html written, len:'+h.length);

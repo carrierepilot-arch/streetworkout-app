@@ -8,15 +8,36 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/forge.css">
   <style>
+    /* FORGE Compatibility Bridge */
+    :root {
+      --text-primary: #0A0A0A;
+      --text-secondary: #6B6B6B;
+      --text-muted: #9CA3AF;
+      --bg-elevated: #F4F4F4;
+      --border: #E5E5E5;
+      --primary: #C8FF00;
+      --card-bg: #FFFFFF;
+    }
+    /* Page heading */
+    main h2 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2rem; text-transform: uppercase; color: var(--noir, #0A0A0A); }
+    main h3 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.3rem; text-transform: uppercase; color: var(--noir, #0A0A0A); }
+    main p { color: var(--gris-texte, #6B6B6B); }
+    /* Charts wrapper */
+    .chart-section { background: #fff; border: 1px solid #E5E5E5; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+    /* Stats cards */
+    .stat-card { background: #fff; border: 1px solid #E5E5E5; border-radius: 16px; padding: 20px; }
+    .stats-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    /* Cards */
+    .card { background: #fff; border: 1px solid #E5E5E5; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
     /* Heatmap */
     .heatmap-grid { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 4px; }
     .heatmap-labels { display: flex; flex-direction: column; gap: 2px; padding-top: 2px; }
     .heatmap-label { width: 14px; height: 14px; font-size: 9px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
     .heatmap-weeks { display: flex; gap: 2px; }
     .heatmap-week { display: flex; flex-direction: column; gap: 2px; }
-    .heatmap-cell { width: 14px; height: 14px; border-radius: 3px; background: var(--bg-elevated, rgba(255,255,255,0.07)); }
-    .heatmap-cell--active { background: var(--primary, #00FF87); opacity: 0.85; }
-    .heatmap-cell--today { outline: 2px solid var(--primary, #00FF87); }
+    .heatmap-cell { width: 14px; height: 14px; border-radius: 3px; background: var(--bg-elevated, #F4F4F4); }
+    .heatmap-cell--active { background: #C8FF00; opacity: 0.9; }
+    .heatmap-cell--today { outline: 2px solid #0A0A0A; }
     .heatmap-cell--empty { background: transparent; }
     .heatmap-legend { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); margin-top: 8px; }
     .heatmap-legend .heatmap-cell { display: inline-block; }
@@ -24,7 +45,7 @@
     .comparison-table-wrap { overflow-x: auto; }
     .comparison-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .comparison-table th { padding: 8px 10px; text-align: left; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; }
-    .comparison-table td { padding: 10px 10px; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text-primary); }
+    .comparison-table td { padding: 10px 10px; border-bottom: 1px solid #F3F4F6; color: var(--text-primary); }
     .comparison-table tr:last-child td { border-bottom: none; }
     /* Volume chart height */
     #an-volume-container { height: 220px; }
@@ -186,12 +207,12 @@
 
   <nav class="forge-bottom-nav">
     <a href="index.html">
-      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      <span>Accueil</span>
-    </a>
-    <a href="entrainement.html">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       <span>Entraînement</span>
+    </a>
+    <a href="progression.html">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span>Découvrir</span>
     </a>
     <a href="analytics.html" class="active">
       <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>

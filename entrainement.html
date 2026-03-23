@@ -85,20 +85,20 @@
       <section style="margin-bottom:40px;">
         <h2 class="forge-section-title">Défis</h2>
         <div class="forge-defi-grid">
-          <div class="forge-defi-card">
+          <div class="forge-defi-card" data-defi="corps28">
             <div class="img-placeholder" style="position:absolute;inset:0;border-radius:0;border:none;opacity:.35;min-height:0;"></div>
             <div class="forge-defi-content">
               <div class="forge-defi-duration">28 JOURS</div>
               <div class="forge-defi-title">Corps entier</div>
-              <button class="forge-btn forge-btn-outline">DÉBUT</button>
+              <button class="forge-btn forge-btn-outline defi-start-btn">DÉBUT</button>
             </div>
           </div>
-          <div class="forge-defi-card">
+          <div class="forge-defi-card" data-defi="brule14">
             <div class="img-placeholder" style="position:absolute;inset:0;border-radius:0;border:none;opacity:.35;min-height:0;"></div>
             <div class="forge-defi-content">
               <div class="forge-defi-duration">14 JOURS</div>
               <div class="forge-defi-title">Brûle la graisse</div>
-              <button class="forge-btn forge-btn-outline">DÉBUT</button>
+              <button class="forge-btn forge-btn-outline defi-start-btn">DÉBUT</button>
             </div>
           </div>
         </div>
@@ -122,13 +122,13 @@
   </main>
 
   <nav class="forge-bottom-nav">
-    <a href="index.html">
-      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      <span>Accueil</span>
-    </a>
-    <a href="entrainement.html" class="active">
+    <a href="index.html" class="active">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       <span>Entraînement</span>
+    </a>
+    <a href="progression.html">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <span>Découvrir</span>
     </a>
     <a href="analytics.html">
       <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
@@ -143,6 +143,22 @@
 
 <script src="js/storage.js"></script>
 <script src="js/exercisedb-api.js"></script>
+
+<!-- DÉFI MODAL -->
+<div id="defi-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);align-items:flex-end;justify-content:center;">
+  <div id="defi-modal-sheet" style="background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);">
+    <div style="padding:20px 24px 0;display:flex;align-items:center;justify-content:space-between;">
+      <span id="defi-modal-tag" style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gris-texte);"></span>
+      <button onclick="closeDefiModal()" style="background:var(--gris-clair);border:none;border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+    <div style="padding:8px 24px 32px;">
+      <h2 id="defi-modal-title" style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:2rem;text-transform:uppercase;margin-bottom:6px;color:var(--noir);"></h2>
+      <p id="defi-modal-desc" style="color:var(--gris-texte);font-size:14px;margin-bottom:24px;"></p>
+      <div id="defi-modal-weeks" style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px;"></div>
+      <button onclick="startDefi()" style="width:100%;background:#C8FF00;color:#0A0A0A;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;">COMMENCER LE DÉFI</button>
+    </div>
+  </div>
+</div>
 <script>
 (function buildWeek(){
   var row=document.getElementById('weekRow');
@@ -198,7 +214,80 @@ if(si) si.addEventListener('input',function(){
 document.addEventListener('DOMContentLoaded',function(){
   render(_cur);
   if(typeof EXERCISEDB_API!=='undefined') EXERCISEDB_API.init().then(function(ok){if(ok){_ready=true;render(_cur);}}).catch(function(){});
+
+  // Défi buttons
+  var DEFIS = {
+    'corps28': {
+      tag: '28 jours • 4 séances/semaine', title: 'Corps Entier', desc: 'Programme progressif full-body. Chaque semaine monte en intensité.',
+      weeks: [
+        {label:'Semaine 1 — Fondations', exs:['Pompes 3×10','Squats 3×15','Planche 3×20s','Fentes 3×10']},
+        {label:'Semaine 2 — Construction', exs:['Pompes 4×12','Tractions 3×5','Dips 3×8','Gainage latéral 3×20s']},
+        {label:'Semaine 3 — Intensité', exs:['Pompes explosives 3×8','Tractions 4×6','Burpees 3×10','Mountain climbers 3×20']},
+        {label:'Semaine 4 — Max effort', exs:['Pompes 5×15','Tractions 5×8','Circuit 4 exercices x3','Test final']},
+      ]
+    },
+    'brule14': {
+      tag: '14 jours • 5 séances/semaine', title: 'Brûle la Graisse', desc: 'HIIT & circuits à haute intensité. Résultats visibles en 2 semaines.',
+      weeks: [
+        {label:'Semaine 1 — Amorçage', exs:['Burpees 3×10','Jumping squats 4×12','Mountain climbers 3×20','Corde à sauter 3×1min']},
+        {label:'Semaine 2 — Combustion', exs:['Tabata pompes','Sprint 10×20m','HIIT full-body 20min','Circuit final 5 rounds']},
+      ]
+    }
+  };
+  window._DEFIS_DATA = DEFIS;
+
+  document.querySelectorAll('.defi-start-btn').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var card = btn.closest('[data-defi]');
+      if(card) openDefiModal(card.dataset.defi);
+    });
+  });
+  document.querySelectorAll('[data-defi]').forEach(function(card){
+    card.addEventListener('click', function(){ openDefiModal(card.dataset.defi); });
+  });
+  document.getElementById('defi-modal').addEventListener('click', function(e){
+    if(e.target===this) closeDefiModal();
+  });
 });
+
+function openDefiModal(key){
+  var DEFIS = window._DEFIS_DATA||{}; var data = DEFIS[key]; if(!data) return;
+  document.getElementById('defi-modal-tag').textContent = data.tag;
+  document.getElementById('defi-modal-title').textContent = data.title;
+  document.getElementById('defi-modal-desc').textContent = data.desc;
+  var weeksEl = document.getElementById('defi-modal-weeks');
+  weeksEl.innerHTML = data.weeks.map(function(w){
+    return '<div style="background:#F4F4F4;border-radius:12px;padding:16px 18px;">'+
+      '<div style="font-family:\'Barlow Condensed\',sans-serif;font-weight:800;font-size:1rem;text-transform:uppercase;margin-bottom:10px;color:#0A0A0A;">'+w.label+'</div>'+
+      w.exs.map(function(ex){return '<div style="font-size:13px;color:#6B6B6B;padding:4px 0;border-bottom:1px solid #E5E5E5;">'+ex+'</div>';}).join('')+
+    '</div>';
+  }).join('');
+  var modal=document.getElementById('defi-modal'), sheet=document.getElementById('defi-modal-sheet');
+  modal.style.display='flex'; modal._key=key;
+  requestAnimationFrame(function(){requestAnimationFrame(function(){ sheet.style.transform='translateY(0)'; });});
+}
+function closeDefiModal(){
+  var sheet=document.getElementById('defi-modal-sheet');
+  sheet.style.transform='translateY(100%)';
+  setTimeout(function(){document.getElementById('defi-modal').style.display='none';},350);
+}
+function startDefi(){
+  var key=document.getElementById('defi-modal')._key;
+  var DEFIS=window._DEFIS_DATA||{}; var data=DEFIS[key]||{};
+  var p=JSON.parse(localStorage.getItem('sw_profil')||'{}');
+  p.defi_actif=key; p.defi_start=new Date().toISOString().slice(0,10);
+  localStorage.setItem('sw_profil',JSON.stringify(p));
+  closeDefiModal();
+  setTimeout(function(){
+    var t=document.createElement('div');
+    t.textContent='Défi "'+data.title+'" lancé !';
+    t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#0A0A0A;color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;';
+    document.body.appendChild(t);
+    setTimeout(function(){t.style.opacity='0';t.style.transition='opacity .4s';},2000);
+    setTimeout(function(){t.remove();},2500);
+  },400);
+}
 </script>
 </body>
 </html>
