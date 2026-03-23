@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FORGE — Street Workout App</title>
+  <link rel="stylesheet" href="css/forge.css">
+</head>
+<body>
+
+<!-- ═══════ HEADER ═══════ -->
+<header class="app-header">
+  <span class="app-logo">FORGE</span>
+  <div class="avatar-circle" id="header-avatar">?</div>
+</header>
+
+<!-- ═══════ TAB NAVIGATION ═══════ -->
+<nav class="tab-nav" id="tab-nav">
+  <button class="tab-btn active" data-tab="profil">
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+      <circle cx="12" cy="7" r="4"/>
+    </svg>
+    <span>Profil</span>
+  </button>
+  <button class="tab-btn" data-tab="entrainement">
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 5v14"/>
+      <path d="M18 5v14"/>
+      <path d="M6 12h12"/>
+      <rect x="2" y="8" width="4" height="8" rx="1"/>
+      <rect x="18" y="8" width="4" height="8" rx="1"/>
+    </svg>
+    <span>Entraînement</span>
+  </button>
+</nav>
+
+<!-- ═══════ CONTENU ═══════ -->
+<main class="app-wrap">
+
+<!-- ──────────────────────────────────────────
+     ONGLET 1 — PROFIL
+     ────────────────────────────────────────── -->
+<div class="tab-content active" id="tab-profil">
+
+  <!-- Avatar -->
+  <div style="text-align:center;margin:28px 0 8px;">
+    <div class="avatar-circle avatar-circle-lg" id="profil-avatar" style="margin:0 auto;">?</div>
+    <p id="profil-greeting" style="margin-top:8px;font-weight:600;font-size:16px;"></p>
+  </div>
+
+  <h2 class="section-title">Mon profil</h2>
+
+  <div class="form-block">
+    <div class="form-group">
+      <label class="form-label" for="input-prenom">Prénom</label>
+      <input class="form-input" type="text" id="input-prenom" placeholder="Prénom" autocomplete="given-name">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="input-nom">Nom</label>
+      <input class="form-input" type="text" id="input-nom" placeholder="Nom" autocomplete="family-name">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="input-annee">Année de naissance</label>
+      <input class="form-input" type="number" id="input-annee" min="1950" max="2010" placeholder="1995">
+      <div class="form-hint" id="hint-age"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="input-taille">Taille (cm)</label>
+      <input class="form-input" type="number" id="input-taille" placeholder="175">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="input-poids">Poids (kg)</label>
+      <input class="form-input" type="number" id="input-poids" placeholder="75">
+      <div class="form-hint" id="hint-imc"></div>
+    </div>
+
+    <button class="btn-primary" id="btn-save-profil" style="margin-top:8px;">SAUVEGARDER</button>
+  </div>
+
+  <!-- Stats -->
+  <h2 class="section-title">Mes stats</h2>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-value" id="stat-imc">—</div>
+      <div class="stat-label">IMC</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="stat-niveau">—</div>
+      <div class="stat-label">Niveau</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="stat-seances">0</div>
+      <div class="stat-label">Séances</div>
+    </div>
+  </div>
+
+</div><!-- /tab-profil -->
+
+<!-- ──────────────────────────────────────────
+     ONGLET 2 — ENTRAÎNEMENT
+     ────────────────────────────────────────── -->
+<div class="tab-content" id="tab-entrainement">
+
+  <!-- A. Objectif -->
+  <h2 class="section-title">Mon objectif</h2>
+  <div class="obj-grid">
+
+    <div class="obj-card" data-obj="FORCE">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 5v14"/><path d="M18 5v14"/><path d="M6 12h12"/>
+        <rect x="2" y="8" width="4" height="8" rx="1"/><rect x="18" y="8" width="4" height="8" rx="1"/>
+      </svg>
+      <div class="obj-card-label">Force</div>
+    </div>
+
+    <div class="obj-card" data-obj="ENDURANCE">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"/>
+      </svg>
+      <div class="obj-card-label">Endurance</div>
+    </div>
+
+    <div class="obj-card" data-obj="STREET WORKOUT">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 4v16"/><path d="M20 4v16"/><path d="M4 4h16"/>
+        <circle cx="12" cy="10" r="2"/><path d="M12 12v5"/><path d="M9 17l3-2 3 2"/>
+      </svg>
+      <div class="obj-card-label">Street Workout</div>
+    </div>
+
+    <div class="obj-card" data-obj="MAINTIEN">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <polyline points="9 12 11 14 15 10"/>
+      </svg>
+      <div class="obj-card-label">Maintien</div>
+    </div>
+
+    <div class="obj-card" data-obj="PERTE DE POIDS">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14 0-5.5 3-7 .5 2.5 2 4.9 2 8 0 2.5-2 5-5 7.5"/>
+        <path d="M12 22c-4 0-7-2-7-5 0-2 1-3.5 2.5-4.5"/>
+      </svg>
+      <div class="obj-card-label">Perte de poids</div>
+    </div>
+
+    <div class="obj-card" data-obj="MUSCULATION">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14.4 14.4 9.6 9.6"/>
+        <path d="M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767-1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l1.767 1.767a2 2 0 1 1 2.828 2.829z"/>
+        <path d="m21.5 21.5-1.4-1.4"/>
+        <path d="M3.9 3.9 2.5 2.5"/>
+        <path d="M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829l2.828-2.828a2 2 0 1 1 2.829 2.828l1.767-1.768a2 2 0 1 1 2.829 2.829z"/>
+      </svg>
+      <div class="obj-card-label">Musculation</div>
+    </div>
+
+  </div>
+
+  <!-- B. Planning -->
+  <h2 class="section-title">Mon planning</h2>
+  <div class="card" style="margin-bottom:16px;">
+    <p style="font-size:13px;font-weight:600;color:var(--gris-texte);margin-bottom:10px;text-transform:uppercase;">Fréquence par semaine</p>
+    <div class="pills">
+      <button class="pill freq-pill" data-freq="1">1j</button>
+      <button class="pill freq-pill" data-freq="2">2j</button>
+      <button class="pill freq-pill" data-freq="3">3j</button>
+      <button class="pill freq-pill" data-freq="4">4j</button>
+      <button class="pill freq-pill" data-freq="5">5j</button>
+      <button class="pill freq-pill" data-freq="6">6j</button>
+      <button class="pill freq-pill" data-freq="7">7j</button>
+    </div>
+
+    <p style="font-size:13px;font-weight:600;color:var(--gris-texte);margin:16px 0 8px;text-transform:uppercase;">Jours d'entraînement</p>
+    <div class="days-row" id="days-row">
+      <button class="day-check" data-day="Lundi">Lun</button>
+      <button class="day-check" data-day="Mardi">Mar</button>
+      <button class="day-check" data-day="Mercredi">Mer</button>
+      <button class="day-check" data-day="Jeudi">Jeu</button>
+      <button class="day-check" data-day="Vendredi">Ven</button>
+      <button class="day-check" data-day="Samedi">Sam</button>
+      <button class="day-check" data-day="Dimanche">Dim</button>
+    </div>
+  </div>
+
+  <button class="btn-primary" id="btn-generate" disabled>GÉNÉRER MON PROGRAMME</button>
+
+  <!-- C. Suivi -->
+  <h2 class="section-title">Mon suivi</h2>
+
+  <!-- Calendrier -->
+  <div class="card" style="margin-bottom:16px;">
+    <div class="cal-header">
+      <button id="cal-prev">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <span class="cal-title" id="cal-title"></span>
+      <button id="cal-next">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+    <div class="cal-weekdays">
+      <span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span><span>Ven</span><span>Sam</span><span>Dim</span>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+  </div>
+
+  <!-- Niveau estimé -->
+  <div class="level-card" style="margin-bottom:16px;">
+    <p style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.5);margin-bottom:4px;">Mon niveau estimé</p>
+    <div class="level-badge" id="level-badge">Débutant</div>
+    <div class="level-bar-track"><div class="level-bar-fill" id="level-bar" style="width:0%"></div></div>
+    <p class="level-info" id="level-info"></p>
+    <button id="btn-open-test" style="margin-top:14px;background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--blanc);padding:10px 20px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;">REFAIRE LE TEST</button>
+  </div>
+
+  <!-- D. Programme généré -->
+  <div id="programme-section" style="display:none;">
+    <h2 class="section-title">Mon programme</h2>
+    <div class="loader-wrap" id="programme-loader" style="display:none;">
+      <div class="spinner"></div>
+      <p>Génération en cours...</p>
+    </div>
+    <div id="programme-result"></div>
+  </div>
+
+</div><!-- /tab-entrainement -->
+
+</main><!-- /app-wrap -->
+
+<!-- ═══════ MODAL TEST DE NIVEAU ═══════ -->
+<div class="modal-overlay" id="modal-test">
+  <div class="modal-box" style="position:relative;">
+    <button id="modal-test-close" style="position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:var(--gris-clair);display:flex;align-items:center;justify-content:center;cursor:pointer;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <h3 class="modal-title">Test de niveau</h3>
+    <div class="form-group">
+      <label class="form-label" for="test-tractions">Tractions max (reps)</label>
+      <input class="form-input" type="number" id="test-tractions" min="0" placeholder="0">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="test-dips">Dips max (reps)</label>
+      <input class="form-input" type="number" id="test-dips" min="0" placeholder="0">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="test-pompes">Pompes max (reps)</label>
+      <input class="form-input" type="number" id="test-pompes" min="0" placeholder="0">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="test-gainage">Gainage max (secondes)</label>
+      <input class="form-input" type="number" id="test-gainage" min="0" placeholder="0">
+    </div>
+    <button class="btn-primary" id="btn-submit-test">VALIDER MON TEST</button>
+  </div>
+</div>
+
+<!-- ═══════ SCRIPTS ═══════ -->
+<script src="js/storage.js"></script>
+<script src="js/api.js"></script>
+<script src="js/profil.js"></script>
+<script src="js/entrainement.js"></script>
+<script>
+(function() {
+  /* Tab switching */
+  var btns = document.querySelectorAll('.tab-btn');
+  var tabs = document.querySelectorAll('.tab-content');
+
+  btns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      btns.forEach(function(b) { b.classList.remove('active'); });
+      tabs.forEach(function(t) { t.classList.remove('active'); });
+      btn.classList.add('active');
+      var target = document.getElementById('tab-' + btn.dataset.tab);
+      if (target) target.classList.add('active');
+    });
+  });
+
+  /* Init modules */
+  SW_PROFIL.init();
+  SW_ENTRAINEMENT.init();
+})();
+</script>
+
+</body>
+</html>
