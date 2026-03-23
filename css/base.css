@@ -4,34 +4,34 @@
    ======================================== */
 
 :root {
-  /* Accent principal — violet SaaS */
-  --primary: #6C63FF;
-  --primary-dark: #5a52d5;
-  --primary-light: rgba(108,99,255,0.12);
-  --accent: #6C63FF;
-  --accent-hover: #5a52d5;
-  /* Fonds — dark mode */
-  --bg-deep: #0f0f1a;
-  --bg-card: #16213e;
-  --bg-elevated: #1a1a2e;
-  --bg-primary: #0f0f1a;
-  --bg-secondary: #1a1a2e;
+  /* Accent principal — bleu fitness */
+  --primary: #2563EB;
+  --primary-dark: #1D4ED8;
+  --primary-light: rgba(37,99,235,0.10);
+  --accent: #2563EB;
+  --accent-hover: #1D4ED8;
+  /* Fonds — thème clair */
+  --bg-deep: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-elevated: #F9FAFB;
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F5F5F5;
   /* Texte */
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #94a3b8;
+  --text-primary: #0D0D0D;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
   /* Couleurs fonctionnelles */
-  --accent-orange: #F59E0B;
-  --accent-blue: #6C63FF;
+  --accent-orange: #EA580C;
+  --accent-blue: #2563EB;
   --danger: #EF4444;
   --success: #10B981;
   --warning: #F59E0B;
   /* Bordures & ombres */
-  --border: rgba(255,255,255,0.08);
-  --border-hover: rgba(108,99,255,0.30);
-  --shadow-primary: 0 4px 20px rgba(108,99,255,0.15);
-  --shadow-card: 0 4px 24px rgba(0,0,0,0.3);
-  /* Rayons — style SaaS pro */
+  --border: #F3F4F6;
+  --border-hover: rgba(37,99,235,0.30);
+  --shadow-primary: 0 4px 14px rgba(37,99,235,0.20);
+  --shadow-card: 0 2px 12px rgba(0,0,0,0.08);
+  /* Rayons */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -58,8 +58,8 @@ body {
   font-weight: 400;
   font-size: 14px;
   line-height: 1.6;
-  color: var(--text-primary);
-  background-color: var(--bg-deep);
+  color: #0D0D0D;
+  background-color: #FFFFFF;
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;

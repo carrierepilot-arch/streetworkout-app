@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="css/pages/streetlifting.css">
   <link rel="stylesheet" href="css/pages/programme.css">
   <link rel="stylesheet" href="css/workout-mode.css">
+  <link rel="stylesheet" href="css/app.css">
   <style>
     .page-tabs{display:flex;gap:0;border-bottom:2px solid var(--border,rgba(15,23,42,.1));margin-bottom:28px}
     .page-tab{background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;padding:12px 24px;font-size:.95rem;font-weight:600;color:var(--text-muted,#64748B);cursor:pointer;font-family:inherit;transition:color .15s,border-color .15s}
@@ -248,13 +249,25 @@
     </main>
   </div>
 
-  <!-- Bottom Navigation (mobile) -->
+  <!-- Bottom Navigation -->
   <nav class="bottom-nav">
-    <a href="profil.html">Profil</a>
-    <a href="progression.html">Progression</a>
-    <a href="entrainement.html" class="active">Entraînement</a>
-    <a href="analytics.html">Analytics</a>
-    </nav>
+    <a href="index.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+      <span>Entraîner</span>
+    </a>
+    <a href="progression.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+      <span>Découvrir</span>
+    </a>
+    <a href="analytics.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span>Rapport</span>
+    </a>
+    <a href="profil.html" class="nav-item">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <span>Profil</span>
+    </a>
+  </nav>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="js/supabase-config.js"></script>
