@@ -26,7 +26,10 @@ export default async function handler(req, res) {
     });
     if (!r.ok) return null;
     var j = await r.json();
-    return j.result;
+    var val = j.result !== undefined ? j.result : null;
+    if (val === null) return null;
+    if (typeof val === 'object') return val;
+    try { return JSON.parse(val); } catch(e) { return val; }
   }
 
   async function kvSet(key, value) {
@@ -59,14 +62,27 @@ export default async function handler(req, res) {
     if (!email || !email.includes('@')) return res.status(400).json({ error: 'Invalid email' });
 
     var safe = safeEmail(email);
-    var pattern = 'sw_*__' + safe;
+    var result = {};
+
     try {
-      var keys = await kvScan(pattern);
-      var result = {};
-      await Promise.all(keys.map(async function(k) {
-        var val = await kvGet(k);
-        if (val !== null) result[k] = val;
+      /* Method 1 — Direct GET for every known key (reliable, no SCAN needed) */
+      var knownBases = ['sw_profil', 'sw_seances', 'sw_programme', 'sw_test', 'sw_test_history'];
+      await Promise.all(knownBases.map(async function(base) {
+        var fullKey = base + '__' + safe;
+        var val = await kvGet(fullKey);
+        if (val !== null) result[fullKey] = val;
       }));
+
+      /* Method 2 — SCAN for any additional keys (future-proof) */
+      var pattern = 'sw_*__' + safe;
+      var keys = await kvScan(pattern);
+      await Promise.all(keys.map(async function(k) {
+        if (!result[k]) {          /* don't override what we already have */
+          var val = await kvGet(k);
+          if (val !== null) result[k] = val;
+        }
+      }));
+
       return res.status(200).json(result);
     } catch(e) {
       return res.status(500).json({ error: 'KV error', detail: e.message });

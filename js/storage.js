@@ -36,7 +36,8 @@ var SW_STORAGE = (function() {
         fetch('/api/userdata', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: email, key: nsKey, data: value })
+          body: JSON.stringify({ email: email, key: nsKey, data: value }),
+          keepalive: true  /* survive page unload on mobile */
         }).catch(function() {});
       } catch(e) {}
     },
@@ -48,7 +49,7 @@ var SW_STORAGE = (function() {
         var res = await fetch('/api/userdata?email=' + encodeURIComponent(email));
         if (!res.ok) return;
         var all = await res.json();
-        if (all && typeof all === 'object') {
+        if (all && typeof all === 'object' && !all.error) {
           Object.keys(all).forEach(function(k) {
             localStorage.setItem(k, typeof all[k] === 'string' ? all[k] : JSON.stringify(all[k]));
           });
