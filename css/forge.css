@@ -2255,6 +2255,30 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
   color: var(--noir);
 }
 
+/* Admin toggle button (header) */
+.btn-admin-toggle {
+  display: none;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--noir);
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 5px 12px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity var(--transition);
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+}
+.btn-admin-toggle svg {
+  stroke: var(--noir);
+  flex-shrink: 0;
+}
+.btn-admin-toggle:hover { opacity: 0.85; }
+
 /* ═══════════════════════════════════════════════
    EXERCISE EDITOR MODAL
    ═══════════════════════════════════════════════ */

@@ -14,6 +14,10 @@
   <div class="header-right">
     <span class="header-email" id="header-email"></span>
     <div class="avatar-circle" id="header-avatar">?</div>
+    <a href="/admin.html" class="btn-admin-toggle" id="btn-admin-toggle" style="display:none;" title="Vue admin">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" width="18" height="18"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M18 14l1.5 1.5L22 13"/></svg>
+      Vue admin
+    </a>
     <button class="btn-logout" id="btn-logout" style="display:none;">Déconnexion</button>
   </div>
 </header>
@@ -764,12 +768,14 @@
     } catch(e) { /* ignore */ }
 
     /* Show logout button + email */
-    var logoutBtn  = document.getElementById('btn-logout');
-    var emailSpan  = document.getElementById('header-email');
-    var adminTab   = document.getElementById('tab-btn-admin');
-    if (logoutBtn)  logoutBtn.style.display = 'inline-flex';
-    if (emailSpan)  emailSpan.textContent    = SW_AUTH.getCurrentEmail() || '';
-    if (adminTab)   adminTab.style.display   = SW_AUTH.isAdmin() ? 'flex' : 'none';
+    var logoutBtn    = document.getElementById('btn-logout');
+    var adminToggle  = document.getElementById('btn-admin-toggle');
+    var emailSpan    = document.getElementById('header-email');
+    var adminTab     = document.getElementById('tab-btn-admin');
+    if (logoutBtn)    logoutBtn.style.display   = 'inline-flex';
+    if (emailSpan)    emailSpan.textContent      = SW_AUTH.getCurrentEmail() || '';
+    if (adminTab)     adminTab.style.display     = 'none'; /* replaced by separate page */
+    if (adminToggle)  adminToggle.style.display  = SW_AUTH.isAdmin() ? 'inline-flex' : 'none';
 
     /* Init modules — chaque module dans son propre try-catch */
     try { SW_PROFIL.init(); } catch(e) { console.error('Profil init error:', e); }

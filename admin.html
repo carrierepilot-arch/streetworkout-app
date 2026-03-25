@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FORGE — Admin Dashboard</title>
+  <link rel="stylesheet" href="css/forge.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <style>
+    :root {
+      --adm-bg: #0D0D0D;
+      --adm-card: #161616;
+      --adm-border: #2A2A2A;
+      --adm-text: #E8E8E8;
+      --adm-muted: #888;
+      --adm-accent: #C8FF00;
+      --adm-red: #FF4444;
+      --adm-blue: #4488FF;
+      --adm-green: #44DD88;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--adm-bg);
+      color: var(--adm-text);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      min-height: 100vh;
+    }
+
+    /* ── Admin Header ── */
+    .adm-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #0D0D0D;
+      border-bottom: 1px solid var(--adm-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+    }
+
+    .adm-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: 1px;
+      color: var(--adm-accent);
+      text-transform: uppercase;
+    }
+
+    .adm-logo span {
+      color: var(--adm-text);
+      font-size: 13px;
+      font-weight: 500;
+      margin-left: 10px;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0;
+      text-transform: none;
+      opacity: 0.6;
+    }
+
+    .adm-header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-vue-user {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--adm-card);
+      border: 1px solid var(--adm-border);
+      border-radius: 8px;
+      color: var(--adm-text);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      text-decoration: none;
+    }
+
+    .btn-vue-user:hover {
+      border-color: var(--adm-accent);
+      color: var(--adm-accent);
+    }
+
+    .btn-vue-user svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      flex-shrink: 0;
+    }
+
+    /* ── Main content ── */
+    .adm-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 20px 60px;
+    }
+
+    .adm-page-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 28px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 28px;
+      color: var(--adm-text);
+    }
+
+    .adm-section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--adm-muted);
+      margin: 32px 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .adm-section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--adm-border);
+    }
+
+    /* ── Stat cards ── */
+    .adm-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    @media (min-width: 600px) {
+      .adm-stats-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .adm-stat-card {
+      background: var(--adm-card);
+      border: 1px solid var(--adm-border);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .adm-stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+
+    .adm-stat-card.green::before  { background: var(--adm-green); }
+    .adm-stat-card.blue::before   { background: var(--adm-blue); }
+    .adm-stat-card.accent::before { background: var(--adm-accent); }
+    .adm-stat-card.red::before    { background: var(--adm-red); }
+
+    .adm-stat-value {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 42px;
+      line-height: 1;
+      color: var(--adm-text);
+      margin-bottom: 6px;
+    }
+
+    .adm-stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--adm-muted);
+    }
+
+    .adm-stat-sub {
+      font-size: 12px;
+      color: var(--adm-muted);
+      margin-top: 8px;
+    }
+
+    /* ── Source badge ── */
+    .adm-source-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-bottom: 16px;
+    }
+    .adm-source-badge.supabase { background: rgba(68,136,255,0.15); color: var(--adm-blue); border: 1px solid rgba(68,136,255,0.3); }
+    .adm-source-badge.kv       { background: rgba(200,255,0,0.10); color: var(--adm-accent); border: 1px solid rgba(200,255,0,0.25); }
+    .adm-source-badge.none     { background: rgba(136,136,136,0.1); color: var(--adm-muted); border: 1px solid var(--adm-border); }
+    .adm-source-badge.warn     { background: rgba(255,68,68,0.12); color: var(--adm-red); border: 1px solid rgba(255,68,68,0.25); }
+
+    /* ── Mini bar chart ── */
+    .adm-chart-wrap {
+      background: var(--adm-card);
+      border: 1px solid var(--adm-border);
+      border-radius: 12px;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .adm-chart-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 80px;
+    }
+
+    .adm-bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+      cursor: default;
+      position: relative;
+    }
+
+    .adm-bar {
+      width: 100%;
+      min-height: 2px;
+      background: var(--adm-border);
+      border-radius: 3px 3px 0 0;
+      transition: background 0.2s;
+    }
+
+    .adm-bar.has-data { background: var(--adm-accent); opacity: 0.7; }
+    .adm-bar.today    { background: var(--adm-accent); opacity: 1; }
+    .adm-bar-col:hover .adm-bar { opacity: 1; }
+
+    .adm-bar-tooltip {
+      display: none;
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--adm-text);
+      color: var(--adm-bg);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 7px;
+      border-radius: 4px;
+      white-space: nowrap;
+      margin-bottom: 4px;
+      z-index: 10;
+    }
+
+    .adm-bar-col:hover .adm-bar-tooltip { display: block; }
+
+    .adm-chart-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--adm-muted);
+    }
+
+    /* ── Users table ── */
+    .adm-table-wrap {
+      background: var(--adm-card);
+      border: 1px solid var(--adm-border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .adm-table-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--adm-border);
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .adm-search {
+      background: var(--adm-bg);
+      border: 1px solid var(--adm-border);
+      border-radius: 8px;
+      color: var(--adm-text);
+      font-size: 14px;
+      padding: 8px 14px;
+      outline: none;
+      width: 200px;
+      transition: border-color 0.15s;
+    }
+
+    .adm-search:focus { border-color: var(--adm-accent); }
+
+    .adm-count-label {
+      font-size: 12px;
+      color: var(--adm-muted);
+      white-space: nowrap;
+    }
+
+    .adm-refresh-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: transparent;
+      border: 1px solid var(--adm-border);
+      border-radius: 8px;
+      color: var(--adm-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .adm-refresh-btn:hover { color: var(--adm-accent); border-color: var(--adm-accent); }
+
+    .adm-table-head {
+      display: grid;
+      grid-template-columns: 1fr 120px 140px 80px;
+      padding: 10px 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--adm-muted);
+      border-bottom: 1px solid var(--adm-border);
+      background: rgba(255,255,255,0.02);
+    }
+
+    @media (max-width: 600px) {
+      .adm-table-head { grid-template-columns: 1fr 80px; }
+      .adm-table-head .col-last, .adm-table-head .col-provider { display: none; }
+    }
+
+    .adm-user-row {
+      display: grid;
+      grid-template-columns: 1fr 120px 140px 80px;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--adm-border);
+      align-items: center;
+      transition: background 0.1s;
+    }
+
+    @media (max-width: 600px) {
+      .adm-user-row { grid-template-columns: 1fr 80px; }
+      .adm-user-row .col-last, .adm-user-row .col-provider { display: none; }
+    }
+
+    .adm-user-row:last-child { border-bottom: none; }
+    .adm-user-row:hover { background: rgba(255,255,255,0.025); }
+
+    .adm-user-email {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--adm-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .adm-user-name {
+      font-size: 12px;
+      color: var(--adm-muted);
+      margin-top: 2px;
+    }
+
+    .adm-user-date {
+      font-size: 12px;
+      color: var(--adm-muted);
+    }
+
+    .adm-admin-tag {
+      display: inline-block;
+      background: var(--adm-accent);
+      color: #000;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .adm-provider-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--adm-muted);
+      text-transform: capitalize;
+    }
+
+    .adm-confirmed {
+      display: inline-block;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--adm-green);
+      margin-right: 4px;
+      flex-shrink: 0;
+    }
+
+    .adm-unconfirmed {
+      display: inline-block;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--adm-red);
+      margin-right: 4px;
+      flex-shrink: 0;
+    }
+
+    /* ── Loading / Empty ── */
+    .adm-loading {
+      text-align: center;
+      padding: 48px;
+      color: var(--adm-muted);
+    }
+
+    .adm-spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--adm-border);
+      border-top-color: var(--adm-accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 14px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Warning box ── */
+    .adm-warn {
+      background: rgba(255,68,68,0.08);
+      border: 1px solid rgba(255,68,68,0.25);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: #ff8888;
+      line-height: 1.6;
+    }
+
+    .adm-warn code {
+      background: rgba(255,68,68,0.15);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: monospace;
+    }
+
+    .adm-info {
+      background: rgba(68,136,255,0.08);
+      border: 1px solid rgba(68,136,255,0.25);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: #88aaff;
+      line-height: 1.6;
+    }
+
+    /* ── Access denied screen ── */
+    #access-denied {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 40px;
+      gap: 14px;
+    }
+
+    #access-denied.show { display: flex; }
+
+    #main-content { display: none; }
+    #main-content.show { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header class="adm-header">
+  <div>
+    <span class="adm-logo">FORGE <span>Admin Dashboard</span></span>
+  </div>
+  <div class="adm-header-right">
+    <a href="/app.html" class="btn-vue-user" id="btn-vue-user">
+      <svg viewBox="0 0 24 24" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Vue utilisateur
+    </a>
+  </div>
+</header>
+
+<!-- ── Access denied ── -->
+<div id="access-denied">
+  <div style="font-size:40px;">🔒</div>
+  <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:24px;text-transform:uppercase;">Accès refusé</div>
+  <div style="color:var(--adm-muted);font-size:14px;">Tu dois être connecté en tant qu'admin.</div>
+  <a href="/app.html" style="margin-top:8px;padding:10px 24px;background:var(--adm-accent);color:#000;border-radius:8px;font-weight:700;font-size:14px;">Retour à l'application</a>
+</div>
+
+<!-- ── Main content ── -->
+<div id="main-content">
+<div class="adm-wrap">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:8px;">
+    <h1 class="adm-page-title" style="margin-bottom:0;">Analyse</h1>
+    <div id="source-badge" class="adm-source-badge none">Chargement…</div>
+  </div>
+
+  <!-- ── Stats cards ── -->
+  <div id="stats-warn" style="display:none;margin-bottom:16px;"></div>
+  <div class="adm-stats-grid" id="stats-grid">
+    <div class="adm-stat-card accent">
+      <div class="adm-stat-value" id="stat-total">—</div>
+      <div class="adm-stat-label">Comptes total</div>
+    </div>
+    <div class="adm-stat-card green">
+      <div class="adm-stat-value" id="stat-today">—</div>
+      <div class="adm-stat-label">Inscrits aujourd'hui</div>
+    </div>
+    <div class="adm-stat-card blue">
+      <div class="adm-stat-value" id="stat-week">—</div>
+      <div class="adm-stat-label">Inscrits cette semaine</div>
+    </div>
+    <div class="adm-stat-card red">
+      <div class="adm-stat-value" id="stat-unconfirmed">—</div>
+      <div class="adm-stat-label">Non confirmés</div>
+    </div>
+  </div>
+
+  <!-- ── Chart ── -->
+  <div class="adm-section-title">Créations de comptes — 30 jours</div>
+  <div class="adm-chart-wrap">
+    <div class="adm-chart-bars" id="chart-bars">
+      <div class="adm-loading" style="flex:1;padding:20px 0;"><div class="adm-spinner"></div></div>
+    </div>
+    <div class="adm-chart-footer">
+      <span id="chart-start">-30j</span>
+      <span style="color:var(--adm-accent);font-size:11px;font-weight:600;">Aujourd'hui ▲</span>
+      <span>Auj</span>
+    </div>
+  </div>
+
+  <!-- ── Utilisateurs ── -->
+  <div class="adm-section-title">Utilisateurs inscrits</div>
+  <div id="service-key-warn" style="display:none;margin-bottom:14px;"></div>
+
+  <div class="adm-table-wrap">
+    <div class="adm-table-toolbar">
+      <input class="adm-search" type="text" id="user-search" placeholder="Rechercher un email…">
+      <span class="adm-count-label" id="user-count">—</span>
+      <button class="adm-refresh-btn" id="btn-refresh">
+        <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M1 4v6h6"/><path d="M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+        Actualiser
+      </button>
+    </div>
+    <div class="adm-table-head">
+      <div>Utilisateur</div>
+      <div>Inscrit le</div>
+      <div class="col-last">Dernière connexion</div>
+      <div class="col-provider">Provider</div>
+    </div>
+    <div id="users-table-body">
+      <div class="adm-loading"><div class="adm-spinner"></div><p>Chargement des utilisateurs…</p></div>
+    </div>
+  </div>
+
+</div><!-- /adm-wrap -->
+</div><!-- /main-content -->
+
+<script src="js/auth.js"></script>
+<script>
+(async function() {
+  'use strict';
+
+  const ADMIN_EMAIL = 'balalobidudi2@gmail.com';
+
+  /* ── Check auth ── */
+  await SW_AUTH.initFromSupabase();
+
+  if (!SW_AUTH.isLoggedIn() || !SW_AUTH.isAdmin()) {
+    document.getElementById('access-denied').classList.add('show');
+    return;
+  }
+
+  document.getElementById('main-content').classList.add('show');
+
+  const callerEmail = SW_AUTH.getCurrentEmail();
+
+  let allUsers = [];
+
+  /* ── Load stats ── */
+  async function loadStats() {
+    try {
+      const r = await fetch('/api/admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'get_stats', callerEmail })
+      });
+      if (!r.ok) throw new Error('API error');
+      const d = await r.json();
+
+      document.getElementById('stat-total').textContent = d.totalUsers ?? '—';
+      document.getElementById('stat-today').textContent = d.newToday ?? '—';
+      document.getElementById('stat-week').textContent  = d.newThisWeek ?? '—';
+
+      /* Source badge */
+      const badge = document.getElementById('source-badge');
+      if (d.source === 'supabase') {
+        badge.className = 'adm-source-badge supabase';
+        badge.textContent = '🔵 Supabase Auth';
+      } else if (d.source === 'kv') {
+        badge.className = 'adm-source-badge kv';
+        badge.textContent = '🟡 Vercel KV';
+      } else {
+        badge.className = 'adm-source-badge none';
+        badge.textContent = '⚪ Aucune source';
+      }
+
+      /* service key warn */
+      if (!d.serviceKeySet) {
+        const w = document.getElementById('service-key-warn');
+        w.style.display = 'block';
+        w.innerHTML = '<div class="adm-warn">⚠️ <strong>Clé service Supabase non configurée</strong> — Tu vois uniquement les utilisateurs de Vercel KV. Pour voir TOUS les comptes Supabase (y compris téléphone, autres navigateurs), ajoute <code>SUPABASE_SERVICE_ROLE_KEY</code> dans les variables d\'environnement Vercel. <a href="https://supabase.com/dashboard/project/tahuyewnuizejbkmqlcb/settings/api" target="_blank" style="color:var(--adm-blue);text-decoration:underline;">Copier la clé →</a></div>';
+      }
+
+      /* Chart */
+      if (d.byDay && d.byDay.length) {
+        renderChart(d.byDay);
+      }
+
+      /* Non confirmed (only from supabase source) */
+      // Will be set after loadUsers
+    } catch(e) {
+      document.getElementById('stats-warn').style.display = 'block';
+      document.getElementById('stats-warn').innerHTML = '<div class="adm-warn">Impossible de charger les statistiques : ' + e.message + '</div>';
+    }
+  }
+
+  /* ── Load users ── */
+  async function loadUsers() {
+    const tbody = document.getElementById('users-table-body');
+    tbody.innerHTML = '<div class="adm-loading"><div class="adm-spinner"></div><p>Chargement…</p></div>';
+
+    try {
+      const r = await fetch('/api/admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'get_all_users', callerEmail })
+      });
+      if (!r.ok) throw new Error('API error ' + r.status);
+      const d = await r.json();
+      allUsers = (d.users || []).sort(function(a, b) {
+        return (b.created_at || '') < (a.created_at || '') ? -1 : 1;
+      });
+
+      /* Update unconfirmed stat */
+      const unconfirmed = allUsers.filter(u => u.confirmed === false).length;
+      const statUnconf = document.getElementById('stat-unconfirmed');
+      if (statUnconf) statUnconf.textContent = unconfirmed > 0 ? unconfirmed : (d.source === 'supabase' ? unconfirmed : '—');
+
+      renderUsers(allUsers);
+    } catch(e) {
+      tbody.innerHTML = '<div class="adm-warn" style="margin:16px;">' + e.message + '</div>';
+    }
+  }
+
+  function renderUsers(users) {
+    const tbody = document.getElementById('users-table-body');
+    document.getElementById('user-count').textContent = users.length + ' utilisateur' + (users.length > 1 ? 's' : '');
+
+    if (!users.length) {
+      tbody.innerHTML = '<div class="adm-loading" style="padding:32px;">Aucun utilisateur trouvé.</div>';
+      return;
+    }
+
+    tbody.innerHTML = users.map(function(u) {
+      var email = u.email || '(sans email)';
+      var name  = u.name || '';
+      var date  = u.created_at ? fmtDate(u.created_at) : '—';
+      var last  = u.last_sign_in ? fmtDate(u.last_sign_in) : '—';
+      var prov  = u.provider || 'email';
+      var confDot = u.confirmed === false
+        ? '<span class="adm-unconfirmed"></span>'
+        : (u.confirmed === true ? '<span class="adm-confirmed"></span>' : '');
+      var adminTag = (email === ADMIN_EMAIL) ? '<span class="adm-admin-tag">admin</span>' : '';
+      return '<div class="adm-user-row">' +
+        '<div><div class="adm-user-email">' + confDot + escHtml(email) + adminTag + '</div>' +
+          (name ? '<div class="adm-user-name">' + escHtml(name) + '</div>' : '') +
+        '</div>' +
+        '<div class="adm-user-date">' + date + '</div>' +
+        '<div class="adm-user-date col-last">' + last + '</div>' +
+        '<div class="col-provider"><span class="adm-provider-tag">' + escHtml(prov) + '</span></div>' +
+        '</div>';
+    }).join('');
+  }
+
+  /* ── Chart ── */
+  function renderChart(byDay) {
+    const bars = document.getElementById('chart-bars');
+    const max  = Math.max(1, Math.max.apply(null, byDay.map(function(d) { return d.count; })));
+    const today = new Date().toISOString().slice(0, 10);
+    bars.innerHTML = byDay.map(function(d) {
+      var pct  = Math.round((d.count / max) * 100);
+      var cls  = d.count > 0 ? (d.date === today ? 'today' : 'has-data') : '';
+      var label = d.date.slice(5) + (d.count > 0 ? ' (' + d.count + ')' : '');
+      return '<div class="adm-bar-col">' +
+        '<div class="adm-bar-tooltip">' + label + '</div>' +
+        '<div class="adm-bar ' + cls + '" style="height:' + Math.max(2, pct) + '%;"></div>' +
+        '</div>';
+    }).join('');
+
+    const start = document.getElementById('chart-start');
+    if (start && byDay.length) start.textContent = byDay[0].date.slice(5);
+  }
+
+  /* ── Search ── */
+  document.getElementById('user-search').addEventListener('input', function() {
+    var q = this.value.trim().toLowerCase();
+    if (!q) { renderUsers(allUsers); return; }
+    renderUsers(allUsers.filter(function(u) {
+      return (u.email || '').toLowerCase().includes(q) ||
+             (u.name  || '').toLowerCase().includes(q);
+    }));
+  });
+
+  /* ── Refresh ── */
+  document.getElementById('btn-refresh').addEventListener('click', function() {
+    loadStats();
+    loadUsers();
+  });
+
+  /* ── Helpers ── */
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    try {
+      var d = new Date(iso);
+      return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' });
+    } catch(e) { return iso.slice(0, 10); }
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ── Init ── */
+  loadStats();
+  loadUsers();
+
+})();
+</script>
+</body>
+</html>
