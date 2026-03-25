@@ -1,5 +1,5 @@
 /* -------------------------------------------------------
-   FORGE Auth — js/auth.js
+   FORGE Auth ï¿½ js/auth.js
    Authentication via Supabase (email/password)
    Fallback localStorage si Supabase indisponible
    Admin: balalobidudi2@gmail.com
@@ -206,8 +206,26 @@ var SW_AUTH = (function() {
     return [];
   }
 
+  /* Google OAuth (Supabase) */
+  async function loginWithGoogle() {
+    var supa = getSupa();
+    if (!supa) return { ok: false, err: 'Supabase indisponible' };
+    try {
+      var r = await supa.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.origin + window.location.pathname }
+      });
+      if (r.error) return { ok: false, err: r.error.message || 'Erreur Google' };
+      /* Supabase redirige vers Google â€” pas de retour synchrone ici */
+      return { ok: true };
+    } catch(e) {
+      return { ok: false, err: e.message || 'Erreur Google' };
+    }
+  }
+
   return {
     login: login, register: register, logout: logout,
+    loginWithGoogle: loginWithGoogle,
     initFromSupabase: initFromSupabase,
     isLoggedIn: isLoggedIn, getCurrentEmail: getCurrentEmail,
     getCurrentUserId: getCurrentUserId, isAdmin: isAdmin,

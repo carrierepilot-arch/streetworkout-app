@@ -2175,6 +2175,44 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
   background: var(--accent);
   color: #fff;
 }
+
+/* Séparateur --- ou --- */
+.login-separator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0 12px;
+  color: rgba(255,255,255,.25);
+  font-size: 12px;
+}
+.login-separator::before,
+.login-separator::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255,255,255,.12);
+}
+
+/* Bouton Google */
+.btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  background: #fff;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, box-shadow .15s;
+  box-shadow: 0 1px 4px rgba(0,0,0,.2);
+}
+.btn-google:hover { background: #f5f5f5; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
+.btn-google:disabled { opacity: 0.6; cursor: not-allowed; }
 .login-overlay .form-input {
   background: rgba(255,255,255,.06);
   border: 1px solid rgba(255,255,255,.12);
