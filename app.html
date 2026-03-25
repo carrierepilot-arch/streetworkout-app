@@ -737,12 +737,16 @@
   }
 
   async function showApp() {
-    /* Migrate old non-namespaced data FIRST (one-time, harmless on subsequent loads) */
-    migrateOldData();
-    /* Pull server data (best-effort, updates localStorage) */
-    await SW_STORAGE.pullFromServer();
-
+    /* Masquer l'overlay EN PREMIER — doit toujours s'exécuter même si erreur après */
     document.getElementById('login-overlay').style.display = 'none';
+
+    try {
+      /* Migrate old non-namespaced data (one-time) */
+      migrateOldData();
+      /* Pull server data (best-effort, updates localStorage) */
+      await SW_STORAGE.pullFromServer();
+    } catch(e) { /* ignore */ }
+
     /* Show logout button + email */
     var logoutBtn  = document.getElementById('btn-logout');
     var emailSpan  = document.getElementById('header-email');
@@ -750,12 +754,15 @@
     if (logoutBtn)  logoutBtn.style.display = 'inline-flex';
     if (emailSpan)  emailSpan.textContent    = SW_AUTH.getCurrentEmail() || '';
     if (adminTab)   adminTab.style.display   = SW_AUTH.isAdmin() ? 'flex' : 'none';
-    /* Init modules once */
-    SW_PROFIL.init();
-    SW_ENTRAINEMENT.init();
-    SW_RESEAU.init();
-    /* Register current user in KV search index on every login (awaited so prenom is always fresh) */
-    await SW_RESEAU.ensureRegistered();
+
+    /* Init modules — chaque module dans son propre try-catch */
+    try { SW_PROFIL.init(); } catch(e) { console.error('Profil init error:', e); }
+    try { SW_ENTRAINEMENT.init(); } catch(e) { console.error('Entraînement init error:', e); }
+    try { SW_RESEAU.init(); } catch(e) { console.error('Réseau init error:', e); }
+
+    /* Register current user in KV search index */
+    try { await SW_RESEAU.ensureRegistered(); } catch(e) { /* ignore */ }
+
     /* Admin panel */
     if (SW_AUTH.isAdmin()) initAdminPanel();
   }
@@ -765,11 +772,10 @@
     var msgList = document.getElementById('admin-messages-list');
     if (!list) return;
 
-    /* ── Helper: render users from localStorage (fallback quand KV absent) ── */
-    function renderLocalUsers() {
-      var allUsers   = SW_AUTH.getUsers();  /* { email: { hash, since } } */
-      var emails     = Object.keys(allUsers);
-      if (!emails.length) {
+    /* ── Fallback : afficher les utilisateurs depuis localStorage (auth locale) ── */
+    async function renderLocalUsers() {
+      var emails = await SW_AUTH.getUsers(); /* async — retourne un tableau d'emails */
+      if (!emails || !emails.length) {
         list.innerHTML = '<div class="admin-kv-warn-box">⚠️ Vercel KV non configuré — aucun utilisateur visible hors-ligne.</div>';
         return;
       }
@@ -779,43 +785,64 @@
           var safe   = email.replace(/[^a-z0-9]/gi, '_').toLowerCase();
           var profil = null;
           try { profil = JSON.parse(localStorage.getItem('sw_profil__' + safe)); } catch(e) {}
-          var name   = profil ? ((profil.prenom || '') + ' ' + (profil.nom || '')).trim() : '';
-          var since  = allUsers[email] && allUsers[email].since ? allUsers[email].since : '';
+          var name  = profil ? ((profil.prenom || '') + ' ' + (profil.nom || '')).trim() : '';
           return '<div class="admin-user-row">' +
             '<div class="admin-user-email">' + email +
             (email === SW_AUTH.ADMIN_EMAIL ? ' <span class="admin-badge">admin</span>' : '') + '</div>' +
-            (name  ? '<div class="admin-user-name">'  + name  + '</div>' : '') +
-            (since ? '<div class="admin-user-stats">Inscrit le : ' + since + '</div>' : '') +
+            (name ? '<div class="admin-user-name">' + name + '</div>' : '') +
             '</div>';
         }).join('');
     }
 
-    /* ── Users : serveur → fallback localStorage ── */
+    /* ── Charger tous les utilisateurs : fusion API Auth + API Social ── */
     var kvOk = false;
     try {
-      var uRes = await fetch('/api/social?action=admin_users&caller=' + encodeURIComponent(SW_AUTH.ADMIN_EMAIL));
-      if (uRes.ok) {
-        kvOk = true;
-        var users = await uRes.json();
-        if (!users.length) {
-          list.innerHTML = '<p class="reseau-empty">Aucun utilisateur enregistré côté serveur.</p>';
+      /* Source 1 : API Auth (forge:auth:list) — TOUS les comptes authentifiés */
+      var authRes = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'get_users', adminEmail: SW_AUTH.ADMIN_EMAIL })
+      });
+
+      if (authRes.ok) {
+        var authData = await authRes.json();
+        if (authData.ok && authData.users) {
+          kvOk = true;
+          var authUsers = authData.users; /* [{ email, since, createdAt }] */
+
+          /* Source 2 : API Social (forge:users:list) — profils avec prenom/nom */
+          var socialProfiles = {};
+          try {
+            var sRes = await fetch('/api/social?action=admin_users&caller=' + encodeURIComponent(SW_AUTH.ADMIN_EMAIL));
+            if (sRes.ok) {
+              var sUsers = await sRes.json();
+              sUsers.forEach(function(u) { if (u && u.email) socialProfiles[u.email] = u; });
+            }
+          } catch(e) { /* social peut échouer, on a quand même les auth users */ }
+
+          if (!authUsers.length) {
+            list.innerHTML = '<p class="reseau-empty">Aucun utilisateur inscrit.</p>';
+          } else {
+            list.innerHTML = authUsers.map(function(u) {
+              var profile = socialProfiles[u.email] || {};
+              var name = ((profile.prenom || '') + ' ' + (profile.nom || '')).trim();
+              var username = profile.username ? '@' + profile.username : '';
+              return '<div class="admin-user-row">' +
+                '<div class="admin-user-email">' + u.email +
+                (u.email === SW_AUTH.ADMIN_EMAIL ? ' <span class="admin-badge">admin</span>' : '') + '</div>' +
+                (name ? '<div class="admin-user-name">' + name + (username ? ' · ' + username : '') + '</div>' : '') +
+                (u.since ? '<div class="admin-user-stats">Inscrit le : ' + u.since + '</div>' : '') +
+                '</div>';
+            }).join('');
+          }
         } else {
-          list.innerHTML = users.map(function(u) {
-            var name = ((u.prenom || '') + ' ' + (u.nom || '')).trim();
-            return '<div class="admin-user-row">' +
-              '<div class="admin-user-email">' + u.email +
-              (u.email === SW_AUTH.ADMIN_EMAIL ? ' <span class="admin-badge">admin</span>' : '') + '</div>' +
-              (name   ? '<div class="admin-user-name">'  + name    + '</div>' : '') +
-              (u.since ? '<div class="admin-user-stats">Inscrit le : ' + u.since + '</div>' : '') +
-              '</div>';
-          }).join('');
+          await renderLocalUsers();
         }
       } else {
-        /* KV non configuré ou erreur serveur → fallback localStorage */
-        renderLocalUsers();
+        await renderLocalUsers();
       }
     } catch(e) {
-      renderLocalUsers();
+      await renderLocalUsers();
     }
 
     /* ── Conversations ── */
@@ -932,22 +959,26 @@
       if (loginErr) loginErr.style.display = 'none';
 
       var result;
-      if (loginMode === 'register') {
-        if (pwd !== pwdConf) {
-          result = { ok: false, err: 'Les mots de passe ne correspondent pas' };
+      try {
+        if (loginMode === 'register') {
+          if (pwd !== pwdConf) {
+            result = { ok: false, err: 'Les mots de passe ne correspondent pas' };
+          } else {
+            result = await SW_AUTH.register(email, pwd);
+          }
         } else {
-          result = await SW_AUTH.register(email, pwd);
+          result = await SW_AUTH.login(email, pwd);
         }
-      } else {
-        result = await SW_AUTH.login(email, pwd);
+      } catch(e) {
+        result = { ok: false, err: 'Erreur inattendue. Réessaie.' };
       }
 
       loginBtn.disabled = false;
       loginBtn.textContent = loginMode === 'register' ? "CRÉER MON COMPTE" : "SE CONNECTER";
-      if (result.ok) {
+      if (result && result.ok) {
         showApp();
       } else {
-        if (loginErr) { loginErr.textContent = result.err; loginErr.style.display = 'block'; }
+        if (loginErr) { loginErr.textContent = (result && result.err) || 'Erreur'; loginErr.style.display = 'block'; }
       }
     });
 

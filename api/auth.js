@@ -1,7 +1,5 @@
-// api/auth.js — Vercel Edge Function — Authentication avec KV Redis
+// api/auth.js — Vercel Serverless Function — Authentication avec KV Redis
 // Stocke les utilisateurs dans KV pour persistance multi-navigateurs
-
-export const config = { runtime: 'edge' };
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -9,16 +7,15 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type'
 };
 
-export default async function handler(req) {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS_HEADERS });
-  }
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') return res.status(204).end();
 
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'POST only' }), {
-      status: 405,
-      headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-    });
+    return res.status(405).json({ error: 'POST only' });
   }
 
   const KV_URL = process.env.KV_REST_API_URL;
@@ -36,7 +33,10 @@ export default async function handler(req) {
       });
       if (!r.ok) return null;
       const j = await r.json();
-      return j.result !== undefined ? j.result : null;
+      const val = j.result !== undefined ? j.result : null;
+      if (val === null) return null;
+      if (typeof val === 'object') return val;
+      try { return JSON.parse(val); } catch(e) { return val; }
     } catch (e) { return null; }
   }
 
@@ -45,9 +45,9 @@ export default async function handler(req) {
     try {
       await fetch(`${KV_URL}/set/${encodeURIComponent(key)}`, {
         method: 'POST',
-        headers: { 
-          Authorization: `Bearer ${KV_TOKEN}`, 
-          'Content-Type': 'application/json' 
+        headers: {
+          Authorization: `Bearer ${KV_TOKEN}`,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(value)
       });
@@ -59,107 +59,95 @@ export default async function handler(req) {
     return (email || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '_');
   }
 
-  const body = await req.json().catch(() => ({}));
+  const body = req.body || {};
   const action = body.action || '';
 
   // ══════════════════ PING ══════════════════
   if (action === 'ping') {
-    return new Response(JSON.stringify({ 
-      ok: true, 
-      kvAvailable: kvAvailable 
-    }), {
-      status: 200,
-      headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-    });
+    return res.status(200).json({ ok: true, kvAvailable: kvAvailable });
   }
 
   // ══════════════════ REGISTER ══════════════════
   if (action === 'register') {
     const { email, hash } = body;
-    
+
     if (!email || !email.includes('@')) {
-      return new Response(JSON.stringify({ ok: false, err: 'Email invalide' }), {
-        status: 400,
-        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-      });
+      return res.status(400).json({ ok: false, err: 'Email invalide' });
     }
-    
+
     if (!hash || hash.length < 10) {
-      return new Response(JSON.stringify({ ok: false, err: 'Mot de passe trop court' }), {
-        status: 400,
-        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-      });
+      return res.status(400).json({ ok: false, err: 'Mot de passe trop court' });
     }
 
     const emailLow = email.trim().toLowerCase();
     const userKey = `forge:auth:${safe(emailLow)}`;
 
-    // If KV not available, return fallback response
     if (!kvAvailable) {
-      return new Response(JSON.stringify({ 
-        ok: false, 
-        err: 'KV not available',
-        kvAvailable: false 
-      }), {
-        status: 503,
-        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-      });
+      return res.status(503).json({ ok: false, err: 'KV not available', kvAvailable: false });
     }
 
     // Check if user exists
     const existing = await kvGet(userKey);
     if (existing) {
-      return new Response(JSON.stringify({ ok: false, err: 'Un compte existe déjà avec cet email' }), {
-        status: 400,
-        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-      });
+      return res.status(400).json({ ok: false, err: 'Un compte existe déjà avec cet email' });
     }
 
-    // Create user
+    const since = new Date().toISOString().slice(0, 10);
+
+    // Create auth user
     const userData = {
       email: emailLow,
       hash: hash,
-      since: new Date().toISOString().slice(0, 10),
+      since: since,
       createdAt: Date.now()
     };
-
     await kvSet(userKey, userData);
 
-    // Add to users list
-    const listKey = 'forge:auth:list';
-    const list = (await kvGet(listKey)) || [];
-    if (!list.includes(emailLow)) {
-      list.push(emailLow);
-      await kvSet(listKey, list);
+    // Add to auth users list
+    const authListKey = 'forge:auth:list';
+    const authList = (await kvGet(authListKey)) || [];
+    if (!Array.isArray(authList)) {
+      await kvSet(authListKey, [emailLow]);
+    } else if (!authList.includes(emailLow)) {
+      authList.push(emailLow);
+      await kvSet(authListKey, authList);
     }
 
-    return new Response(JSON.stringify({ ok: true, email: emailLow }), {
-      status: 200,
-      headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-    });
+    // ALSO register in social users list so admin sees the user immediately
+    const socialListKey = 'forge:users:list';
+    const socialUserKey = `forge:user:${safe(emailLow)}`;
+    const socialList = (await kvGet(socialListKey)) || [];
+    if (!Array.isArray(socialList)) {
+      await kvSet(socialListKey, [emailLow]);
+    } else if (!socialList.includes(emailLow)) {
+      socialList.push(emailLow);
+      await kvSet(socialListKey, socialList);
+    }
+    // Create empty social profile if it doesn't exist yet
+    const existingProfile = await kvGet(socialUserKey);
+    if (!existingProfile) {
+      await kvSet(socialUserKey, {
+        email: emailLow,
+        prenom: '',
+        nom: '',
+        username: '',
+        since: since
+      });
+    }
+
+    return res.status(200).json({ ok: true, email: emailLow });
   }
 
   // ══════════════════ LOGIN ══════════════════
   if (action === 'login') {
     const { email, hash } = body;
-    
+
     if (!email || !email.includes('@')) {
-      return new Response(JSON.stringify({ ok: false, err: 'Email invalide' }), {
-        status: 400,
-        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-      });
+      return res.status(400).json({ ok: false, err: 'Email invalide' });
     }
 
-    // If KV not available, return fallback response
     if (!kvAvailable) {
-      return new Response(JSON.stringify({ 
-        ok: false, 
-        err: 'KV not available',
-        kvAvailable: false 
-      }), {
-        status: 503,
-        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-      });
+      return res.status(503).json({ ok: false, err: 'KV not available', kvAvailable: false });
     }
 
     const emailLow = email.trim().toLowerCase();
@@ -167,56 +155,39 @@ export default async function handler(req) {
 
     const user = await kvGet(userKey);
     if (!user) {
-      return new Response(JSON.stringify({ ok: false, err: 'Aucun compte avec cet email' }), {
-        status: 400,
-        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-      });
+      return res.status(400).json({ ok: false, err: 'Aucun compte avec cet email' });
     }
 
     if (user.hash !== hash) {
-      return new Response(JSON.stringify({ ok: false, err: 'Mot de passe incorrect' }), {
-        status: 400,
-        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-      });
+      return res.status(400).json({ ok: false, err: 'Mot de passe incorrect' });
     }
 
-    return new Response(JSON.stringify({ ok: true, email: emailLow }), {
-      status: 200,
-      headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-    });
+    return res.status(200).json({ ok: true, email: emailLow });
   }
 
   // ══════════════════ GET USERS LIST (admin) ══════════════════
   if (action === 'get_users') {
     const { adminEmail } = body;
     if (adminEmail !== '1@gmail.com') {
-      return new Response(JSON.stringify({ ok: false, err: 'Forbidden' }), {
-        status: 403,
-        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-      });
+      return res.status(403).json({ ok: false, err: 'Forbidden' });
     }
 
     if (!kvAvailable) {
-      return new Response(JSON.stringify({ ok: false, err: 'KV not available' }), {
-        status: 503,
-        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-      });
+      return res.status(503).json({ ok: false, err: 'KV not available' });
     }
 
     const list = (await kvGet('forge:auth:list')) || [];
-    const users = await Promise.all(list.map(async (e) => {
+    const safeList = Array.isArray(list) ? list : [];
+    const users = await Promise.all(safeList.map(async (e) => {
       const u = await kvGet(`forge:auth:${safe(e)}`);
-      return u ? { email: u.email, since: u.since, createdAt: u.createdAt } : null;
+      return u ? { email: u.email || e, since: u.since, createdAt: u.createdAt } : { email: e };
     }));
 
-    return new Response(JSON.stringify({ ok: true, users: users.filter(Boolean) }), {
-      status: 200,
-      headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-    });
+    return res.status(200).json({ ok: true, users: users.filter(Boolean) });
   }
 
-  return new Response(JSON.stringify({ error: 'Unknown action' }), {
-    status: 400,
-    headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
+  return res.status(400).json({ error: 'Unknown action' });
+}
+
   });
 }

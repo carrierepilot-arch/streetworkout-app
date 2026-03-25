@@ -1,6 +1,8 @@
 /* ═══════════════════════════════════════════════════════
    FORGE Auth — js/auth.js
-   Authentication avec localStorage (KV non disponible car protégé)
+   Authentication via API serveur (Vercel KV / Redis)
+   Fallback localStorage si API indisponible
+   Migration automatique des anciens comptes localStorage → serveur
    Admin: 1@gmail.com
    ═══════════════════════════════════════════════════════ */
 
@@ -9,7 +11,6 @@ var SW_AUTH = (function() {
 
   var ADMIN_EMAIL = '1@gmail.com';
   var SESSION_KEY = 'sw_session';
-  var kvAvailable = false; // Force localStorage car KV protégé par Vercel Auth
 
   /* Hash password with WebCrypto SHA-256 → hex string */
   async function hashPwd(pwd) {
@@ -28,7 +29,7 @@ var SW_AUTH = (function() {
     localStorage.setItem(SESSION_KEY, JSON.stringify({ email: email }));
   }
 
-  /* LocalStorage only */
+  /* Comptes locaux (fallback) */
   function getUsersLocal() {
     try { return JSON.parse(localStorage.getItem('sw_users')) || {}; } catch(e) { return {}; }
   }
@@ -37,37 +38,101 @@ var SW_AUTH = (function() {
     localStorage.setItem('sw_users', JSON.stringify(users));
   }
 
-  /* Login — localStorage only */
+  /* Appel à l'API auth serveur — retourne null si l'API est injoignable */
+  async function callAPI(payload) {
+    try {
+      var res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      var data = await res.json();
+      return data;
+    } catch(e) {
+      return null; /* API injoignable (pas de réseau ou pas de serveur Vercel) */
+    }
+  }
+
+  /* Login — API serveur en priorité, localStorage en fallback
+     Migration automatique des anciens comptes localStorage vers le serveur */
   async function login(email, pwd) {
     email = (email || '').trim().toLowerCase();
     if (!email || !email.includes('@')) return { ok: false, err: 'Email invalide' };
     if (!pwd || pwd.length < 4) return { ok: false, err: 'Mot de passe trop court (4 car. min)' };
 
     var hash = await hashPwd(pwd);
-    var users = getUsersLocal();
-    
-    if (!users[email]) return { ok: false, err: 'Aucun compte avec cet email' };
-    if (users[email].hash !== hash) return { ok: false, err: 'Mot de passe incorrect' };
 
-    saveSession(email);
-    return { ok: true };
+    /* 1. Essayer l'API serveur */
+    var result = await callAPI({ action: 'login', email: email, hash: hash });
+
+    if (result && result.ok) {
+      saveSession(result.email || email);
+      return { ok: true };
+    }
+
+    /* 2. Si le compte n'existe pas côté serveur, vérifier si c'est un ancien compte localStorage */
+    if (result && result.err === 'Aucun compte avec cet email') {
+      var users = getUsersLocal();
+      if (users[email] && users[email].hash === hash) {
+        /* Migrer ce compte vers le serveur */
+        var migResult = await callAPI({ action: 'register', email: email, hash: hash });
+        if (migResult && migResult.ok) {
+          saveSession(email);
+          return { ok: true };
+        }
+        /* Migration impossible mais compte local valide → accès autorisé */
+        saveSession(email);
+        return { ok: true };
+      }
+      /* Vérifier aussi si le hash est correct mais compte absent */
+      if (users[email] && users[email].hash !== hash) {
+        return { ok: false, err: 'Mot de passe incorrect' };
+      }
+    }
+
+    /* 3. Si l'API est complètement indisponible (null) → fallback localStorage */
+    if (result === null || (result && result.kvAvailable === false)) {
+      var localUsers = getUsersLocal();
+      if (!localUsers[email]) return { ok: false, err: 'Aucun compte avec cet email' };
+      if (localUsers[email].hash !== hash) return { ok: false, err: 'Mot de passe incorrect' };
+      saveSession(email);
+      return { ok: true };
+    }
+
+    return result || { ok: false, err: 'Erreur de connexion' };
   }
 
-  /* Register — localStorage only */
+  /* Register — API serveur en priorité, localStorage en fallback */
   async function register(email, pwd) {
     email = (email || '').trim().toLowerCase();
     if (!email || !email.includes('@')) return { ok: false, err: 'Email invalide' };
     if (!pwd || pwd.length < 4) return { ok: false, err: 'Mot de passe trop court (4 car. min)' };
 
     var hash = await hashPwd(pwd);
-    var users = getUsersLocal();
-    
-    if (users[email]) return { ok: false, err: 'Un compte existe déjà avec cet email' };
 
-    users[email] = { hash: hash, since: new Date().toISOString().slice(0, 10) };
-    saveUsersLocal(users);
-    saveSession(email);
-    return { ok: true };
+    /* 1. Essayer l'API serveur */
+    var result = await callAPI({ action: 'register', email: email, hash: hash });
+
+    if (result && result.ok) {
+      /* Enregistrer aussi en local pour le fallback futur */
+      var users = getUsersLocal();
+      users[email] = { hash: hash, since: new Date().toISOString().slice(0, 10) };
+      saveUsersLocal(users);
+      saveSession(result.email || email);
+      return { ok: true };
+    }
+
+    /* 2. Si l'API est indisponible → fallback localStorage */
+    if (result === null || (result && result.kvAvailable === false)) {
+      var localUsers = getUsersLocal();
+      if (localUsers[email]) return { ok: false, err: 'Un compte existe déjà avec cet email' };
+      localUsers[email] = { hash: hash, since: new Date().toISOString().slice(0, 10) };
+      saveUsersLocal(localUsers);
+      saveSession(email);
+      return { ok: true };
+    }
+
+    return result || { ok: false, err: 'Erreur de connexion' };
   }
 
   function logout() {
@@ -96,14 +161,19 @@ var SW_AUTH = (function() {
     return base + '__' + safe;
   }
 
-  /* Get users from localStorage */
+  /* Get users list — via API serveur, fallback localStorage */
   async function getUsers() {
+    var result = await callAPI({ action: 'get_users', adminEmail: ADMIN_EMAIL });
+    if (result && result.ok && result.users) {
+      return result.users.map(function(u) { return u.email; });
+    }
     return Object.keys(getUsersLocal());
   }
 
-  /* Check KV availability (always false for now) */
+  /* Check KV availability */
   async function checkKV() {
-    return kvAvailable;
+    var result = await callAPI({ action: 'ping' });
+    return !!(result && result.kvAvailable);
   }
 
   return {
