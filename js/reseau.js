@@ -32,6 +32,17 @@ var SW_RESEAU = (function () {
     document.querySelectorAll('.tab-btn:not([data-tab="reseau"])').forEach(function (btn) {
       btn.addEventListener('click', _stopPolling);
     });
+
+    /* Auto-register user when profil is saved */
+    var saveBtn = document.getElementById('btn-save-profil');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function () {
+        setTimeout(function () { ensureRegistered(); }, 500);
+      });
+    }
+
+    /* Register user on page load if on profil tab */
+    setTimeout(function () { ensureRegistered(); }, 1000);
   }
 
   var kvAvailable = null; /* null = unknown, true/false after first check */
@@ -95,10 +106,14 @@ var SW_RESEAU = (function () {
     var q = (document.getElementById('reseau-search-input').value || '').trim();
     var el = document.getElementById('reseau-search-results');
     if (!el) return;
-    if (q.length < 2) { el.innerHTML = ''; return; }
+    if (q.length < 1) { el.innerHTML = ''; return; }
 
     el.innerHTML = '<p class="reseau-empty">Recherche…</p>';
+    
+    console.log('[RESEAU] Recherche:', q);
     var results = await apiGet({ action: 'search', q: q, caller: myEmail });
+
+    console.log('[RESEAU] Résultats:', results);
 
     if (results && results._kvError) {
       el.innerHTML = '<p class="reseau-empty reseau-kv-warn">⚠️ Service réseau non disponible. Activez <strong>Vercel KV</strong> dans votre dashboard Vercel pour utiliser cette fonctionnalité.</p>';
@@ -431,6 +446,7 @@ var SW_RESEAU = (function () {
   /* ── Public: force-register current user in KV with latest profile data ── */
   async function ensureRegistered() {
     if (!myEmail) return;
+    
     /* Read from form fields first (most current), fall back to localStorage */
     var prenomEl    = document.getElementById('input-prenom');
     var nomEl       = document.getElementById('input-nom');
@@ -439,6 +455,17 @@ var SW_RESEAU = (function () {
     var prenom      = (prenomEl   && prenomEl.value.trim())   || p.prenom   || '';
     var nom         = (nomEl      && nomEl.value.trim())      || p.nom      || '';
     var username    = (usernameEl && usernameEl.value.trim()) || p.username || '';
+    
+    /* Also get email from auth */
+    var email = myEmail;
+    
+    /* Only register if we have at least a name */
+    if (!prenom && !nom && !username) {
+      console.log('[RESEAU] Pas assez de données pour enregistrer le profil');
+      return;
+    }
+    
+    console.log('[RESEAU] Enregistrement utilisateur:', email, prenom, nom, username);
     await registerPublicProfile(prenom, nom, username);
   }
 

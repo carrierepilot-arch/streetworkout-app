@@ -63,8 +63,11 @@ export default async function handler(req, res) {
     /* ── Search users ── */
     if (action === 'search') {
       const q = (req.query.q || '').trim().toLowerCase();
-      if (q.length < 2) return res.status(200).json([]);
+      if (q.length < 1) return res.status(200).json([]);
+      
       const list = parse(await kvGet(k.usersList)) || [];
+      console.log('[API] Users list:', list);
+      
       const results = await Promise.all(
         list.map(async (email) => {
           if (email === caller) return null;
@@ -74,7 +77,9 @@ export default async function handler(req, res) {
           return haystack.includes(q) ? p : null;
         })
       );
-      return res.status(200).json(results.filter(Boolean));
+      const filtered = results.filter(Boolean);
+      console.log('[API] Search results:', filtered);
+      return res.status(200).json(filtered);
     }
 
     /* ── Friends list ── */
