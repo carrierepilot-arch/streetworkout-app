@@ -8,8 +8,8 @@
 var SW_AUTH = (function() {
   'use strict';
 
-  var SUPABASE_URL  = 'https://tahuyewnuizejbkmqlcb.supabase.co';
-  var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRhaHV5ZXdudWl6ZWpia21xbGNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMzUyOTUsImV4cCI6MjA4OTcxMTI5NX0.1f2SN95exMgVv9d1HWd6WmkkAYPgPx5blxDC4e6aTRc';
+  var SUPABASE_URL  = 'https://qykqfpqibzipdfntqyul.supabase.co';
+  var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5a3FmcHFpYnppcGRmbnRxeXVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NDI0NTQsImV4cCI6MjA5MDAxODQ1NH0.AV2Qn2OPHHEX7M5BtEiqx4LxrVxzrKyLZI_GMFj-8Mc';
   var ADMIN_EMAIL   = 'balalobidudi2@gmail.com';
   var SESSION_KEY   = 'sw_session';
 

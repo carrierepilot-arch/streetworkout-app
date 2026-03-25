@@ -9,7 +9,7 @@ const CORS = {
   'Access-Control-Allow-Headers': 'Content-Type'
 };
 
-const SUPABASE_URL  = 'https://tahuyewnuizejbkmqlcb.supabase.co';
+const SUPABASE_URL  = 'https://qykqfpqibzipdfntqyul.supabase.co';
 const ADMIN_EMAIL   = 'balalobidudi2@gmail.com';
 
 export default async function handler(req, res) {
