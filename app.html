@@ -689,6 +689,7 @@
 </div>
 
 <!-- ═══════ SCRIPTS ═══════ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/api.js"></script>
@@ -696,7 +697,7 @@
 <script src="js/entrainement.js"></script>
 <script src="js/reseau.js"></script>
 <script>
-(function() {
+(async function() {
   /* Tab switching */
   var btns = document.querySelectorAll('.tab-btn');
   var tabs = document.querySelectorAll('.tab-content');
@@ -794,43 +795,25 @@
         }).join('');
     }
 
-    /* ── Charger tous les utilisateurs : fusion API Auth + API Social ── */
+    /* ── Charger tous les utilisateurs depuis Supabase profiles ── */
     var kvOk = false;
     try {
-      /* Source 1 : API Auth (forge:auth:list) — TOUS les comptes authentifiés */
-      var authRes = await fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'get_users', adminEmail: SW_AUTH.ADMIN_EMAIL })
-      });
-
-      if (authRes.ok) {
-        var authData = await authRes.json();
-        if (authData.ok && authData.users) {
+      var supa = SW_AUTH.getSupa();
+      if (supa) {
+        var profilesRes = await supa.from('profiles').select('*').order('since', { ascending: false });
+        if (!profilesRes.error && profilesRes.data) {
           kvOk = true;
-          var authUsers = authData.users; /* [{ email, since, createdAt }] */
-
-          /* Source 2 : API Social (forge:users:list) — profils avec prenom/nom */
-          var socialProfiles = {};
-          try {
-            var sRes = await fetch('/api/social?action=admin_users&caller=' + encodeURIComponent(SW_AUTH.ADMIN_EMAIL));
-            if (sRes.ok) {
-              var sUsers = await sRes.json();
-              sUsers.forEach(function(u) { if (u && u.email) socialProfiles[u.email] = u; });
-            }
-          } catch(e) { /* social peut échouer, on a quand même les auth users */ }
-
-          if (!authUsers.length) {
+          var profiles = profilesRes.data;
+          if (!profiles.length) {
             list.innerHTML = '<p class="reseau-empty">Aucun utilisateur inscrit.</p>';
           } else {
-            list.innerHTML = authUsers.map(function(u) {
-              var profile = socialProfiles[u.email] || {};
-              var name = ((profile.prenom || '') + ' ' + (profile.nom || '')).trim();
-              var username = profile.username ? '@' + profile.username : '';
+            list.innerHTML = profiles.map(function(u) {
+              var name = ((u.prenom || '') + ' ' + (u.nom || '')).trim();
+              var username = u.username ? '@' + u.username : '';
               return '<div class="admin-user-row">' +
                 '<div class="admin-user-email">' + u.email +
                 (u.email === SW_AUTH.ADMIN_EMAIL ? ' <span class="admin-badge">admin</span>' : '') + '</div>' +
-                (name ? '<div class="admin-user-name">' + name + (username ? ' · ' + username : '') + '</div>' : '') +
+                (name ? '<div class="admin-user-name">' + name + (username ? ' \u00b7 ' + username : '') + '</div>' : '') +
                 (u.since ? '<div class="admin-user-stats">Inscrit le : ' + u.since + '</div>' : '') +
                 '</div>';
             }).join('');
@@ -915,11 +898,14 @@
   }
 
   /* Logout (header + profil tab) */
-  function doLogout() { SW_AUTH.logout(); location.reload(); }
+  async function doLogout() { await SW_AUTH.logout(); location.reload(); }
   var logoutBtn       = document.getElementById('btn-logout');
   var logoutProfilBtn = document.getElementById('btn-logout-profil');
   if (logoutBtn)       logoutBtn.addEventListener('click', doLogout);
   if (logoutProfilBtn) logoutProfilBtn.addEventListener('click', doLogout);
+
+  /* Initialiser Supabase puis vérifier la session */
+  await SW_AUTH.initFromSupabase();
 
   if (SW_AUTH.isLoggedIn()) {
     showApp();
@@ -977,8 +963,18 @@
       loginBtn.textContent = loginMode === 'register' ? "CRÉER MON COMPTE" : "SE CONNECTER";
       if (result && result.ok) {
         showApp();
+      } else if (result && result.needsConfirm) {
+        if (loginErr) {
+          loginErr.textContent = result.err;
+          loginErr.style.display = 'block';
+          loginErr.style.color = '#4ade80'; /* vert — info, pas erreur */
+        }
       } else {
-        if (loginErr) { loginErr.textContent = (result && result.err) || 'Erreur'; loginErr.style.display = 'block'; }
+        if (loginErr) {
+          loginErr.textContent = (result && result.err) || 'Erreur';
+          loginErr.style.display = 'block';
+          loginErr.style.color = '';
+        }
       }
     });
 
@@ -990,6 +986,7 @@
   }
 })();
 </script>
+<!-- Note: Supabase SDK loaded via CDN above -->
 
 </body>
 </html>
