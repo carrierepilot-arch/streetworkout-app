@@ -456,16 +456,13 @@ var SW_RESEAU = (function () {
     var nom         = (nomEl      && nomEl.value.trim())      || p.nom      || '';
     var username    = (usernameEl && usernameEl.value.trim()) || p.username || '';
     
-    /* Also get email from auth */
-    var email = myEmail;
-    
-    /* Only register if we have at least a name */
+    /* Use email as fallback for display name if no profile data */
     if (!prenom && !nom && !username) {
-      console.log('[RESEAU] Pas assez de données pour enregistrer le profil');
-      return;
+      prenom = myEmail.split('@')[0];
+      console.log('[RESEAU] Utilisation de l\'email comme nom par défaut:', prenom);
     }
     
-    console.log('[RESEAU] Enregistrement utilisateur:', email, prenom, nom, username);
+    console.log('[RESEAU] Enregistrement utilisateur:', myEmail, prenom, nom, username);
     await registerPublicProfile(prenom, nom, username);
   }
 
